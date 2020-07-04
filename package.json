@@ -10,7 +10,6 @@
     "dev": "concurrently --kill-others-on-fail \"npm run api\" \"npm run client\"",
     "lint": "cd api && npm run lint && cd ../client && npm run lint",
     "lint:fix": "cd api && npm run lint:fix && cd ../client && npm run lint:fix",
-    "prepush": "npm run lint:fix"
   },
   "repository": {
     "type": "git",
@@ -25,7 +24,6 @@
   "homepage": "https://github.com/shelchkov/chat#readme",
   "devDependencies": {
     "concurrently": "^5.2.0",
-    "husky": "^4.2.5",
     "typescript": "^3.9.6"
   }
 }
