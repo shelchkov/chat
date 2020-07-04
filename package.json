@@ -7,7 +7,9 @@
     "client": "cd client && npm start",
     "api": "cd api && npm start",
     "api:tsc": "cd api && npm run tsc",
-    "dev": "concurrently --kill-others-on-fail \"npm run api\" \"npm run client\""
+    "dev": "concurrently --kill-others-on-fail \"npm run api\" \"npm run client\"",
+    "lint": "eslint */**/*.{js,ts,tsx}",
+    "lint:fix": "eslint */**/*.{js,ts,tsx} --quiet --fix"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,14 @@
   },
   "homepage": "https://github.com/shelchkov/chat#readme",
   "devDependencies": {
-    "concurrently": "^5.2.0"
+    "@typescript-eslint/eslint-plugin": "^3.5.0",
+    "@typescript-eslint/parser": "^3.5.0",
+    "concurrently": "^5.2.0",
+    "eslint": "^7.3.1",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.20.3",
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.6"
   }
 }
