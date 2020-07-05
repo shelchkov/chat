@@ -1,6 +1,7 @@
 import React, { ReactElement, ChangeEvent } from "react"
 import styled from "styled-components"
 import { theme } from "../../style-guide/theme"
+import { getSignedOutInputWidth } from "../../utils/utils"
 
 interface Props {
 	label: string
@@ -11,11 +12,11 @@ interface Props {
 const InputContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	width: 200px;
-	margin: .5rem 0 .8rem 1rem;
+	width: ${getSignedOutInputWidth(0)};
+	margin: .5rem 0 .8rem 0;
 
 	@media (min-width: ${theme.breakpoints[0]}) {
-		width: 240px;
+		width: ${getSignedOutInputWidth(1)};
 	}
 `
 
