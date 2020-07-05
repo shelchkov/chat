@@ -1,7 +1,8 @@
 import React from "react"
+import { SignedOutPage } from "./pages/signed-out.page"
 
 const App = () => (
-  <div>Chat</div>
+  <SignedOutPage />
 )
 
 export default App
