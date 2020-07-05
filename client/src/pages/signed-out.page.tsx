@@ -1,6 +1,7 @@
 import React, { ReactElement, useState } from "react"
 import styled from "styled-components"
 import { Input } from "../components/input/input"
+import { Button } from "../components/button/button"
 import { theme } from "../style-guide/theme"
 import { getSignedOutInputWidth } from "../utils/utils"
 
@@ -41,6 +42,9 @@ const SignedOutSwitchForm = styled.p`
 const getSwitchFormText = (form: Forms): string =>
 	form === Forms.SIGN_IN ? "Create Account" : "Sign in"
 
+const getSignedOutButtonText = (form: Forms): string =>
+	form === Forms.SIGN_IN ? "Sign in" : "Sign up"
+
 export const SignedOutPage = (): ReactElement => {
 	const [form, setForm] = useState(Forms.SIGN_IN)
 
@@ -75,6 +79,7 @@ export const SignedOutPage = (): ReactElement => {
 			<SignedOutSwitchForm onClick={handleSwitchForm}>
 				{getSwitchFormText(form)}
 			</SignedOutSwitchForm>
+			<Button text={getSignedOutButtonText(form)} />
 		</SignedOutContainer>
 	)
 }
