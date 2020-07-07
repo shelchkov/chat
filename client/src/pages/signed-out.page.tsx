@@ -4,6 +4,7 @@ import { Input } from "../components/input/input"
 import { Button } from "../components/button/button"
 import { theme } from "../style-guide/theme"
 import { getSignedOutInputWidth } from "../utils/utils"
+import { InputTypes } from "../utils/enums"
 
 enum Forms {
 	"SIGN_IN" = "SIGN_IN",
@@ -62,16 +63,17 @@ export const SignedOutPage = (): ReactElement => {
 
 			{form === Forms.SIGN_IN ?
 				<>
-					<Input name="email" label="Email" />
-					<Input name="password" label="Password" />
+					<Input name="email" label="Email" type={InputTypes.EMAIL} />
+					<Input name="password" label="Password" type={InputTypes.PASSWORD} />
 				</>
 			:
 				<>
-					<Input name="email" label="Email" />
-					<Input name="password" label="Password" />
+					<Input name="email" label="Email" type={InputTypes.EMAIL} />
+					<Input name="password" label="Password" type={InputTypes.PASSWORD} />
 					<Input
 						name="confirm-password"
 						label="Confirm Password"
+						type={InputTypes.PASSWORD}
 					/>
 				</>
 			}

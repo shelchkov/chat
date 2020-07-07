@@ -2,11 +2,13 @@ import React, { ReactElement, ChangeEvent } from "react"
 import styled from "styled-components"
 import { theme } from "../../style-guide/theme"
 import { getSignedOutInputWidth } from "../../utils/utils"
+import { InputTypes } from "../../utils/enums"
 
 interface Props {
 	label: string
 	name: string
 	onChange?: (event: ChangeEvent) => void
+	type?: InputTypes
 }
 
 const InputContainer = styled.div`
@@ -34,13 +36,13 @@ const InputComponent = styled.input`
 	outline: none;
 `
 
-export const Input = ({ label, name, onChange }: Props): ReactElement => (
+export const Input = ({ label, name, ...rest }: Props): ReactElement => (
 	<InputContainer>
 		<InputLabel htmlFor={`${name}-input`}>{label}</InputLabel>
 		<InputComponent
 			id={`${name}-input`}
 			name={name}
-			onChange={onChange}
+			{...rest}
 		/>
 	</InputContainer>
 )
