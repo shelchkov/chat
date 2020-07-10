@@ -6,3 +6,7 @@
 # build
 /api/build
 /client/build
+
+# environment variables
+/api/.env
+docker.env

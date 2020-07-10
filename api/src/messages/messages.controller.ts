@@ -12,8 +12,9 @@ export class MessagesController {
   getMessagesFromUser(
     @Param("id") id: string,
     @Body() body: GetMessagesDto,
-  ): MessageDto[] {
+  ): Promise<MessageDto[]> {
     const { userId } = body
+
     return this.messagesService.getMessagesFromUser(
       Number(id),
       Number(userId),
@@ -24,7 +25,7 @@ export class MessagesController {
   sendMessageToUser(
     @Param("to") to: string,
     @Body() message: SendMessageDto,
-  ): MessageDto {
+  ): Promise<MessageDto> {
     return this.messagesService.sendMessageToUser(Number(to), message)
   }
 }

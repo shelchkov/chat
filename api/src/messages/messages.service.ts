@@ -1,18 +1,25 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common"
 import { SendMessageDto } from "./dto/sendMessage.dto"
 import { MessageDto } from "./dto/message.dto"
+import { InjectRepository } from "@nestjs/typeorm"
+import Message from "./message.entity"
+import { Repository } from "typeorm"
 
 @Injectable()
 export class MessagesService {
+  constructor(
+  	@InjectRepository(Message)
+  	private messagesRepository: Repository<Message>
+  ) {}
+
   private messages = []
   private lastMessageId = 0
 
-  getMessagesFromUser(id: number, userId: number): MessageDto[] {
-    const foundMessages = this.messages.filter(
-      message =>
-        (message.from === id && message.to === userId) ||
-        (message.from === userId && message.to === id),
-    )
+  async getMessagesFromUser(id: number, userId: number): Promise<MessageDto[]> {
+  	const foundMessages = await this.messagesRepository.find({ where: [
+  		{ from: id, to: userId },
+  		{ from: userId, to: id }
+  	] })
 
     if (!foundMessages.length) {
       throw new HttpException("Messages weren't found", HttpStatus.NOT_FOUND)
@@ -21,14 +28,13 @@ export class MessagesService {
     return foundMessages
   }
 
-  sendMessageToUser(to: number, message: SendMessageDto): MessageDto {
-    const newMessage = {
+  async sendMessageToUser(to: number, message: SendMessageDto): Promise<MessageDto> {
+    const newMessage = this.messagesRepository.create({
       ...message,
-      id: ++this.lastMessageId,
       to,
-    }
+    })
+    await this.messagesRepository.save(newMessage)
 
-    this.messages.push(newMessage)
     return newMessage
   }
 }
