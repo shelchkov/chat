@@ -1,18 +1,18 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
 
 @Entity()
-class Message {
+class User {
   @PrimaryGeneratedColumn()
   public id: number
 
-  @Column()
-  public text: string
+  @Column({ unique: true })
+  public email: string
 
   @Column()
-  public from: number
+  public name: string
 
   @Column()
-  public to: number
+  public password: string
 }
 
-export default Message
+export default User
