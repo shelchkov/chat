@@ -5,12 +5,13 @@ import {
   Param,
   Body,
   UseGuards,
+  Req,
 } from "@nestjs/common"
 import { MessagesService } from "./messages.service"
 import { SendMessageDto } from "./dto/sendMessage.dto"
-import { GetMessagesDto } from "./dto/getMessages.dto"
 import Message from "./message.entity"
 import JwtAuthenticationGuard from "../authentication/jwt-authentication.guard"
+import RequestWithUser from "../authentication/requestWithUser.interface"
 
 @Controller("messages")
 export class MessagesController {
@@ -20,9 +21,9 @@ export class MessagesController {
   @UseGuards(JwtAuthenticationGuard)
   getMessagesFromUser(
     @Param("id") id: string,
-    @Body() body: GetMessagesDto,
+    @Req() request: RequestWithUser,
   ): Promise<Message[]> {
-    const { userId } = body
+    const userId = request.user.id
 
     return this.messagesService.getMessagesFromUser(
       Number(id),
@@ -35,7 +36,14 @@ export class MessagesController {
   sendMessageToUser(
     @Param("to") to: string,
     @Body() message: SendMessageDto,
+    @Req() request: RequestWithUser,
   ): Promise<Message> {
-    return this.messagesService.sendMessageToUser(Number(to), message)
+    const userId = request.user.id
+
+    return this.messagesService.sendMessageToUser(
+      Number(to),
+      Number(userId),
+      message.text,
+    )
   }
 }
