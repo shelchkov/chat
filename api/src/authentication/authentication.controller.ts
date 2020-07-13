@@ -1,8 +1,10 @@
-import { Controller, Post, Body, Get } from "@nestjs/common"
+import { Controller, Post, Body, HttpCode, UseGuards } from "@nestjs/common"
 import { SignUpDto } from "./dto/signUp.dto"
 import { AuthenticationService } from "./authentication.service"
 import { SignInDto } from "./dto/signIn.dto"
 import User from "../users/user.entity"
+import { LocalAuthenticationGuard } from "./localAuthentication.guard"
+import RequestWithUser from "./requestWithUser.interface"
 
 @Controller("authentication")
 export class AuthenticationController {
@@ -14,11 +16,12 @@ export class AuthenticationController {
     return this.authenticationService.signUp(data)
   }
 
-  @Get("sign-in")
-  async signIn(@Body() data: SignInDto): Promise<User> {
-    return this.authenticationService.getAuthenticatedUser(
-      data.email,
-      data.password,
-    )
+  @HttpCode(200)
+  @UseGuards(LocalAuthenticationGuard)
+  @Post("sign-in")
+  async signIn(@Body() data: RequestWithUser): Promise<User> {
+    const user = data.user
+
+    return { ...user, password: undefined }
   }
 }
