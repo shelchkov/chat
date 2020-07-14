@@ -1,5 +1,4 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common"
-import { SendMessageDto } from "./dto/sendMessage.dto"
 import { InjectRepository } from "@nestjs/typeorm"
 import Message from "./message.entity"
 import { Repository } from "typeorm"
@@ -31,11 +30,13 @@ export class MessagesService {
 
   async sendMessageToUser(
     to: number,
-    message: SendMessageDto,
+    from: number,
+    text: string,
   ): Promise<Message> {
     const newMessage = this.messagesRepository.create({
-      ...message,
       to,
+      from,
+      text,
     })
     await this.messagesRepository.save(newMessage)
 

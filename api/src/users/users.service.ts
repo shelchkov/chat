@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import User from "./user.entity"
-import { Repository } from "typeorm"
+import { Repository, Like } from "typeorm"
 import { CreateUserDto } from "./dto/createUser.dto"
 
 @Injectable()
@@ -26,5 +26,21 @@ export class UsersService {
     await this.usersRepository.save(newUser)
 
     return newUser
+  }
+
+  async getById(userId: number): Promise<User> {
+    const user = await this.usersRepository.findOne({ id: userId })
+
+    if (!user) {
+      throw new HttpException("User wasn't found", HttpStatus.NOT_FOUND)
+    }
+
+    return user
+  }
+
+  async searchUsers(query: string): Promise<User[]> {
+    const users = await this.usersRepository.find({ where: `name ILIKE '%${query}%'` })
+
+    return users
   }
 }
