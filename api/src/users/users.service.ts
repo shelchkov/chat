@@ -27,4 +27,14 @@ export class UsersService {
 
     return newUser
   }
+
+  async getById(userId: number): Promise<User> {
+    const user = await this.usersRepository.findOne({ id: userId })
+
+    if (!user) {
+      throw new HttpException("User wasn't found", HttpStatus.NOT_FOUND)
+    }
+
+    return user
+  }
 }
