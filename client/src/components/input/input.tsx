@@ -10,6 +10,7 @@ interface Props {
 	onChange?: (event: ChangeEvent) => void
 	type?: InputTypes
 	reference?: any
+	error?: string
 }
 
 const InputContainer = styled.div`
@@ -37,7 +38,14 @@ const InputComponent = styled.input`
 	outline: none;
 `
 
-export const Input = ({ label, name, reference, ...rest }: Props): ReactElement => (
+const ErrorContainer = styled.p`
+	margin-top: .2rem;
+	margin-bottom: 0;
+	color: red;
+	font-size: .7rem;
+`
+
+export const Input = ({ label, name, reference, error, ...rest }: Props): ReactElement => (
 	<InputContainer>
 		<InputLabel htmlFor={`${name}-input`}>{label}</InputLabel>
 		<InputComponent
@@ -46,5 +54,7 @@ export const Input = ({ label, name, reference, ...rest }: Props): ReactElement 
 			ref={reference}
 			{...rest}
 		/>
+
+		{error && <ErrorContainer>{error}</ErrorContainer>}
 	</InputContainer>
 )
