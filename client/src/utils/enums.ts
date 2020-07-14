@@ -8,3 +8,8 @@ export enum ButtonTypes {
 	"BUTTON" = "button",
 	"RESET" = "reset"
 }
+
+export enum RequestMethod {
+	"GET" = "GET",
+	"POST" = "POST",
+}
