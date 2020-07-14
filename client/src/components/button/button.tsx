@@ -1,9 +1,12 @@
 import React, { ReactElement } from "react"
 import styled from "styled-components"
 
+import { ButtonTypes } from "../../utils/enums"
+
 interface Props {
 	text: string
 	clickHandler?: () => void
+	type?: ButtonTypes
 }
 
 const ButtonComponent = styled.button`
@@ -15,6 +18,6 @@ const ButtonComponent = styled.button`
 	font-size: 1rem;
 `
 
-export const Button = ({ text, clickHandler }: Props): ReactElement => (
-	<ButtonComponent onClick={clickHandler}>{text}</ButtonComponent>
+export const Button = ({ text, clickHandler, ...rest }: Props): ReactElement => (
+	<ButtonComponent onClick={clickHandler} {...rest}>{text}</ButtonComponent>
 )

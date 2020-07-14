@@ -9,6 +9,7 @@ interface Props {
 	name: string
 	onChange?: (event: ChangeEvent) => void
 	type?: InputTypes
+	reference?: any
 }
 
 const InputContainer = styled.div`
@@ -36,12 +37,13 @@ const InputComponent = styled.input`
 	outline: none;
 `
 
-export const Input = ({ label, name, ...rest }: Props): ReactElement => (
+export const Input = ({ label, name, reference, ...rest }: Props): ReactElement => (
 	<InputContainer>
 		<InputLabel htmlFor={`${name}-input`}>{label}</InputLabel>
 		<InputComponent
 			id={`${name}-input`}
 			name={name}
+			ref={reference}
 			{...rest}
 		/>
 	</InputContainer>
