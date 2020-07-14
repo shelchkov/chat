@@ -6,5 +6,10 @@ export enum InputTypes {
 export enum ButtonTypes {
 	"SUBMIT" = "submit",
 	"BUTTON" = "button",
-	"RESET" = "reset"
+	"RESET" = "reset",
+}
+
+export enum RequestMethod {
+	"GET" = "GET",
+	"POST" = "POST",
 }

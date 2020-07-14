@@ -10,14 +10,20 @@ interface Props {
 }
 
 const ButtonComponent = styled.button`
-	padding: .6rem 2.2rem;
+	padding: 0.6rem 2.2rem;
 	color: #fff;
 	background-color: limegreen;
 	border: none;
-	border-radius: .6rem;
+	border-radius: 0.6rem;
 	font-size: 1rem;
 `
 
-export const Button = ({ text, clickHandler, ...rest }: Props): ReactElement => (
-	<ButtonComponent onClick={clickHandler} {...rest}>{text}</ButtonComponent>
+export const Button = ({
+	text,
+	clickHandler,
+	...rest
+}: Props): ReactElement => (
+	<ButtonComponent onClick={clickHandler} {...rest}>
+		{text}
+	</ButtonComponent>
 )

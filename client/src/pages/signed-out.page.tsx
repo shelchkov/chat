@@ -38,7 +38,6 @@ const SignedOutSwitchForm = styled.p`
 	@media (min-width: ${theme.breakpoints[0]}) {
 		width: ${getSignedOutInputWidth(1)};
 	}
-
 `
 
 const getSwitchFormText = (form: Forms): string =>
@@ -59,11 +58,7 @@ export const SignedOutPage = (): ReactElement => {
 		<SignedOutContainer>
 			<SignedOutText>{signedOutText}</SignedOutText>
 
-			{form === Forms.SIGN_IN ?
-				<SignInForm />
-			:
-				<SignUpForm />
-			}
+			{form === Forms.SIGN_IN ? <SignInForm /> : <SignUpForm />}
 
 			<SignedOutSwitchForm onClick={handleSwitchForm}>
 				{getSwitchFormText(form)}

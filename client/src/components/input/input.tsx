@@ -17,7 +17,7 @@ const InputContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	width: ${getSignedOutInputWidth(0)};
-	margin: .5rem 0 .8rem 0;
+	margin: 0.5rem 0 0.8rem 0;
 
 	@media (min-width: ${theme.breakpoints[0]}) {
 		width: ${getSignedOutInputWidth(1)};
@@ -25,27 +25,33 @@ const InputContainer = styled.div`
 `
 
 const InputLabel = styled.label`
-	margin-bottom: .3rem;
-	margin-left: .4rem;
+	margin-bottom: 0.3rem;
+	margin-left: 0.4rem;
 	color: ${theme.colors.greys[0]};
 `
 
 const InputComponent = styled.input`
-	padding: .4rem .6rem;
-	border-radius: .4rem;
+	padding: 0.4rem 0.6rem;
+	border-radius: 0.4rem;
 	border: 1px solid ${theme.colors.greys[1]};
 	font-size: 1rem;
 	outline: none;
 `
 
 const ErrorContainer = styled.p`
-	margin-top: .2rem;
+	margin-top: 0.2rem;
 	margin-bottom: 0;
 	color: red;
-	font-size: .7rem;
+	font-size: 0.7rem;
 `
 
-export const Input = ({ label, name, reference, error, ...rest }: Props): ReactElement => (
+export const Input = ({
+	label,
+	name,
+	reference,
+	error,
+	...rest
+}: Props): ReactElement => (
 	<InputContainer>
 		<InputLabel htmlFor={`${name}-input`}>{label}</InputLabel>
 		<InputComponent
