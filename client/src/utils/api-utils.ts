@@ -6,21 +6,28 @@ interface RequestInput {
 	method: RequestMethod
 }
 
-export const getSignInInput = (email: string, password: string): RequestInput => ({
+export const getSignInInput = (
+	email: string,
+	password: string,
+): RequestInput => ({
 	url: "http://localhost:5000/authentication/sign-in",
 	body: {
 		email,
-		password
+		password,
 	},
-	method: RequestMethod.POST
+	method: RequestMethod.POST,
 })
 
-export const getSignUpInput = (email: string, name: string, password: string): RequestInput => ({
+export const getSignUpInput = (
+	email: string,
+	name: string,
+	password: string,
+): RequestInput => ({
 	url: "http://localhost:5000/authentication/sign-up",
 	body: {
 		email,
 		name,
-		password
+		password,
 	},
-	method: RequestMethod.POST
+	method: RequestMethod.POST,
 })
