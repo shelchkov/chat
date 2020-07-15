@@ -6,7 +6,7 @@ interface Request {
 	data?: any
 	error?: string
 	isLoading: boolean
-	start: (body?: any) => void
+	start: (body?: any, urlAddon?: string) => void
 }
 
 interface Props {
@@ -20,14 +20,14 @@ export const useRequest = ({ url, body, method }: Props): Request => {
 	const [data, setData] = useState()
 	const [error, setError] = useState()
 
-	const start = (newBody?: any): void => {
+	const start = (newBody?: any, urlAddon?: string): void => {
 		if (isLoading) {
 			return
 		}
 
 		setIsLoading(true)
 
-		fetch(url, {
+		fetch(url + (urlAddon || ""), {
 			method: method || RequestMethod.GET,
 			headers: {
 				"Content-Type": "application/json",

@@ -12,6 +12,11 @@ import {
 	somethingWentWrong,
 } from "../../utils/utils"
 import { getSignUpInput } from "../../utils/api-utils"
+import { User } from "../../utils/interfaces"
+
+interface Props {
+	setUser: (user: User) => void
+}
 
 interface Inputs {
 	email: string
@@ -22,7 +27,7 @@ interface Inputs {
 
 const passwordsShouldMatch = "Passwords Should Match"
 
-export const SignUpForm = (): ReactElement => {
+export const SignUpForm = ({ setUser }: Props): ReactElement => {
 	const { register, handleSubmit, errors } = useForm<Inputs>()
 	const { start, data, error, isLoading } = useRequest(
 		getSignUpInput("", "", ""),
@@ -43,8 +48,9 @@ export const SignUpForm = (): ReactElement => {
 		}
 
 		if (data && data.id) {
-			console.log(data)
+			setUser(data)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data])
 
 	useEffect((): void => {

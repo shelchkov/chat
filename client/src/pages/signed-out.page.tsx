@@ -6,6 +6,11 @@ import { SignUpForm } from "../components/sign-forms/sign-up-form"
 
 import { theme } from "../style-guide/theme"
 import { getSignedOutInputWidth } from "../utils/utils"
+import { User } from "../utils/interfaces"
+
+interface Props {
+	setUser: (user: User) => void
+}
 
 enum Forms {
 	"SIGN_IN" = "SIGN_IN",
@@ -43,7 +48,7 @@ const SignedOutSwitchForm = styled.p`
 const getSwitchFormText = (form: Forms): string =>
 	form === Forms.SIGN_IN ? "Create Account" : "Sign in"
 
-export const SignedOutPage = (): ReactElement => {
+export const SignedOutPage = ({ setUser }: Props): ReactElement => {
 	const [form, setForm] = useState(Forms.SIGN_IN)
 
 	const handleSwitchForm = (): void => {
@@ -58,7 +63,11 @@ export const SignedOutPage = (): ReactElement => {
 		<SignedOutContainer>
 			<SignedOutText>{signedOutText}</SignedOutText>
 
-			{form === Forms.SIGN_IN ? <SignInForm /> : <SignUpForm />}
+			{form === Forms.SIGN_IN ? (
+				<SignInForm setUser={setUser} />
+			) : (
+				<SignUpForm setUser={setUser} />
+			)}
 
 			<SignedOutSwitchForm onClick={handleSwitchForm}>
 				{getSwitchFormText(form)}
