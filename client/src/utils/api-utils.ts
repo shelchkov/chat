@@ -31,3 +31,8 @@ export const getSignUpInput = (
 	},
 	method: RequestMethod.POST,
 })
+
+export const getAuthenticateInput = (): RequestInput => ({
+	url: "http://localhost:5000/authentication/",
+	method: RequestMethod.GET,
+})

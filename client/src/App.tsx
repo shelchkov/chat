@@ -1,6 +1,36 @@
-import React from "react"
-import { SignedOutPage } from "./pages/signed-out.page"
+import React, { ReactElement, useState, useEffect } from "react"
+import { useRequest } from "./effects/use-request"
 
-const App = () => <SignedOutPage />
+import { SignedOutPage } from "./pages/signed-out.page"
+import { MainPage } from "./pages/main.page"
+import { LoadingPage } from "./pages/loading.page"
+import { getAuthenticateInput } from "./utils/api-utils"
+
+const App = (): ReactElement => {
+	const { data, start } = useRequest(getAuthenticateInput())
+	const [user, setUser] = useState<any>()
+
+	useEffect((): void => {
+		if (data && data.statusCode === 401) {
+			setUser(null)
+
+			return
+		}
+
+		console.log(data)
+	}, [data])
+
+	useEffect(start, [])
+
+	if (user === null) {
+		return <SignedOutPage setUser={setUser} />
+	}
+
+	if (user) {
+		return <MainPage />
+	}
+
+	return <LoadingPage />
+}
 
 export default App
