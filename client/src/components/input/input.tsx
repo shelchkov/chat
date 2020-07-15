@@ -5,22 +5,31 @@ import { getSignedOutInputWidth } from "../../utils/utils"
 import { InputTypes } from "../../utils/enums"
 
 interface Props {
-	label: string
+	label?: string
 	name: string
 	onChange?: (event: ChangeEvent) => void
 	type?: InputTypes
 	reference?: any
 	error?: string
+	placeholder?: string
+	isAddFriendForm?: boolean
+}
+
+interface CustomInputProps {
+	isAddFriendForm?: boolean
 }
 
 const InputContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	width: ${getSignedOutInputWidth(0)};
-	margin: 0.5rem 0 0.8rem 0;
+	margin: 0.5rem 0 0.8rem
+		${(p: CustomInputProps): string =>
+			p.isAddFriendForm ? ".4rem" : "0"};
 
 	@media (min-width: ${theme.breakpoints[0]}) {
-		width: ${getSignedOutInputWidth(1)};
+		width: ${(p: CustomInputProps): string =>
+			p.isAddFriendForm ? "180px" : getSignedOutInputWidth(1)};
 	}
 `
 
@@ -50,10 +59,13 @@ export const Input = ({
 	name,
 	reference,
 	error,
+	isAddFriendForm,
 	...rest
 }: Props): ReactElement => (
-	<InputContainer>
-		<InputLabel htmlFor={`${name}-input`}>{label}</InputLabel>
+	<InputContainer isAddFriendForm={isAddFriendForm}>
+		{label && (
+			<InputLabel htmlFor={`${name}-input`}>{label}</InputLabel>
+		)}
 		<InputComponent
 			id={`${name}-input`}
 			name={name}

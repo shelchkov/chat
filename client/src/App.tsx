@@ -33,7 +33,7 @@ const App = (): ReactElement => {
 	}
 
 	if (user) {
-		return <MainPage />
+		return <MainPage user={user} />
 	}
 
 	return <LoadingPage />
