@@ -4,10 +4,12 @@ import { useRequest } from "./effects/use-request"
 import { SignedOutPage } from "./pages/signed-out.page"
 import { MainPage } from "./pages/main.page"
 import { LoadingPage } from "./pages/loading.page"
+import { ErrorPage } from "./pages/error.page"
+
 import { getAuthenticateInput } from "./utils/api-utils"
 
 const App = (): ReactElement => {
-	const { data, start } = useRequest(getAuthenticateInput())
+	const { data, start, error } = useRequest(getAuthenticateInput())
 	const [user, setUser] = useState<any>()
 
 	useEffect((): void => {
@@ -21,6 +23,10 @@ const App = (): ReactElement => {
 	}, [data])
 
 	useEffect(start, [])
+
+	if (error) {
+		return <ErrorPage />
+	}
 
 	if (user === null) {
 		return <SignedOutPage setUser={setUser} />
