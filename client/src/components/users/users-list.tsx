@@ -1,14 +1,15 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement, useState } from "react"
 import styled from "styled-components"
 
 import { AddFriendForm } from "./add-friend.form"
-import { UserCard } from "./user-card"
+import { UsersListContent } from "./users-list-content"
 
 import { User } from "../../utils/interfaces"
 import { theme } from "../../style-guide/theme"
 
 interface Props {
-	users: User[]
+	users?: User[]
+	updateUsersList: (users?: User[] | null) => void
 }
 
 const UsersBlockContainer = styled.div`
@@ -22,29 +23,22 @@ const UsersListContainer = styled.div`
 	border-top: 1px solid ${theme.colors.greys[1]};
 `
 
-const NoUsersContainer = styled.div`
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`
+export const UsersList = ({
+	users,
+	updateUsersList,
+}: Props): ReactElement => {
+	const [isSearching, setIsSearching] = useState(false)
 
-const noUsersText = "Add users by searching above."
+	return (
+		<UsersBlockContainer>
+			<AddFriendForm
+				updateUsersList={updateUsersList}
+				setIsSearching={setIsSearching}
+			/>
 
-export const UsersList = ({ users }: Props): ReactElement => (
-	<UsersBlockContainer>
-		<AddFriendForm />
-
-		<UsersListContainer>
-			{users.length > 0 ? (
-				users.map(
-					(user): ReactElement => (
-						<UserCard user={user} key={user.id} />
-					),
-				)
-			) : (
-				<NoUsersContainer>{noUsersText}</NoUsersContainer>
-			)}
-		</UsersListContainer>
-	</UsersBlockContainer>
-)
+			<UsersListContainer>
+				<UsersListContent users={users} isSearching={isSearching} />
+			</UsersListContainer>
+		</UsersBlockContainer>
+	)
+}

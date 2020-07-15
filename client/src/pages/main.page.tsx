@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement, useState } from "react"
 import styled from "styled-components"
 
 import { UsersList } from "../components/users/users-list"
@@ -33,14 +33,30 @@ const getMainText = (name: string): string =>
 	`Hi, ${name}. Start conversation by selecting user below.`
 
 export const MainPage = ({ user }: Props): ReactElement => {
-	const users: User[] = []
+	const [users, setUsers] = useState<User[]>()
+
+	const updateUsersList = (users?: User[] | null): void => {
+		if (users) {
+			setUsers(users)
+
+			return
+		}
+
+		if (users === null) {
+			setUsers(undefined)
+
+			return
+		}
+
+		setUsers([])
+	}
 
 	return (
 		<MainContainer>
 			<MainText>{getMainText(user.name)}</MainText>
 
 			<MessagesContainer>
-				<UsersList users={users} />
+				<UsersList users={users} updateUsersList={updateUsersList} />
 				<MessagesList />
 			</MessagesContainer>
 		</MainContainer>

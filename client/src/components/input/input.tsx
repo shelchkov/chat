@@ -7,7 +7,7 @@ import { InputTypes } from "../../utils/enums"
 interface Props {
 	label?: string
 	name: string
-	onChange?: (event: ChangeEvent) => void
+	onChange?: (event: ChangeEvent<HTMLInputElement>) => void
 	type?: InputTypes
 	reference?: any
 	error?: string

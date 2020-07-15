@@ -1,5 +1,7 @@
 import { RequestMethod } from "./enums"
 
+const host = "http://localhost:5000"
+
 interface RequestInput {
 	body?: any
 	url: string
@@ -10,7 +12,7 @@ export const getSignInInput = (
 	email: string,
 	password: string,
 ): RequestInput => ({
-	url: "http://localhost:5000/authentication/sign-in",
+	url: `${host}/authentication/sign-in`,
 	body: {
 		email,
 		password,
@@ -23,7 +25,7 @@ export const getSignUpInput = (
 	name: string,
 	password: string,
 ): RequestInput => ({
-	url: "http://localhost:5000/authentication/sign-up",
+	url: `${host}/authentication/sign-up`,
 	body: {
 		email,
 		name,
@@ -33,6 +35,11 @@ export const getSignUpInput = (
 })
 
 export const getAuthenticateInput = (): RequestInput => ({
-	url: "http://localhost:5000/authentication/",
+	url: `${host}/authentication/`,
+	method: RequestMethod.GET,
+})
+
+export const getUsersSearchInput = (): RequestInput => ({
+	url: `${host}/users?q=`,
 	method: RequestMethod.GET,
 })
