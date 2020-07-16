@@ -3,3 +3,5 @@ export const getSignedOutInputWidth = (breakpoint: number): string =>
 
 export const requiredFieldText = "Required filed"
 export const somethingWentWrong = "Something went wrong. Try again"
+
+export const apiUrl = "http://localhost:5000"

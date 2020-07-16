@@ -21,6 +21,7 @@ export class AuthenticationService {
     try {
       const newUser = await this.usersService.create({
         ...data,
+        email: data.email.toLowerCase(),
         password: hashedPassword,
       })
 
