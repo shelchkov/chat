@@ -43,6 +43,6 @@ export class UsersService {
       where: `name ILIKE '%${query}%'`,
     })
 
-    return users
+    return users.map((user): User => ({ ...user, password: undefined }))
   }
 }

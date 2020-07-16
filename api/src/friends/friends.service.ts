@@ -42,12 +42,17 @@ export class FriendsService {
       userId,
       friendId,
     })
-    await this.friendsRepository.save(newFriend)
+    const newFriend2 = await this.friendsRepository.create({
+      userId: friendId,
+      friendId: userId,
+    })
+
+    await this.friendsRepository.save([newFriend, newFriend2])
 
     return newFriend
   }
 
-  private async getUserFriend(userId: number, friendId): Promise<Friend> {
+  async getUserFriend(userId: number, friendId: number): Promise<Friend> {
     return this.friendsRepository.findOne({ userId, friendId })
   }
 }
