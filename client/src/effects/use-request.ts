@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 import { RequestMethod } from "../utils/enums"
+import { apiUrl } from "../utils/utils"
 
 interface Request {
 	data?: any
@@ -31,8 +32,10 @@ export const useRequest = ({ url, body, method }: Props): Request => {
 			method: method || RequestMethod.GET,
 			headers: {
 				"Content-Type": "application/json",
+				"Access-Control-Allow-Origin": apiUrl,
 			},
 			body: JSON.stringify(newBody || body),
+			credentials: "include",
 		})
 			.then((data) => data.json())
 			.then((data): void => {
