@@ -10,9 +10,6 @@ export class MessagesService {
     private messagesRepository: Repository<Message>,
   ) {}
 
-  private messages = []
-  private lastMessageId = 0
-
   async getMessagesFromUser(id: number, userId: number): Promise<Message[]> {
     const foundMessages = await this.messagesRepository.find({
       where: [
@@ -21,7 +18,7 @@ export class MessagesService {
       ],
     })
 
-    if (!foundMessages.length) {
+    if (foundMessages.length === 0) {
       throw new HttpException("Messages weren't found", HttpStatus.NOT_FOUND)
     }
 

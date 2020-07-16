@@ -8,7 +8,6 @@ export class UsersController {
 
   @Get()
   searchUsers(@Query("q") query: string): Promise<User[]> {
-    console.log(query)
     return this.usersService.searchUsers(query)
   }
 }
