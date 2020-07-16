@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react"
+import React, { ReactElement } from "react"
 import styled from "styled-components"
 
 import { AddFriendForm } from "./add-friend.form"
@@ -8,8 +8,12 @@ import { User } from "../../utils/interfaces"
 import { theme } from "../../style-guide/theme"
 
 interface Props {
-	users?: User[]
+	users: User[] | undefined
 	updateUsersList: (users?: User[] | null) => void
+	isLoading: boolean
+	handleUserSelect: (id: number) => void
+	isSearching: boolean
+	setIsSearching: (isSearching: boolean) => void
 }
 
 const UsersBlockContainer = styled.div`
@@ -26,19 +30,24 @@ const UsersListContainer = styled.div`
 export const UsersList = ({
 	users,
 	updateUsersList,
-}: Props): ReactElement => {
-	const [isSearching, setIsSearching] = useState(false)
+	isLoading,
+	handleUserSelect,
+	isSearching,
+	setIsSearching,
+}: Props): ReactElement => (
+	<UsersBlockContainer>
+		<AddFriendForm
+			updateUsersList={updateUsersList}
+			setIsSearching={setIsSearching}
+		/>
 
-	return (
-		<UsersBlockContainer>
-			<AddFriendForm
-				updateUsersList={updateUsersList}
-				setIsSearching={setIsSearching}
+		<UsersListContainer>
+			<UsersListContent
+				users={users}
+				isSearching={isSearching}
+				isLoading={isLoading}
+				handleUserSelect={handleUserSelect}
 			/>
-
-			<UsersListContainer>
-				<UsersListContent users={users} isSearching={isSearching} />
-			</UsersListContainer>
-		</UsersBlockContainer>
-	)
-}
+		</UsersListContainer>
+	</UsersBlockContainer>
+)

@@ -19,7 +19,7 @@ const App = (): ReactElement => {
 			return
 		}
 
-		console.log(data)
+		setUser(data)
 	}, [data])
 
 	useEffect(start, [])

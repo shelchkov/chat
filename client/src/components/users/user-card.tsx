@@ -6,6 +6,7 @@ import { theme } from "../../style-guide/theme"
 
 interface Props {
 	user: User
+	handleUserSelect: (id: number) => void
 }
 
 const UserCardContainer = styled.div`
@@ -15,6 +16,17 @@ const UserCardContainer = styled.div`
 	cursor: pointer;
 `
 
-export const UserCard = ({ user }: Props): ReactElement => (
-	<UserCardContainer>{user.name}</UserCardContainer>
-)
+export const UserCard = ({
+	user,
+	handleUserSelect,
+}: Props): ReactElement => {
+	const handleClick = (): void => {
+		handleUserSelect(user.id)
+	}
+
+	return (
+		<UserCardContainer onClick={handleClick}>
+			{user.name}
+		</UserCardContainer>
+	)
+}
