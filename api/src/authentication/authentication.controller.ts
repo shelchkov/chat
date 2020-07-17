@@ -22,8 +22,16 @@ export class AuthenticationController {
     private readonly authenticationService: AuthenticationService,
   ) {}
   @Post("sign-up")
-  async signUp(@Body() data: SignUpDto): Promise<User> {
-    return this.authenticationService.signUp(data)
+  async signUp(
+    @Body() data: SignUpDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    const user = await this.authenticationService.signUp(data)
+
+    const cookie = this.authenticationService.getCookieWithJwtToken(user.id)
+    response.setHeader("Set-Cookie", cookie)
+
+    response.send(user)
   }
 
   @HttpCode(200)
@@ -42,10 +50,7 @@ export class AuthenticationController {
 
   @UseGuards(JwtAuthenticationGuard)
   @Post("sign-out")
-  async signOut(
-    @Req() request: RequestWithUser,
-    @Res() response: Response,
-  ): Promise<void> {
+  async signOut(@Res() response: Response): Promise<void> {
     response.setHeader(
       "Set-Cookie",
       this.authenticationService.getCookieForLogOut(),

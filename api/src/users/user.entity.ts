@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from "typeorm"
 
 @Entity()
 class User {
@@ -13,6 +19,18 @@ class User {
 
   @Column()
   public password: string
+
+  @ManyToOne(
+    () => User,
+    user => user.friends,
+  )
+  public friend: User
+
+  @OneToMany(
+    () => User,
+    user => user.friend,
+  )
+  public friends: User[]
 }
 
 export default User
