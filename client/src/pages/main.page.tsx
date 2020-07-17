@@ -67,6 +67,7 @@ export const MainPage = ({ user }: Props): ReactElement => {
 				<MessagesList
 					selectedUserId={selectedFriendId}
 					isSearching={isSearching}
+					user={user}
 				/>
 			</MessagesContainer>
 		</MainContainer>

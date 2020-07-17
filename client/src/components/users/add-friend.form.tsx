@@ -61,7 +61,7 @@ export const AddFriendForm = ({
 				reference={register({ required: true })}
 				onChange={handleEmptyInput}
 			/>
-			<Button text="Search" isAddFriendForm type={ButtonTypes.SUBMIT} />
+			<Button text="Search" isMessagesPage type={ButtonTypes.SUBMIT} />
 		</Form>
 	)
 }

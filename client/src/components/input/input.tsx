@@ -13,10 +13,13 @@ interface Props {
 	error?: string
 	placeholder?: string
 	isAddFriendForm?: boolean
+	isSendMessageForm?: boolean
+	disabled?: boolean
 }
 
 interface CustomInputProps {
 	isAddFriendForm?: boolean
+	isSendMessageForm?: boolean
 }
 
 const InputContainer = styled.div`
@@ -29,7 +32,9 @@ const InputContainer = styled.div`
 
 	@media (min-width: ${theme.breakpoints[0]}) {
 		width: ${(p: CustomInputProps): string =>
-			p.isAddFriendForm ? "180px" : getSignedOutInputWidth(1)};
+			p.isAddFriendForm
+				? "180px"
+				: getSignedOutInputWidth(1, p.isSendMessageForm)};
 	}
 `
 
@@ -60,9 +65,13 @@ export const Input = ({
 	reference,
 	error,
 	isAddFriendForm,
+	isSendMessageForm,
 	...rest
 }: Props): ReactElement => (
-	<InputContainer isAddFriendForm={isAddFriendForm}>
+	<InputContainer
+		isAddFriendForm={isAddFriendForm}
+		isSendMessageForm={isSendMessageForm}
+	>
 		{label && (
 			<InputLabel htmlFor={`${name}-input`}>{label}</InputLabel>
 		)}
