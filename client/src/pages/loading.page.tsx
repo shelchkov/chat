@@ -2,6 +2,7 @@ import React, { ReactElement } from "react"
 import styled from "styled-components"
 
 import { theme } from "../style-guide/theme"
+import { loadingText } from "../utils/utils"
 
 export const LoadingContainer = styled.div`
 	height: 100vh;
@@ -13,8 +14,6 @@ export const LoadingContainer = styled.div`
 	font-size: 1.8rem;
 	text-align: center;
 `
-
-const loadingText = "Loading..."
 
 export const LoadingPage = (): ReactElement => (
 	<LoadingContainer>{loadingText}</LoadingContainer>

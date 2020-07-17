@@ -13,7 +13,7 @@ const App = (): ReactElement => {
 	const [user, setUser] = useState<any>()
 
 	useEffect((): void => {
-		if (data && data.statusCode === 401) {
+		if (data && data.statusCode) {
 			setUser(null)
 
 			return

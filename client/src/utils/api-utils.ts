@@ -44,11 +44,6 @@ export const getUsersSearchInput = (): RequestInput => ({
 	method: RequestMethod.GET,
 })
 
-export const getFriendsInput = (): RequestInput => ({
-	url: `${host}/friends/`,
-	method: RequestMethod.GET,
-})
-
 export const getUsersMessagesInput = (): RequestInput => ({
 	url: `${host}/messages/`,
 	method: RequestMethod.GET,

@@ -6,7 +6,7 @@ import { theme } from "../../style-guide/theme"
 
 interface Props {
 	user: User
-	handleUserSelect: (id: number) => void
+	handleUserSelect: (id?: number) => void
 }
 
 const UserCardContainer = styled.div`
