@@ -37,6 +37,7 @@ export class MessagesService {
     const friend = await this.usersService.getUsersFriend(from, to)
     if (!friend) {
       await this.usersService.addFriend(from, to)
+      await this.usersService.addFriend(to, from)
     }
 
     const newMessage = this.messagesRepository.create({
