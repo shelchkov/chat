@@ -21,9 +21,10 @@ const UsersBlockContainer = styled.div`
 `
 
 const UsersListContainer = styled.div`
-	height: 100%;
 	margin-top: 0.4rem;
 	border-top: 1px solid ${theme.colors.greys[1]};
+	height: calc(100% - 61px);
+	overflow-y: auto;
 `
 
 export const UsersList = ({
