@@ -1,5 +1,13 @@
-export const getSignedOutInputWidth = (breakpoint: number): string =>
-	breakpoint === 0 ? "16rem" : "18rem"
+export const getSignedOutInputWidth = (
+	breakpoint: number,
+	isSendMessageform?: boolean,
+): string => {
+	if (isSendMessageform) {
+		return "fill-available"
+	}
+
+	return breakpoint === 0 ? "16rem" : "18rem"
+}
 
 export const apiUrl = "http://localhost:5000"
 

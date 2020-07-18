@@ -7,37 +7,43 @@ interface Props {
 	text: string
 	clickHandler?: () => void
 	type?: ButtonTypes
-	isAddFriendForm?: boolean
+	isMessagesPage?: boolean
+	isDisabled?: boolean
 }
 
 interface CustomButtonProps {
-	isAddFriendForm?: boolean
+	isMessagesPage?: boolean
+	isDisabled?: boolean
 }
 
 const ButtonComponent = styled.button`
 	padding: ${(p: CustomButtonProps): string =>
-		p.isAddFriendForm ? "0 1rem" : "0.6rem 2.2rem"};
+		p.isMessagesPage ? "0 1rem" : "0.6rem 2.2rem"};
 	margin: ${(p: CustomButtonProps): string =>
-		p.isAddFriendForm ? ".5rem .4rem 0 .4rem" : "0"};
+		p.isMessagesPage ? ".5rem .4rem 0 .4rem" : "0"};
 	height: ${(p: CustomButtonProps): string =>
-		p.isAddFriendForm ? "33px" : "auto"};
+		p.isMessagesPage ? "33px" : "auto"};
 	color: #fff;
 	background-color: limegreen;
 	border: none;
 	border-radius: 0.6rem;
 	font-size: 1rem;
-	cursor: pointer;
+	cursor: ${(p): string => (p.isDisabled ? "default" : "pointer")};
 `
 
 export const Button = ({
 	text,
 	clickHandler,
-	isAddFriendForm,
+	isMessagesPage,
+	isDisabled,
+	type,
 	...rest
 }: Props): ReactElement => (
 	<ButtonComponent
-		onClick={clickHandler}
-		isAddFriendForm={isAddFriendForm}
+		onClick={isDisabled ? undefined : clickHandler}
+		isMessagesPage={isMessagesPage}
+		isDisabled={isDisabled}
+		type={isDisabled ? ButtonTypes.BUTTON : type}
 		{...rest}
 	>
 		{text}

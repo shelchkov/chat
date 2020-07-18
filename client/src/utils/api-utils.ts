@@ -48,3 +48,14 @@ export const getUsersMessagesInput = (): RequestInput => ({
 	url: `${host}/messages/`,
 	method: RequestMethod.GET,
 })
+
+export const getSendMessageInput = (
+	text?: string,
+	id?: string,
+): RequestInput => ({
+	url: `${host}/messages/${id || ""}`,
+	body: {
+		text: text || "",
+	},
+	method: RequestMethod.POST,
+})

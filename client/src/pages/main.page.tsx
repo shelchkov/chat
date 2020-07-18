@@ -24,6 +24,7 @@ const MainText = styled.p`
 
 const MessagesContainer = styled.div`
 	display: flex;
+	height: calc(100% - 51px);
 `
 
 const getMainText = (name: string): string =>
@@ -67,6 +68,7 @@ export const MainPage = ({ user }: Props): ReactElement => {
 				<MessagesList
 					selectedUserId={selectedFriendId}
 					isSearching={isSearching}
+					user={user}
 				/>
 			</MessagesContainer>
 		</MainContainer>

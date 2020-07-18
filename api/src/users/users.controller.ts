@@ -20,8 +20,11 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthenticationGuard)
-  searchUsers(@Query("q") query: string): Promise<User[]> {
-    return this.usersService.searchUsers(query)
+  searchUsers(
+    @Query("q") query: string,
+    @Req() request: RequestWithUser,
+  ): Promise<User[]> {
+    return this.usersService.searchUsers(query, request.user.id)
   }
 
   @Post("/friends/:friendId")

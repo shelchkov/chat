@@ -44,9 +44,9 @@ export class UsersService {
     return user
   }
 
-  async searchUsers(query: string): Promise<User[]> {
+  async searchUsers(query: string, userId: number): Promise<User[]> {
     const users = await this.usersRepository.find({
-      where: `name ILIKE '%${query}%'`,
+      where: `(name ILIKE '%${query}%') AND ("id" != '${String(userId)}')`,
     })
 
     return users.map((user): User => ({ ...user, password: undefined }))
