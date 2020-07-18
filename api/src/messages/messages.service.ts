@@ -2,18 +2,18 @@ import { Injectable, HttpException, HttpStatus } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import Message from "./message.entity"
 import { Repository } from "typeorm"
-import { FriendsService } from "../friends/friends.service"
+import { UsersService } from "../users/users.service"
 
 @Injectable()
 export class MessagesService {
   constructor(
     @InjectRepository(Message)
     private messagesRepository: Repository<Message>,
-    private readonly friendsService: FriendsService,
+    private readonly usersService: UsersService,
   ) {}
 
   async getMessagesFromUser(id: number, userId: number): Promise<Message[]> {
-    const friend = await this.friendsService.getUserFriend(userId, id)
+    const friend = await this.usersService.getUsersFriend(userId, id)
     if (!friend) {
       throw new HttpException(
         "User needs to be added to friends list to receive messages",
@@ -34,9 +34,10 @@ export class MessagesService {
     from: number,
     text: string,
   ): Promise<Message> {
-    const friend = await this.friendsService.getUserFriend(from, to)
+    const friend = await this.usersService.getUsersFriend(from, to)
     if (!friend) {
-      await this.friendsService.addUserFriend(from, to)
+      await this.usersService.addFriend(from, to)
+      await this.usersService.addFriend(to, from)
     }
 
     const newMessage = this.messagesRepository.create({

@@ -10,8 +10,7 @@ import { theme } from "../../style-guide/theme"
 interface Props {
 	users: User[] | undefined
 	updateUsersList: (users?: User[] | null) => void
-	isLoading: boolean
-	handleUserSelect: (id: number) => void
+	handleUserSelect: (id?: number) => void
 	isSearching: boolean
 	setIsSearching: (isSearching: boolean) => void
 }
@@ -30,7 +29,6 @@ const UsersListContainer = styled.div`
 export const UsersList = ({
 	users,
 	updateUsersList,
-	isLoading,
 	handleUserSelect,
 	isSearching,
 	setIsSearching,
@@ -45,7 +43,6 @@ export const UsersList = ({
 			<UsersListContent
 				users={users}
 				isSearching={isSearching}
-				isLoading={isLoading}
 				handleUserSelect={handleUserSelect}
 			/>
 		</UsersListContainer>

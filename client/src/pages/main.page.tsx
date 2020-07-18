@@ -1,13 +1,11 @@
-import React, { ReactElement, useState, useEffect } from "react"
+import React, { ReactElement, useState } from "react"
 import styled from "styled-components"
-import { useRequest } from "../effects/use-request"
 
 import { UsersList } from "../components/users/users-list"
 import { MessagesList } from "../components/messages/messages-list"
 
-import { User, Friend } from "../utils/interfaces"
+import { User } from "../utils/interfaces"
 import { theme } from "../style-guide/theme"
-import { getFriendsInput } from "../utils/api-utils"
 
 interface Props {
 	user: User
@@ -31,52 +29,27 @@ const MessagesContainer = styled.div`
 const getMainText = (name: string): string =>
 	`Hi, ${name}. You can start conversation by selecting user below.`
 
-const getUsersFromFriends = (friends: Friend[]): User[] =>
-	friends.map(
-		(friend): User => ({
-			id: friend.friendId,
-			name: "Name",
-			email: "",
-		}),
-	)
-
 export const MainPage = ({ user }: Props): ReactElement => {
-	const [users, setUsers] = useState<User[]>()
-	const { data, start, error, isLoading } = useRequest(
-		getFriendsInput(),
+	const [friends, setFriends] = useState<User[] | undefined>(
+		user.friends || [],
 	)
-	const [selectedUser, setSelectedUser] = useState<User>()
+	const [selectedFriendId, setSelectedFriendId] = useState<number>()
 	const [isSearching, setIsSearching] = useState(false)
-
-	useEffect(start, [])
-
-	useEffect((): void => {
-		data && setUsers(getUsersFromFriends(data))
-	}, [data])
-
-	useEffect((): void => {
-		error && setUsers(undefined)
-	}, [error])
 
 	const updateUsersList = (users?: User[] | null): void => {
 		if (users) {
-			setUsers(users)
+			setFriends(users)
 
 			return
 		}
 
 		if (users === null) {
-			setUsers(undefined)
+			setFriends(undefined)
 
 			return
 		}
 
-		setUsers(getUsersFromFriends(data) || [])
-	}
-
-	const handleUserSelect = (id: number): void => {
-		const user = users && users.find((user): boolean => user.id === id)
-		user && setSelectedUser(user)
+		setFriends(user.friends || [])
 	}
 
 	return (
@@ -85,15 +58,14 @@ export const MainPage = ({ user }: Props): ReactElement => {
 
 			<MessagesContainer>
 				<UsersList
-					users={users}
+					users={friends}
 					updateUsersList={updateUsersList}
-					isLoading={isLoading}
-					handleUserSelect={handleUserSelect}
+					handleUserSelect={setSelectedFriendId}
 					isSearching={isSearching}
 					setIsSearching={setIsSearching}
 				/>
 				<MessagesList
-					selectedUserId={selectedUser ? selectedUser.id : undefined}
+					selectedUserId={selectedFriendId}
 					isSearching={isSearching}
 				/>
 			</MessagesContainer>

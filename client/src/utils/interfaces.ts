@@ -2,12 +2,7 @@ export interface User {
 	email: string
 	name: string
 	id: number
-}
-
-export interface Friend {
-	id: number
-	userId: number
-	friendId: number
+	friends?: User[]
 }
 
 export interface Message {
