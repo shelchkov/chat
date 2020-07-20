@@ -1,5 +1,7 @@
 # chat
 
+[Demo](https://peaceful-river-48954.herokuapp.com)
+
 ## How to run
 
 1. Run `npm run install:all` to install packages;
