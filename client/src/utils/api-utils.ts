@@ -1,6 +1,6 @@
 import { RequestMethod } from "./enums"
 
-const host = "http://localhost:5000"
+const host = process.env.API_URL || "http://localhost:5000"
 
 interface RequestInput {
 	body?: any
