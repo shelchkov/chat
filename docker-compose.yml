@@ -4,10 +4,14 @@ services:
   postgres:
     container_name: postgres
     image: postgres
-    ports:
-      - "5432:5432"
     env_file:
       - docker.env
+    ports:
+      - ${DB_PORT}: ${DB_PORT}
+    environment:
+      - POSTGRES_USER: ${DB_USER}
+      - POSTGRES_PASSWORD: ${DB_PASSWORD}
+      - POSTGRES_DB: ${DB_DATABASE}
   api:
     container_name: api
     build:
