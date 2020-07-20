@@ -1,8 +1,23 @@
-version: "3"
+version: "3.7"
+
 services:
   postgres:
+    container_name: postgres
     image: postgres
     ports:
-      - "5433:5432"
+      - "5432:5432"
     env_file:
-    - docker.env
+      - docker.env
+  api:
+    container_name: api
+    build:
+      context: ./api
+      target: development
+    volumes:
+      - ./api:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "5000:5000"
+    command: npm run start:dev
+    depends_on:
+      - "postgres"
