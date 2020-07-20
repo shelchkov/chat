@@ -3,6 +3,8 @@
 /api/node_modules
 /client/node_modules
 
+/.DS_Store
+
 # build
 /api/build
 /client/build
