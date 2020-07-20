@@ -16,7 +16,7 @@ import RequestWithUser from "./requestWithUser.interface"
 import { Response } from "express"
 import JwtAuthenticationGuard from "./jwt-authentication.guard"
 
-@Controller("authentication")
+@Controller("authentication1")
 export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
