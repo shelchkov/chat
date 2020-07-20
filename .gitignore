@@ -6,8 +6,8 @@
 /.DS_Store
 
 # build
-/api/build
 /client/build
+/api/src/static
 
 # environment variables
 /api/.env

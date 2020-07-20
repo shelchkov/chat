@@ -2,26 +2,22 @@ version: "3.7"
 
 services:
   postgres:
-    container_name: postgres
+    # container_name: postgres
     image: postgres
     env_file:
       - docker.env
     ports:
-      - ${DB_PORT}: ${DB_PORT}
-    environment:
-      - POSTGRES_USER: ${DB_USER}
-      - POSTGRES_PASSWORD: ${DB_PASSWORD}
-      - POSTGRES_DB: ${DB_DATABASE}
-  api:
-    container_name: api
-    build:
-      context: ./api
-      target: development
-    volumes:
-      - ./api:/usr/src/app
-      - /usr/src/app/node_modules
-    ports:
-      - "5000:5000"
-    command: npm run start:dev
-    depends_on:
-      - "postgres"
+      - "5433:5432"
+  # api:
+  #   container_name: api
+  #   build:
+  #     context: ./api
+  #     target: development
+  #   volumes:
+  #     - ./api:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   ports:
+  #     - "5000:5000"
+  #   command: npm run start:dev
+  #   depends_on:
+  #     - "postgres"

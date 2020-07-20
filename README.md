@@ -7,3 +7,9 @@
 3. Run `npm run dev` to start api and client.
 
 Also note that you need to add docker.env (POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB) and api/.env (POSTGRES_HOST, POSTGRES_PORT, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, PORT, JWT_SECRET, JWT_EXPIRATION_TIME) files. Those values need to match api and client urls in client/src/utils/utils.ts and api/src/main.ts.
+
+
+## Deployment
+
+1. Run `npm run clent:build` and move contents of client/build to api/src/static;
+2. Deploy api.

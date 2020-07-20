@@ -8,7 +8,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config"
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        if (!process.env.DATABASE_URL) {
+        if (process.env.NODE_ENV !== "production") {
           return {
             type: "postgres" as any,
             host: configService.get("POSTGRES_HOST"),
