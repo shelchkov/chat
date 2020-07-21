@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm"
 import Message from "./message.entity"
 import { Repository } from "typeorm"
 import { UsersService } from "../users/users.service"
+import { SubscriptionsGateway } from "../subscriptions/subscriptions.gateway"
 
 @Injectable()
 export class MessagesService {
@@ -10,6 +11,7 @@ export class MessagesService {
     @InjectRepository(Message)
     private messagesRepository: Repository<Message>,
     private readonly usersService: UsersService,
+    private readonly subscriptionsProvider: SubscriptionsGateway,
   ) {}
 
   async getMessagesFromUser(id: number, userId: number): Promise<Message[]> {
@@ -46,6 +48,8 @@ export class MessagesService {
       text,
     })
     await this.messagesRepository.save(newMessage)
+
+    this.subscriptionsProvider.sendMessageToUser(to, newMessage)
 
     return newMessage
   }

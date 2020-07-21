@@ -1,11 +1,12 @@
-import React, { ReactElement, useState } from "react"
+import React, { ReactElement, useState, useEffect } from "react"
 import styled from "styled-components"
 
 import { UsersList } from "../components/users/users-list"
 import { MessagesList } from "../components/messages/messages-list"
 
-import { User } from "../utils/interfaces"
+import { User, Message } from "../utils/interfaces"
 import { theme } from "../style-guide/theme"
+import { socketUrl } from "../utils/api-utils"
 
 interface Props {
 	user: User
@@ -37,6 +38,8 @@ export const MainPage = ({ user }: Props): ReactElement => {
 	const [selectedFriendId, setSelectedFriendId] = useState<number>()
 	const [isSearching, setIsSearching] = useState(false)
 
+	const [newMessage, setNewMessage] = useState<Message>()
+
 	const updateUsersList = (users?: User[] | null): void => {
 		if (users) {
 			setFriends(users)
@@ -52,6 +55,15 @@ export const MainPage = ({ user }: Props): ReactElement => {
 
 		setFriends(user.friends || [])
 	}
+
+	useEffect((): void => {
+		const ws = new WebSocket(socketUrl)
+
+		ws.onmessage = (event): void => {
+			const message = JSON.parse(event.data)
+			setNewMessage(message)
+		}
+	}, [])
 
 	return (
 		<MainContainer>
@@ -69,6 +81,7 @@ export const MainPage = ({ user }: Props): ReactElement => {
 					selectedUserId={selectedFriendId}
 					isSearching={isSearching}
 					user={user}
+					newMessage={newMessage}
 				/>
 			</MessagesContainer>
 		</MainContainer>
