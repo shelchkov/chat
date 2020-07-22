@@ -13,5 +13,6 @@ Also note that you need to add docker.env (POSTGRES_USER, POSTGRES_PASSWORD, POS
 
 ## Deployment
 
-1. Run `npm run clent:build` and move contents of client/build to api/src/static;
-2. Deploy api.
+1. Change host and apiUrl in client/src/utils/api-utils.ts and remove port in api/src/subscriptions/subscriptions.gateway.ts;
+2. Run `npm run clent:build` and move contents of client/build to api/src/static;
+3. Deploy api.
