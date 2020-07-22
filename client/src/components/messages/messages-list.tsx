@@ -80,7 +80,7 @@ export const MessagesList = ({
 		) {
 			addMessage(newMessage)
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [newMessage, addMessage, selectedUserId])
 
 	return (
