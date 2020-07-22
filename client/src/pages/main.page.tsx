@@ -39,6 +39,11 @@ export const MainPage = ({ user }: Props): ReactElement => {
 	const [isSearching, setIsSearching] = useState(false)
 
 	const [newMessage, setNewMessage] = useState<Message>()
+	const [onlineFriends, setOnlineFriends] = useState<number[]>()
+
+	const [originalFriends, setOriginalFriends] = useState<User[]>(
+		user.friends || [],
+	)
 
 	const updateUsersList = (users?: User[] | null): void => {
 		if (users) {
@@ -53,17 +58,67 @@ export const MainPage = ({ user }: Props): ReactElement => {
 			return
 		}
 
-		setFriends(user.friends || [])
+		setFriends(originalFriends)
 	}
 
 	useEffect((): void => {
 		const ws = new WebSocket(socketUrl)
 
 		ws.onmessage = (event): void => {
-			const message = JSON.parse(event.data)
-			setNewMessage(message)
+			const data = JSON.parse(event.data)
+
+			if (data.newMessage) {
+				const newMessage = data.newMessage
+				setNewMessage(newMessage)
+
+				if (
+					!friends ||
+					!friends.find(
+						(friend): boolean => friend.id === newMessage.from,
+					)
+				) {
+					console.log("Add new friend after receiving new message")
+					setFriends([
+						...(friends || []),
+						{
+							id: newMessage.from,
+							name: data.fromName,
+							email: "",
+							isOnline: true,
+						},
+					])
+				}
+			}
+
+			if (data.online) {
+				setOnlineFriends(
+					data.online.map(
+						(onlineUser: { userId: number }): number =>
+							onlineUser.userId,
+					),
+				)
+			}
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
+	const addNewFriend = (userId: number): void => {
+		console.log({ originalFriends })
+		console.log({ friends })
+		console.log("Add", userId)
+		if (
+			friends &&
+			!originalFriends.find((friend): boolean => friend.id === userId)
+		) {
+			console.log("Add new friend")
+			const newFriend = friends.find(
+				(friend): boolean => friend.id === userId,
+			)
+			console.log(newFriend)
+			newFriend &&
+				setOriginalFriends([...(originalFriends || []), newFriend])
+		}
+	}
 
 	return (
 		<MainContainer>
@@ -76,12 +131,14 @@ export const MainPage = ({ user }: Props): ReactElement => {
 					handleUserSelect={setSelectedFriendId}
 					isSearching={isSearching}
 					setIsSearching={setIsSearching}
+					onlineFriends={onlineFriends}
 				/>
 				<MessagesList
 					selectedUserId={selectedFriendId}
 					isSearching={isSearching}
 					user={user}
 					newMessage={newMessage}
+					addNewFriend={addNewFriend}
 				/>
 			</MessagesContainer>
 		</MainContainer>

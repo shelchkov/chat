@@ -3,6 +3,7 @@ export interface User {
 	name: string
 	id: number
 	friends?: User[]
+	isOnline?: boolean
 }
 
 export interface Message {

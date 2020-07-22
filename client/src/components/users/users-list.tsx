@@ -13,6 +13,7 @@ interface Props {
 	handleUserSelect: (id?: number) => void
 	isSearching: boolean
 	setIsSearching: (isSearching: boolean) => void
+	onlineFriends?: number[]
 }
 
 const UsersBlockContainer = styled.div`
@@ -27,12 +28,32 @@ const UsersListContainer = styled.div`
 	overflow-y: auto;
 `
 
+const formatUsers = (
+	users?: User[],
+	onlineFriends?: number[],
+): User[] | undefined => {
+	if (!users) {
+		return
+	}
+
+	if (onlineFriends) {
+		return users.map(
+			(user): User =>
+				onlineFriends.includes(user.id)
+					? { ...user, isOnline: true }
+					: user,
+		)
+	}
+
+	return users
+}
 export const UsersList = ({
 	users,
 	updateUsersList,
 	handleUserSelect,
 	isSearching,
 	setIsSearching,
+	onlineFriends,
 }: Props): ReactElement => (
 	<UsersBlockContainer>
 		<AddFriendForm
@@ -42,7 +63,7 @@ export const UsersList = ({
 
 		<UsersListContainer>
 			<UsersListContent
-				users={users}
+				users={formatUsers(users, onlineFriends)}
 				isSearching={isSearching}
 				handleUserSelect={handleUserSelect}
 			/>

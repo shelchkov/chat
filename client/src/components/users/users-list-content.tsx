@@ -52,6 +52,7 @@ export const UsersListContent = ({
 						user={user}
 						key={user.id}
 						handleUserSelect={handleUserSelect}
+						shouldHideUserStatus={isSearching}
 					/>
 				),
 			)}

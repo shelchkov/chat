@@ -2,6 +2,7 @@ import React, { ReactElement } from "react"
 import styled from "styled-components"
 
 import { ButtonTypes } from "../../utils/enums"
+import { theme } from "../../style-guide/theme"
 
 interface Props {
 	text: string
@@ -24,7 +25,7 @@ const ButtonComponent = styled.button`
 	height: ${(p: CustomButtonProps): string =>
 		p.isMessagesPage ? "33px" : "auto"};
 	color: #fff;
-	background-color: limegreen;
+	background-color: ${theme.colors.greens[0]};
 	border: none;
 	border-radius: 0.6rem;
 	font-size: 1rem;

@@ -44,6 +44,7 @@ export class MessagesController {
       Number(to),
       Number(userId),
       message.text,
+      request.user.name,
     )
   }
 }

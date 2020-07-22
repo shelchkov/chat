@@ -7,6 +7,7 @@ import { theme } from "../../style-guide/theme"
 interface Props {
 	user: User
 	handleUserSelect: (id?: number) => void
+	shouldHideUserStatus?: boolean
 }
 
 const UserCardContainer = styled.div`
@@ -16,9 +17,25 @@ const UserCardContainer = styled.div`
 	cursor: pointer;
 `
 
+const UserNameContainer = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+`
+
+const UserStatus = styled.div<{ isOnline?: boolean }>`
+	width: 7px;
+	height: 7px;
+	margin-right: 8px;
+	background-color: ${(p): string =>
+		p.isOnline ? theme.colors.greens[0] : theme.colors.greys[1]};
+	border-radius: 50%;
+`
+
 export const UserCard = ({
 	user,
 	handleUserSelect,
+	shouldHideUserStatus,
 }: Props): ReactElement => {
 	const handleClick = (): void => {
 		handleUserSelect(user.id)
@@ -26,7 +43,12 @@ export const UserCard = ({
 
 	return (
 		<UserCardContainer onClick={handleClick}>
-			{user.name}
+			<UserNameContainer>
+				{user.name}
+				{!shouldHideUserStatus && (
+					<UserStatus isOnline={user.isOnline} />
+				)}
+			</UserNameContainer>
 		</UserCardContainer>
 	)
 }
