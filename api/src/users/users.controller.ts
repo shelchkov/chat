@@ -13,6 +13,7 @@ import { UsersService } from "./users.service"
 import User from "./user.entity"
 import JwtAuthenticationGuard from "../authentication/jwt-authentication.guard"
 import RequestWithUser from "../authentication/requestWithUser.interface"
+import { SearchUsersDto } from "./dto/searchUsers.dto"
 
 @Controller("users")
 export class UsersController {
@@ -21,7 +22,7 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthenticationGuard)
   searchUsers(
-    @Query("q") query: string,
+    @Query() { q: query }: SearchUsersDto,
     @Req() request: RequestWithUser,
   ): Promise<User[]> {
     return this.usersService.searchUsers(query, request.user.id)
