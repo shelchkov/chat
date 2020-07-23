@@ -1,6 +1,7 @@
 import { RequestMethod } from "./enums"
 
-const host = process.env.API_URL || "http://localhost:5000"
+export const host = process.env.API_URL || "http://localhost:5000"
+export const socketUrl = "ws://localhost:8080/events"
 
 interface RequestInput {
 	body?: any

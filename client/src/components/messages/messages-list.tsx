@@ -11,6 +11,7 @@ interface Props {
 	selectedUserId?: number
 	isSearching: boolean
 	user: User | undefined
+	newMessage: Message | undefined
 }
 
 const MessagesListContainer = styled.div`
@@ -34,6 +35,7 @@ export const MessagesList = ({
 	selectedUserId,
 	isSearching,
 	user,
+	newMessage,
 }: Props): ReactElement => {
 	const { start, data, isLoading, error } = useRequest(
 		getUsersMessagesInput(),
@@ -64,6 +66,22 @@ export const MessagesList = ({
 	const addMessage = (message: Message): void => {
 		setMessages([...(messages || []), message])
 	}
+
+	useEffect((): void => {
+		if (!user || !newMessage) {
+			return
+		}
+
+		if (
+			newMessage.from === selectedUserId &&
+			!(messages || []).find(
+				(message): boolean => message.id === newMessage.id,
+			)
+		) {
+			addMessage(newMessage)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [newMessage, addMessage, selectedUserId])
 
 	return (
 		<MessagesListContainer>

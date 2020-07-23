@@ -74,4 +74,9 @@ export class AuthenticationService {
   public getCookieForLogOut(): string {
     return `Authentication=; HttpOnly; Path=/; Max-Age=0`
   }
+
+  public getUserIdFromToken(token: string): number {
+    const { userId } = this.jwtService.decode(token) as TokenPayload
+    return userId
+  }
 }

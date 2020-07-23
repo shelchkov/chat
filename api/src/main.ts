@@ -2,6 +2,7 @@ import { NestFactory } from "@nestjs/core"
 import { AppModule } from "./app.module"
 import * as cookieParser from "cookie-parser"
 import { NestExpressApplication } from "@nestjs/platform-express"
+import { WsAdapter } from "@nestjs/platform-ws"
 
 const clientUrl = "http://localhost:3000"
 
@@ -18,6 +19,7 @@ async function bootstrap() {
         }
 
   app.enableCors(options)
+  app.useWebSocketAdapter(new WsAdapter(app))
   await app.listen(process.env.PORT || "5000")
 }
 bootstrap()
