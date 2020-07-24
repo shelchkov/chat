@@ -3,16 +3,22 @@ import styled from "styled-components"
 import { useRequest } from "../../effects/use-request"
 
 import { getSignOutInput } from "../../utils/api-utils"
+import { theme } from "../../style-guide/theme"
 
 interface Props {
 	handleSignOut: () => void
 }
 
 const SignOutButton = styled.p`
-	margin-right: 1rem;
+	margin-right: 0.5rem;
 	margin-left: 1rem;
+	min-width: 63px;
 	text-decoration: underline;
 	cursor: pointer;
+
+	@media (min-width: ${theme.breakpoints[1]}) {
+		margin-right: 1rem;
+	}
 `
 
 const signOutText = "Sign Out"
