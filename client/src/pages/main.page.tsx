@@ -41,6 +41,8 @@ export const MainPage = ({ user }: Props): ReactElement => {
 	const [newMessage, setNewMessage] = useState<Message>()
 	const [onlineFriends, setOnlineFriends] = useState<number[]>()
 
+	const [connectionsNumber, setconnectionsNumber] = useState(1)
+
 	const [originalFriends, setOriginalFriends] = useState<User[]>(
 		user.friends || [],
 	)
@@ -62,6 +64,10 @@ export const MainPage = ({ user }: Props): ReactElement => {
 	}
 
 	useEffect((): void => {
+		if (!connectionsNumber) {
+			return
+		}
+
 		const ws = new WebSocket(socketUrl)
 
 		ws.onmessage = (event): void => {
@@ -77,7 +83,6 @@ export const MainPage = ({ user }: Props): ReactElement => {
 						(friend): boolean => friend.id === newMessage.from,
 					)
 				) {
-					console.log("Add new friend after receiving new message")
 					setFriends([
 						...(friends || []),
 						{
@@ -99,22 +104,26 @@ export const MainPage = ({ user }: Props): ReactElement => {
 				)
 			}
 		}
+
+		ws.onclose = (): void => {
+			setTimeout((): void => setconnectionsNumber(connectionsNumber + 1), 100 * connectionsNumber)
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [connectionsNumber])
+
+	useEffect((): void => {
+		setconnectionsNumber(0)
 	}, [])
 
 	const addNewFriend = (userId: number): void => {
-		console.log({ originalFriends })
-		console.log({ friends })
-		console.log("Add", userId)
 		if (
 			friends &&
 			!originalFriends.find((friend): boolean => friend.id === userId)
 		) {
-			console.log("Add new friend")
 			const newFriend = friends.find(
 				(friend): boolean => friend.id === userId,
 			)
-			console.log(newFriend)
+
 			newFriend &&
 				setOriginalFriends([...(originalFriends || []), newFriend])
 		}
