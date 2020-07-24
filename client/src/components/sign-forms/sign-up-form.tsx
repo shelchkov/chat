@@ -7,10 +7,7 @@ import { Button } from "../button/button"
 import { ErrorContainer } from "./error-container"
 
 import { InputTypes, ButtonTypes } from "../../utils/enums"
-import {
-	requiredFieldText,
-	somethingWentWrong,
-} from "../../utils/utils"
+import { somethingWentWrong } from "../../utils/utils"
 import { getSignUpInput } from "../../utils/api-utils"
 import { User } from "../../utils/interfaces"
 
@@ -65,28 +62,42 @@ export const SignUpForm = ({ setUser }: Props): ReactElement => {
 				name="email"
 				label="Email"
 				type={InputTypes.EMAIL}
-				reference={register({ required: true })}
-				error={errors.email && requiredFieldText}
+				reference={register({
+					required: true,
+					validate: (value): boolean => !!value.trim(),
+				})}
+				error={errors.email && errors.email.type}
 			/>
 			<Input
 				name="name"
 				label="Name"
-				reference={register({ required: true })}
-				error={errors.name && requiredFieldText}
+				reference={register({
+					required: true,
+					validate: (value): boolean => !!value.trim(),
+				})}
+				error={errors.name && errors.name.type}
 			/>
 			<Input
 				name="password"
 				label="Password"
 				type={InputTypes.PASSWORD}
-				reference={register({ required: true })}
-				error={errors.password && requiredFieldText}
+				reference={register({
+					required: true,
+					minLength: 6,
+					validate: (value): boolean => !!value.trim(),
+				})}
+				error={errors.password && errors.password.type}
 			/>
 			<Input
 				name="confirmPassword"
 				label="Confirm Password"
 				type={InputTypes.PASSWORD}
-				reference={register({ required: true })}
-				error={errors.confirmPassword && requiredFieldText}
+				reference={register({
+					required: true,
+					minLength: 6,
+					validate: (value): boolean => !!value.trim(),
+				})}
+				error={errors.confirmPassword && errors.confirmPassword.type}
 			/>
 
 			{errorMessage && <ErrorContainer>{errorMessage}</ErrorContainer>}

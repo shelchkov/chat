@@ -11,7 +11,10 @@ export const getSignedOutInputWidth = (
 
 export const apiUrl = "http://localhost:5000"
 
-export const requiredFieldText = "Required filed"
+export const requiredFieldError = "Required field"
+export const minLengthFieldError = "At least 6 characters"
+export const validateFieldError = "Shouldn't end or start w/ space"
+
 export const somethingWentWrong =
 	"Something went wrong. Please Try again"
 export const loadingText = "Loading..."

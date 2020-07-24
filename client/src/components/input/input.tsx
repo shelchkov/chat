@@ -1,7 +1,13 @@
 import React, { ReactElement, ChangeEvent } from "react"
 import styled from "styled-components"
+
 import { theme } from "../../style-guide/theme"
-import { getSignedOutInputWidth } from "../../utils/utils"
+import {
+	getSignedOutInputWidth,
+	requiredFieldError,
+	minLengthFieldError,
+	validateFieldError,
+} from "../../utils/utils"
 import { InputTypes } from "../../utils/enums"
 
 interface Props {
@@ -59,6 +65,19 @@ const ErrorContainer = styled.p`
 	font-size: 0.7rem;
 `
 
+const getErrorText = (error: string): string => {
+	switch (error) {
+		case "required":
+			return requiredFieldError
+		case "minLength":
+			return minLengthFieldError
+		case "validate":
+			return validateFieldError
+		default:
+			return error
+	}
+}
+
 export const Input = ({
 	label,
 	name,
@@ -82,6 +101,6 @@ export const Input = ({
 			{...rest}
 		/>
 
-		{error && <ErrorContainer>{error}</ErrorContainer>}
+		{error && <ErrorContainer>{getErrorText(error)}</ErrorContainer>}
 	</InputContainer>
 )
