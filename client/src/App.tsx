@@ -7,12 +7,17 @@ import { LoadingPage } from "./pages/loading.page"
 import { ErrorPage } from "./pages/error.page"
 
 import { getAuthenticateInput } from "./utils/api-utils"
+import { User } from "./utils/interfaces"
 
 const App = (): ReactElement => {
 	const { data, start, error } = useRequest(getAuthenticateInput())
-	const [user, setUser] = useState<any>()
+	const [user, setUser] = useState<User | null>()
 
 	useEffect((): void => {
+		if (!data) {
+			return
+		}
+
 		if (data && data.statusCode) {
 			setUser(null)
 
@@ -24,6 +29,10 @@ const App = (): ReactElement => {
 
 	useEffect(start, [])
 
+	const handleSignOut = (): void => {
+		setUser(null)
+	}
+
 	if (error) {
 		return <ErrorPage />
 	}
@@ -33,7 +42,7 @@ const App = (): ReactElement => {
 	}
 
 	if (user) {
-		return <MainPage user={user} />
+		return <MainPage user={user} handleSignOut={handleSignOut} />
 	}
 
 	return <LoadingPage />

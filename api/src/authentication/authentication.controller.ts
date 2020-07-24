@@ -52,6 +52,7 @@ export class AuthenticationController {
     response.send({ ...user, password: undefined })
   }
 
+  @HttpCode(200)
   @UseGuards(JwtAuthenticationGuard)
   @Post("sign-out")
   async signOut(@Res() response: Response): Promise<void> {
@@ -60,7 +61,7 @@ export class AuthenticationController {
       this.authenticationService.getCookieForLogOut(),
     )
 
-    response.sendStatus(200)
+    response.send({ success: true })
   }
 
   @UseGuards(JwtAuthenticationGuard)
