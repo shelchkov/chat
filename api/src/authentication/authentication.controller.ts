@@ -45,6 +45,10 @@ export class AuthenticationController {
     const cookie = this.authenticationService.getCookieWithJwtToken(user.id)
     response.setHeader("Set-Cookie", cookie)
 
+    user.friends = user.friends.map((friend): User & {
+      password?: string
+    } => ({ ...friend, password: undefined }))
+
     response.send({ ...user, password: undefined })
   }
 
@@ -63,6 +67,9 @@ export class AuthenticationController {
   @Get()
   authenticate(@Req() request: RequestWithUser): User {
     const user = request.user
+    user.friends = user.friends.map((friend): User & {
+      password?: string
+    } => ({ ...friend, password: undefined }))
 
     return { ...user, password: undefined }
   }
