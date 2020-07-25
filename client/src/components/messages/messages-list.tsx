@@ -12,6 +12,7 @@ interface Props {
 	isSearching: boolean
 	user: User | undefined
 	newMessage: Message | undefined
+	addNewFriend: (userId: number) => void
 }
 
 const MessagesListContainer = styled.div`
@@ -36,6 +37,7 @@ export const MessagesList = ({
 	isSearching,
 	user,
 	newMessage,
+	addNewFriend,
 }: Props): ReactElement => {
 	const { start, data, isLoading, error } = useRequest(
 		getUsersMessagesInput(),
@@ -64,6 +66,10 @@ export const MessagesList = ({
 	}, [data])
 
 	const addMessage = (message: Message): void => {
+		if (!messages) {
+			addNewFriend(message.to)
+		}
+
 		setMessages([...(messages || []), message])
 	}
 

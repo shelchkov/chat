@@ -35,6 +35,7 @@ export class MessagesService {
     to: number,
     from: number,
     text: string,
+    fromName: string,
   ): Promise<Message> {
     const friend = await this.usersService.getUsersFriend(from, to)
     if (!friend) {
@@ -49,7 +50,7 @@ export class MessagesService {
     })
     await this.messagesRepository.save(newMessage)
 
-    this.subscriptionsProvider.sendMessageToUser(to, newMessage)
+    this.subscriptionsProvider.sendMessageToUser(to, newMessage, fromName)
 
     return newMessage
   }
