@@ -39,12 +39,16 @@ export class SubscriptionsGateway
     const userId = this.authenticateUser(request)
 
     if (!userId) {
+      client.send(JSON.stringify({ error: "No token" }))
+
       return
     }
 
     const user = await this.usersService.getById(userId)
 
     if (!user) {
+      client.send(JSON.stringify({ error: "Invalid token" }))
+
       return
     }
 
