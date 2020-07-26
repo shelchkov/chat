@@ -1,15 +1,17 @@
 import React, { ReactElement, useState, useEffect } from "react"
 import styled from "styled-components"
+import { useSockets } from "../effects/use-sockets"
 
 import { UsersList } from "../components/users/users-list"
 import { MessagesList } from "../components/messages/messages-list"
+import { SignOut } from "../components/main/sign-out"
 
 import { User, Message } from "../utils/interfaces"
 import { theme } from "../style-guide/theme"
-import { socketUrl } from "../utils/api-utils"
 
 interface Props {
 	user: User
+	handleSignOut: () => void
 }
 
 const MainContainer = styled.div`
@@ -17,10 +19,16 @@ const MainContainer = styled.div`
 	color: ${theme.colors.greys[0]};
 `
 
+const MainTextContainer = styled.div`
+	height: 51px;
+	display: flex;
+	justify-content: space-between;
+	border-bottom: 1px solid ${theme.colors.greys[1]};
+`
+
 const MainText = styled.p`
 	margin: 0;
 	padding: 1rem 2rem;
-	border-bottom: 1px solid ${theme.colors.greys[1]};
 `
 
 const MessagesContainer = styled.div`
@@ -31,7 +39,10 @@ const MessagesContainer = styled.div`
 const getMainText = (name: string): string =>
 	`Hi, ${name}. You can start conversation by selecting user below.`
 
-export const MainPage = ({ user }: Props): ReactElement => {
+export const MainPage = ({
+	user,
+	handleSignOut,
+}: Props): ReactElement => {
 	const [friends, setFriends] = useState<User[] | undefined>(
 		user.friends || [],
 	)
@@ -41,11 +52,11 @@ export const MainPage = ({ user }: Props): ReactElement => {
 	const [newMessage, setNewMessage] = useState<Message>()
 	const [onlineFriends, setOnlineFriends] = useState<number[]>()
 
-	const [connectionsNumber, setconnectionsNumber] = useState(1)
-
 	const [originalFriends, setOriginalFriends] = useState<User[]>(
 		user.friends || [],
 	)
+
+	const { data } = useSockets()
 
 	const updateUsersList = (users?: User[] | null): void => {
 		if (users) {
@@ -64,56 +75,41 @@ export const MainPage = ({ user }: Props): ReactElement => {
 	}
 
 	useEffect((): void => {
-		if (!connectionsNumber) {
+		if (!data) {
 			return
 		}
 
-		const ws = new WebSocket(socketUrl)
+		if (data.newMessage) {
+			const newMessage = data.newMessage
+			setNewMessage(newMessage)
 
-		ws.onmessage = (event): void => {
-			const data = JSON.parse(event.data)
-
-			if (data.newMessage) {
-				const newMessage = data.newMessage
-				setNewMessage(newMessage)
-
-				if (
-					!friends ||
-					!friends.find(
-						(friend): boolean => friend.id === newMessage.from,
-					)
-				) {
-					setFriends([
-						...(friends || []),
-						{
-							id: newMessage.from,
-							name: data.fromName,
-							email: "",
-							isOnline: true,
-						},
-					])
-				}
-			}
-
-			if (data.online) {
-				setOnlineFriends(
-					data.online.map(
-						(onlineUser: { userId: number }): number =>
-							onlineUser.userId,
-					),
+			if (
+				!friends ||
+				!friends.find(
+					(friend): boolean => friend.id === newMessage.from,
 				)
+			) {
+				setFriends([
+					...(friends || []),
+					{
+						id: newMessage.from,
+						name: data.fromName,
+						email: "",
+						isOnline: true,
+					} as User,
+				])
 			}
 		}
 
-		ws.onclose = (): void => {
-			setTimeout((): void => setconnectionsNumber(connectionsNumber + 1), 100 * connectionsNumber)
+		if (data.online) {
+			setOnlineFriends(
+				data.online.map(
+					(onlineUser: { userId: number }): number => onlineUser.userId,
+				),
+			)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [connectionsNumber])
-
-	useEffect((): void => {
-		setconnectionsNumber(0)
-	}, [])
+	}, [data])
 
 	const addNewFriend = (userId: number): void => {
 		if (
@@ -131,7 +127,10 @@ export const MainPage = ({ user }: Props): ReactElement => {
 
 	return (
 		<MainContainer>
-			<MainText>{getMainText(user.name)}</MainText>
+			<MainTextContainer>
+				<MainText>{getMainText(user.name)}</MainText>
+				<SignOut handleSignOut={handleSignOut} />
+			</MainTextContainer>
 
 			<MessagesContainer>
 				<UsersList

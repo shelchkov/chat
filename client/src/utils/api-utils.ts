@@ -60,3 +60,8 @@ export const getSendMessageInput = (
 	},
 	method: RequestMethod.POST,
 })
+
+export const getSignOutInput = (): RequestInput => ({
+	url: `${host}/authentication/sign-out`,
+	method: RequestMethod.POST,
+})

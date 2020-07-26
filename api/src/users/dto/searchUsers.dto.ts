@@ -1,6 +1,7 @@
-import { IsNumberString } from "class-validator"
+import { IsString, IsNotEmpty } from "class-validator"
 
 export class SearchUsersDto {
-  @IsNumberString()
+  @IsString()
+  @IsNotEmpty()
   q: string
 }
