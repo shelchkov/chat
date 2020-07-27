@@ -40,6 +40,7 @@ export class SubscriptionsGateway
 
     if (!userId) {
       client.send(JSON.stringify({ error: "No token" }))
+      client.disconnect()
 
       return
     }
@@ -48,6 +49,7 @@ export class SubscriptionsGateway
 
     if (!user) {
       client.send(JSON.stringify({ error: "Invalid token" }))
+      client.disconnect()
 
       return
     }
@@ -68,14 +70,15 @@ export class SubscriptionsGateway
     fromName: string,
   ): void {
     const user = this.users.find((user): boolean => user.userId === userId)
-    user &&
+    if (user) {
       user.client.send(JSON.stringify({ newMessage: message, fromName }))
 
-    this.addUserFriend(userId, message.from)
-    this.addUserFriend(message.from, userId)
+      this.addUserFriend(userId, message.from)
+      this.addUserFriend(message.from, userId)
+    }
   }
 
-  sendUsersStatus(): void {
+  private sendUsersStatus(): void {
     this.users.forEach((user): void => {
       const onlineUsers = this.users
         .filter((onlineUser): boolean =>
