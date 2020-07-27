@@ -2,9 +2,8 @@ import React, { ReactElement, useState, useEffect } from "react"
 import styled from "styled-components"
 import { useSockets } from "../effects/use-sockets"
 
-import { UsersList } from "../components/users/users-list"
-import { MessagesList } from "../components/messages/messages-list"
 import { SignOut } from "../components/main/sign-out"
+import { Messages } from "../components/main/messages"
 
 import { User, Message } from "../utils/interfaces"
 import { theme } from "../style-guide/theme"
@@ -58,12 +57,8 @@ export const MainPage = ({
 	const [friends, setFriends] = useState<User[] | undefined>(
 		user.friends || [],
 	)
-	const [selectedFriendId, setSelectedFriendId] = useState<number>()
-	const [isSearching, setIsSearching] = useState(false)
-
 	const [newMessage, setNewMessage] = useState<Message>()
 	const [onlineFriends, setOnlineFriends] = useState<number[]>()
-
 	const [originalFriends, setOriginalFriends] = useState<User[]>(
 		user.friends || [],
 	)
@@ -145,17 +140,10 @@ export const MainPage = ({
 			</MainTextContainer>
 
 			<MessagesContainer>
-				<UsersList
-					users={friends}
+				<Messages
+					friends={friends}
 					updateUsersList={updateUsersList}
-					handleUserSelect={setSelectedFriendId}
-					isSearching={isSearching}
-					setIsSearching={setIsSearching}
 					onlineFriends={onlineFriends}
-				/>
-				<MessagesList
-					selectedUserId={selectedFriendId}
-					isSearching={isSearching}
 					user={user}
 					newMessage={newMessage}
 					addNewFriend={addNewFriend}
