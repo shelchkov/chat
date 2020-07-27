@@ -70,6 +70,9 @@ export class SubscriptionsGateway
     const user = this.users.find((user): boolean => user.userId === userId)
     user &&
       user.client.send(JSON.stringify({ newMessage: message, fromName }))
+
+    this.addUserFriend(userId, message.from)
+    this.addUserFriend(message.from, userId)
   }
 
   sendUsersStatus(): void {
@@ -81,5 +84,23 @@ export class SubscriptionsGateway
         .map((user): OnlineUserDto => ({ userId: user.userId }))
       user.client.send(JSON.stringify({ online: onlineUsers }))
     })
+  }
+
+  private addUserFriend(userId: number, friendId: number): void {
+    if (userId === friendId) {
+      return
+    }
+
+    const user = this.users.find((user): boolean => user.userId === userId)
+
+    if (user.friends.includes(friendId)) {
+      return
+    }
+
+    user.friends = [...user.friends, friendId]
+    this.users = [
+      ...this.users.filter((user): boolean => user.userId !== userId),
+      user,
+    ]
   }
 }
