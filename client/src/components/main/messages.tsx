@@ -28,11 +28,11 @@ export const Messages = ({
 	const { isMore: isDesktop } = useWidth(
 		getPixelsFromRem(theme.breakpoints[1]),
 	)
-	const [selectedFriendId, setSelectedFriendId] = useState<number>()
+	const [selectedFriend, setSelectedFriend] = useState<User>()
 	const [isSearching, setIsSearching] = useState(false)
 
 	const showUsersList = (): void => {
-		setSelectedFriendId(undefined)
+		setSelectedFriend(undefined)
 	}
 
 	if (isDesktop) {
@@ -41,13 +41,14 @@ export const Messages = ({
 				<UsersList
 					users={friends}
 					updateUsersList={updateUsersList}
-					handleUserSelect={setSelectedFriendId}
+					handleUserSelect={setSelectedFriend}
 					isSearching={isSearching}
 					setIsSearching={setIsSearching}
 					onlineFriends={onlineFriends}
+					selectedUserId={selectedFriend && selectedFriend.id}
 				/>
 				<MessagesList
-					selectedUserId={selectedFriendId}
+					selectedUser={selectedFriend}
 					isSearching={isSearching}
 					user={user}
 					newMessage={newMessage}
@@ -57,10 +58,10 @@ export const Messages = ({
 		)
 	}
 
-	if (selectedFriendId) {
+	if (selectedFriend) {
 		return (
 			<MessagesList
-				selectedUserId={selectedFriendId}
+				selectedUser={selectedFriend}
 				isSearching={isSearching}
 				user={user}
 				newMessage={newMessage}
@@ -75,7 +76,7 @@ export const Messages = ({
 		<UsersList
 			users={friends}
 			updateUsersList={updateUsersList}
-			handleUserSelect={setSelectedFriendId}
+			handleUserSelect={setSelectedFriend}
 			isSearching={isSearching}
 			setIsSearching={setIsSearching}
 			onlineFriends={onlineFriends}

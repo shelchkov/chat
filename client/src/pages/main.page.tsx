@@ -40,10 +40,10 @@ const MainText = styled.p`
 
 const MessagesContainer = styled.div`
 	display: flex;
-	height: calc(100% - 86px);
+	height: calc(100% - 87px);
 
 	@media (min-width: ${theme.breakpoints[1]}) {
-		height: calc(100% - 51px);
+		height: calc(100% - 52px);
 	}
 `
 
@@ -96,15 +96,16 @@ export const MainPage = ({
 					(friend): boolean => friend.id === newMessage.from,
 				)
 			) {
-				setFriends([
-					...(friends || []),
-					{
-						id: newMessage.from,
-						name: data.fromName,
-						email: "",
-						isOnline: true,
-					} as User,
-				])
+				const newFriend = {
+					id: newMessage.from,
+					name: data.fromName,
+					email: "",
+					isOnline: true,
+				} as User
+
+				setFriends([...(friends || []), newFriend])
+
+				setOnlineFriends([...(onlineFriends || []), newFriend.id])
 			}
 		}
 
