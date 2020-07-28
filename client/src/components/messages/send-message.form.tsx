@@ -57,7 +57,10 @@ export const SendMessageForm = ({
 				name="message"
 				isSendMessageForm
 				disabled={isDisabled}
-				reference={register({ required: true })}
+				reference={register({
+					required: true,
+					validate: (value): boolean => !!value.trim(),
+				})}
 				placeholder="Type your message"
 			/>
 			<Button

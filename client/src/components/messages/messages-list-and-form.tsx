@@ -25,6 +25,7 @@ interface CustomMessageContainerProps {
 
 const MessageContainer = styled.div`
 	width: fit-content;
+	max-width: 60%;
 	padding: 0.1rem 1.1rem;
 	margin-left: ${(p: CustomMessageContainerProps): string =>
 		p.isMyMessage ? "auto" : "0"};

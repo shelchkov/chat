@@ -58,7 +58,10 @@ export const AddFriendForm = ({
 				name="addFriend"
 				placeholder="Search Users"
 				isAddFriendForm
-				reference={register({ required: true })}
+				reference={register({
+					required: true,
+					validate: (value): boolean => !!value.trim(),
+				})}
 				onChange={handleEmptyInput}
 			/>
 			<Button text="Search" isMessagesPage type={ButtonTypes.SUBMIT} />

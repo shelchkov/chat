@@ -8,10 +8,7 @@ import { ErrorContainer } from "./error-container"
 
 import { InputTypes } from "../../utils/enums"
 import { getSignInInput } from "../../utils/api-utils"
-import {
-	somethingWentWrong,
-	requiredFieldText,
-} from "../../utils/utils"
+import { somethingWentWrong } from "../../utils/utils"
 import { User } from "../../utils/interfaces"
 
 interface Props {
@@ -57,15 +54,22 @@ export const SignInForm = ({ setUser }: Props): ReactElement => {
 				name="email"
 				label="Email"
 				type={InputTypes.EMAIL}
-				reference={register({ required: true })}
-				error={errors.email && requiredFieldText}
+				reference={register({
+					required: true,
+					validate: (value): boolean => !!value.trim(),
+				})}
+				error={errors.email && errors.email.type}
 			/>
 			<Input
 				name="password"
 				label="Password"
 				type={InputTypes.PASSWORD}
-				reference={register({ required: true })}
-				error={errors.password && requiredFieldText}
+				reference={register({
+					required: true,
+					minLength: 6,
+					validate: (value): boolean => !!value.trim(),
+				})}
+				error={errors.password && errors.password.type}
 			/>
 
 			{errorMessage && <ErrorContainer>{errorMessage}</ErrorContainer>}

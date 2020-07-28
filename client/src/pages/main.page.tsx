@@ -20,20 +20,32 @@ const MainContainer = styled.div`
 `
 
 const MainTextContainer = styled.div`
-	height: 51px;
+	height: 86px;
 	display: flex;
 	justify-content: space-between;
 	border-bottom: 1px solid ${theme.colors.greys[1]};
+
+	@media (min-width: ${theme.breakpoints[1]}) {
+		height: 51px;
+	}
 `
 
 const MainText = styled.p`
+	padding: 1rem 0.5rem 1rem 1rem;
 	margin: 0;
-	padding: 1rem 2rem;
+
+	@media (min-width: theme.breakpoints[1]) {
+		padding: 1rem 2rem;
+	}
 `
 
 const MessagesContainer = styled.div`
 	display: flex;
-	height: calc(100% - 51px);
+	height: calc(100% - 86px);
+
+	@media (min-width: ${theme.breakpoints[1]}) {
+		height: calc(100% - 51px);
+	}
 `
 
 const getMainText = (name: string): string =>
