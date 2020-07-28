@@ -19,8 +19,7 @@ interface Props {
 const MessagesListContent = styled.div<{ shouldShowBackBtn?: boolean }>`
 	padding: 0.6rem 0.6rem 0.4rem 0.6rem;
 	overflow-y: auto;
-	${(p): string =>
-		p.shouldShowBackBtn ? "height: fill-available;" : ""}
+	${(p): string => (p.shouldShowBackBtn ? "height: 100%;" : "")}
 `
 
 interface CustomMessageContainerProps {
