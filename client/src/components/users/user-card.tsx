@@ -16,7 +16,7 @@ const UserCardContainer = styled.div<{ isSelected: boolean }>`
 	min-height: 24px;
 	border-bottom: 1px solid ${theme.colors.greys[1]};
 	background-color: ${(p): string =>
-		p.isSelected ? theme.colors.greys[1] : "transparent"};
+		p.isSelected ? theme.colors.greys[2] : "transparent"};
 	cursor: pointer;
 `
 

@@ -49,6 +49,8 @@ export const MessagesList = ({
 	const [messages, setMessages] = useState<Message[]>()
 
 	useEffect((): void => {
+		setMessages(undefined)
+
 		selectedUser &&
 			(!isSearching || findFriend(user, selectedUser.id)) &&
 			start(undefined, String(selectedUser.id))

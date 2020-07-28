@@ -8,6 +8,7 @@ interface Request {
 	error?: string
 	isLoading: boolean
 	start: (body?: any, urlAddon?: string) => void
+	resetData: () => void
 }
 
 interface Props {
@@ -49,5 +50,9 @@ export const useRequest = ({ url, body, method }: Props): Request => {
 			})
 	}
 
-	return { data, error, isLoading, start }
+	const resetData = (): void => {
+		setData(undefined)
+	}
+
+	return { data, error, isLoading, start, resetData }
 }
