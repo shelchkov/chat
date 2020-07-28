@@ -2,8 +2,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
-  OneToMany,
+  ManyToMany,
+  JoinTable,
 } from "typeorm"
 
 @Entity()
@@ -20,16 +20,8 @@ class User {
   @Column()
   public password: string
 
-  @ManyToOne(
-    () => User,
-    user => user.friends,
-  )
-  public friend: User
-
-  @OneToMany(
-    () => User,
-    user => user.friend,
-  )
+  @ManyToMany(() => User)
+  @JoinTable()
   public friends: User[]
 }
 

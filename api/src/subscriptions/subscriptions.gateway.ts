@@ -75,6 +75,11 @@ export class SubscriptionsGateway
 
       this.addUserFriend(userId, message.from)
       this.addUserFriend(message.from, userId)
+
+      const sender = this.users.find(
+        (user): boolean => user.userId === message.from,
+      )
+      sender.client.send(JSON.stringify({ newUserOnline: userId }))
     }
   }
 
