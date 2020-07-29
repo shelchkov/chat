@@ -73,13 +73,14 @@ export class SubscriptionsGateway
     if (user) {
       user.client.send(JSON.stringify({ newMessage: message, fromName }))
 
-      this.addUserFriend(userId, message.from)
+      const isFriendAdded = this.addUserFriend(userId, message.from)
       this.addUserFriend(message.from, userId)
 
       const sender = this.users.find(
         (user): boolean => user.userId === message.from,
       )
-      sender.client.send(JSON.stringify({ newUserOnline: userId }))
+      isFriendAdded &&
+        sender.client.send(JSON.stringify({ newUserOnline: userId }))
     }
   }
 
@@ -94,9 +95,12 @@ export class SubscriptionsGateway
     })
   }
 
-  private addUserFriend(userId: number, friendId: number): void {
+  private addUserFriend(
+    userId: number,
+    friendId: number,
+  ): boolean | undefined {
     if (userId === friendId) {
-      return
+      return false
     }
 
     const user = this.users.find((user): boolean => user.userId === userId)
@@ -110,5 +114,7 @@ export class SubscriptionsGateway
       ...this.users.filter((user): boolean => user.userId !== userId),
       user,
     ]
+
+    return true
   }
 }
