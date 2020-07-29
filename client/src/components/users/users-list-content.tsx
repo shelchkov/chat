@@ -8,7 +8,8 @@ import { User } from "../../utils/interfaces"
 interface Props {
 	users: User[] | undefined
 	isSearching: boolean
-	handleUserSelect: (id?: number) => void
+	handleUserSelect: (user?: User) => void
+	selectedUserId: number | undefined
 }
 
 const NoUsersContainer = styled.div`
@@ -27,6 +28,7 @@ export const UsersListContent = ({
 	users,
 	isSearching,
 	handleUserSelect,
+	selectedUserId,
 }: Props): ReactElement => {
 	if (!users) {
 		return (
@@ -53,6 +55,7 @@ export const UsersListContent = ({
 						key={user.id}
 						handleUserSelect={handleUserSelect}
 						shouldHideUserStatus={isSearching}
+						isSelected={user.id === selectedUserId}
 					/>
 				),
 			)}

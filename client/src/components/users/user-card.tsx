@@ -6,14 +6,17 @@ import { theme } from "../../style-guide/theme"
 
 interface Props {
 	user: User
-	handleUserSelect: (id?: number) => void
+	handleUserSelect: (user?: User) => void
 	shouldHideUserStatus?: boolean
+	isSelected: boolean
 }
 
-const UserCardContainer = styled.div`
+const UserCardContainer = styled.div<{ isSelected: boolean }>`
 	padding: 0.4rem 0.7rem;
 	min-height: 24px;
 	border-bottom: 1px solid ${theme.colors.greys[1]};
+	background-color: ${(p): string =>
+		p.isSelected ? theme.colors.greys[2] : "transparent"};
 	cursor: pointer;
 `
 
@@ -36,13 +39,14 @@ export const UserCard = ({
 	user,
 	handleUserSelect,
 	shouldHideUserStatus,
+	isSelected,
 }: Props): ReactElement => {
 	const handleClick = (): void => {
-		handleUserSelect(user.id)
+		handleUserSelect(user)
 	}
 
 	return (
-		<UserCardContainer onClick={handleClick}>
+		<UserCardContainer onClick={handleClick} isSelected={isSelected}>
 			<UserNameContainer>
 				{user.name}
 				{!shouldHideUserStatus && (

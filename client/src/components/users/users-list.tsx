@@ -10,16 +10,18 @@ import { theme } from "../../style-guide/theme"
 interface Props {
 	users: User[] | undefined
 	updateUsersList: (users?: User[] | null) => void
-	handleUserSelect: (id?: number) => void
+	handleUserSelect: (user?: User) => void
 	isSearching: boolean
 	setIsSearching: (isSearching: boolean) => void
 	onlineFriends?: number[]
 	isMobile?: boolean
+	selectedUserId?: number
 }
 
 const UsersBlockContainer = styled.div<{ isMobile?: boolean }>`
 	width: ${(p): string => (p.isMobile ? "100%" : "40%")};
-	border-right: 1px solid ${theme.colors.greys[1]};
+	border-right: ${(p): string =>
+		p.isMobile ? "none" : `1px solid ${theme.colors.greys[1]}`};
 `
 
 const UsersListContainer = styled.div`
@@ -42,7 +44,7 @@ const formatUsers = (
 			(user): User =>
 				onlineFriends.includes(user.id)
 					? { ...user, isOnline: true }
-					: user,
+					: { ...user, isOnline: false },
 		)
 	}
 
@@ -56,8 +58,9 @@ export const UsersList = ({
 	setIsSearching,
 	onlineFriends,
 	isMobile,
+	selectedUserId,
 }: Props): ReactElement => (
-	<UsersBlockContainer isMobile>
+	<UsersBlockContainer isMobile={isMobile}>
 		<AddFriendForm
 			updateUsersList={updateUsersList}
 			setIsSearching={setIsSearching}
@@ -68,6 +71,7 @@ export const UsersList = ({
 				users={formatUsers(users, onlineFriends)}
 				isSearching={isSearching}
 				handleUserSelect={handleUserSelect}
+				selectedUserId={selectedUserId}
 			/>
 		</UsersListContainer>
 	</UsersBlockContainer>

@@ -8,7 +8,7 @@ import { getUsersMessagesInput } from "../../utils/api-utils"
 import { Message, User } from "../../utils/interfaces"
 
 interface Props {
-	selectedUserId?: number
+	selectedUser?: User
 	isSearching: boolean
 	user: User | undefined
 	newMessage: Message | undefined
@@ -35,7 +35,7 @@ const findFriend = (
 	user.friends.find((friend): boolean => friend.id === friendId)
 
 export const MessagesList = ({
-	selectedUserId,
+	selectedUser,
 	isSearching,
 	user,
 	newMessage,
@@ -49,11 +49,13 @@ export const MessagesList = ({
 	const [messages, setMessages] = useState<Message[]>()
 
 	useEffect((): void => {
-		selectedUserId &&
-			(!isSearching || findFriend(user, selectedUserId)) &&
-			start(undefined, String(selectedUserId))
+		setMessages(undefined)
+
+		selectedUser &&
+			(!isSearching || findFriend(user, selectedUser.id)) &&
+			start(undefined, String(selectedUser.id))
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedUserId])
+	}, [selectedUser])
 
 	useEffect((): void => {
 		if (!data) {
@@ -78,12 +80,12 @@ export const MessagesList = ({
 	}
 
 	useEffect((): void => {
-		if (!user || !newMessage) {
+		if (!user || !newMessage || !selectedUser) {
 			return
 		}
 
 		if (
-			newMessage.from === selectedUserId &&
+			newMessage.from === selectedUser.id &&
 			!(messages || []).find(
 				(message): boolean => message.id === newMessage.id,
 			)
@@ -91,7 +93,7 @@ export const MessagesList = ({
 			addMessage(newMessage)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [newMessage, addMessage, selectedUserId])
+	}, [newMessage, addMessage, selectedUser])
 
 	return (
 		<MessagesListContainer>
@@ -100,7 +102,7 @@ export const MessagesList = ({
 			) : (
 				<MessagesListAndForm
 					messages={messages}
-					selectedUserId={selectedUserId}
+					selectedUser={selectedUser}
 					error={error}
 					isLoading={isLoading}
 					addMessage={addMessage}

@@ -11,6 +11,7 @@ interface Data {
 	newMessage?: Message
 	online?: { userId: number }[]
 	fromName?: string
+	newUserOnline?: number
 }
 
 const closeTimeout = 100

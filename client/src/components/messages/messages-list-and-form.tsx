@@ -3,12 +3,12 @@ import styled from "styled-components"
 
 import { SendMessageForm } from "./send-message.form"
 
-import { Message } from "../../utils/interfaces"
+import { Message, User } from "../../utils/interfaces"
 import { theme } from "../../style-guide/theme"
 
 interface Props {
 	messages: Message[] | undefined
-	selectedUserId: number | undefined
+	selectedUser: User | undefined
 	isLoading: boolean
 	error?: string
 	addMessage: (message: Message) => void
@@ -19,8 +19,7 @@ interface Props {
 const MessagesListContent = styled.div<{ shouldShowBackBtn?: boolean }>`
 	padding: 0.6rem 0.6rem 0.4rem 0.6rem;
 	overflow-y: auto;
-	${(p): string =>
-		p.shouldShowBackBtn ? "height: fill-available;" : ""}
+	${(p): string => (p.shouldShowBackBtn ? "height: 100%;" : "")}
 `
 
 interface CustomMessageContainerProps {
@@ -46,15 +45,25 @@ export const Loading = styled.div`
 `
 
 const BackButtonContainer = styled.div`
+	height: 2.125rem;
+	display: flex;
 	border-bottom: 1px solid ${theme.colors.greys[1]};
 `
 
 const BackButton = styled.p`
+	position: absolute;
 	margin: 0;
 	padding: 0.5rem 1.3rem;
 	width: fit-content;
 	text-decoration: underline;
 	cursor: pointer;
+`
+
+const UserName = styled.p`
+	margin: 0 auto;
+	font-size: 1rem;
+	font-weight: bold;
+	line-height: 2.125rem;
 `
 
 const errorText = "Something went wrong"
@@ -63,7 +72,7 @@ const backButtonText = "Back"
 
 export const MessagesListAndForm = ({
 	messages,
-	selectedUserId,
+	selectedUser,
 	isLoading,
 	error,
 	addMessage,
@@ -90,6 +99,7 @@ export const MessagesListAndForm = ({
 					<BackButton onClick={showUsersList}>
 						{backButtonText}
 					</BackButton>
+					<UserName>{selectedUser && selectedUser.name}</UserName>
 				</BackButtonContainer>
 			)}
 			<MessagesListContent
@@ -100,7 +110,9 @@ export const MessagesListAndForm = ({
 					messages.map(
 						(message: Message): ReactElement => (
 							<MessageContainer
-								isMyMessage={message.from !== selectedUserId}
+								isMyMessage={
+									selectedUser && message.from !== selectedUser.id
+								}
 								key={message.id}
 							>
 								{message.text}
@@ -121,7 +133,7 @@ export const MessagesListAndForm = ({
 			<SendMessageForm
 				isLoading={isLoading}
 				error={error}
-				selectedUserId={selectedUserId}
+				selectedUserId={selectedUser && selectedUser.id}
 				addMessage={addMessage}
 			/>
 		</>

@@ -74,6 +74,8 @@ export class UsersService {
       )
     }
 
+    newFriend.friends = undefined
+
     const newUser = { ...user, friends: [...user.friends, newFriend] }
     this.usersRepository.save(newUser)
 
