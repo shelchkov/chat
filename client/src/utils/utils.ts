@@ -18,3 +18,8 @@ export const validateFieldError = "Shouldn't end or start w/ space"
 export const somethingWentWrong =
 	"Something went wrong. Please Try again"
 export const loadingText = "Loading..."
+
+const remSize = 16
+
+export const getPixelsFromRem = (rem: string): number =>
+	parseInt(rem) * remSize

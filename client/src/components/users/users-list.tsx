@@ -14,10 +14,11 @@ interface Props {
 	isSearching: boolean
 	setIsSearching: (isSearching: boolean) => void
 	onlineFriends?: number[]
+	isMobile?: boolean
 }
 
-const UsersBlockContainer = styled.div`
-	width: 40%;
+const UsersBlockContainer = styled.div<{ isMobile?: boolean }>`
+	width: ${(p): string => (p.isMobile ? "100%" : "40%")};
 	border-right: 1px solid ${theme.colors.greys[1]};
 `
 
@@ -54,8 +55,9 @@ export const UsersList = ({
 	isSearching,
 	setIsSearching,
 	onlineFriends,
+	isMobile,
 }: Props): ReactElement => (
-	<UsersBlockContainer>
+	<UsersBlockContainer isMobile>
 		<AddFriendForm
 			updateUsersList={updateUsersList}
 			setIsSearching={setIsSearching}

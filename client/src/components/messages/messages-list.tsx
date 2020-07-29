@@ -13,6 +13,8 @@ interface Props {
 	user: User | undefined
 	newMessage: Message | undefined
 	addNewFriend: (userId: number) => void
+	isMobile?: boolean
+	showUsersList?: () => void
 }
 
 const MessagesListContainer = styled.div`
@@ -38,6 +40,8 @@ export const MessagesList = ({
 	user,
 	newMessage,
 	addNewFriend,
+	isMobile,
+	showUsersList,
 }: Props): ReactElement => {
 	const { start, data, isLoading, error } = useRequest(
 		getUsersMessagesInput(),
@@ -100,6 +104,8 @@ export const MessagesList = ({
 					error={error}
 					isLoading={isLoading}
 					addMessage={addMessage}
+					shouldShowBackBtn={isMobile}
+					showUsersList={showUsersList}
 				/>
 			)}
 		</MessagesListContainer>

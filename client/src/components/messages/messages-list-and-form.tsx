@@ -12,11 +12,15 @@ interface Props {
 	isLoading: boolean
 	error?: string
 	addMessage: (message: Message) => void
+	shouldShowBackBtn?: boolean
+	showUsersList?: () => void
 }
 
-const MessagesListContent = styled.div`
+const MessagesListContent = styled.div<{ shouldShowBackBtn?: boolean }>`
 	padding: 0.6rem 0.6rem 0.4rem 0.6rem;
 	overflow-y: auto;
+	${(p): string =>
+		p.shouldShowBackBtn ? "height: fill-available;" : ""}
 `
 
 interface CustomMessageContainerProps {
@@ -41,8 +45,21 @@ export const Loading = styled.div`
 	align-items: center;
 `
 
+const BackButtonContainer = styled.div`
+	border-bottom: 1px solid ${theme.colors.greys[1]};
+`
+
+const BackButton = styled.p`
+	margin: 0;
+	padding: 0.5rem 1.3rem;
+	width: fit-content;
+	text-decoration: underline;
+	cursor: pointer;
+`
+
 const errorText = "Something went wrong"
 const noMessagesText = "No messages"
+const backButtonText = "Back"
 
 export const MessagesListAndForm = ({
 	messages,
@@ -50,6 +67,8 @@ export const MessagesListAndForm = ({
 	isLoading,
 	error,
 	addMessage,
+	shouldShowBackBtn,
+	showUsersList,
 }: Props): ReactElement => {
 	const messagesListRef = createRef<HTMLDivElement>()
 
@@ -66,7 +85,17 @@ export const MessagesListAndForm = ({
 
 	return (
 		<>
-			<MessagesListContent ref={messagesListRef}>
+			{shouldShowBackBtn && (
+				<BackButtonContainer>
+					<BackButton onClick={showUsersList}>
+						{backButtonText}
+					</BackButton>
+				</BackButtonContainer>
+			)}
+			<MessagesListContent
+				ref={messagesListRef}
+				shouldShowBackBtn={shouldShowBackBtn}
+			>
 				{messages && messages.length > 0 ? (
 					messages.map(
 						(message: Message): ReactElement => (
