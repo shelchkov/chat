@@ -19,7 +19,7 @@ export const useSockets = (): SocketsProps => {
 	const [connectionsNumber, setconnectionsNumber] = useState(1)
 	const [data, setData] = useState()
 
-	useEffect((): void => {
+	useEffect((): (() => void) | undefined => {
 		if (!connectionsNumber) {
 			return
 		}
@@ -32,11 +32,27 @@ export const useSockets = (): SocketsProps => {
 			setData(data)
 		}
 
+		let timer: number | null
+
 		ws.onclose = (): void => {
-			setTimeout(
+			if (timer === null) {
+				return
+			}
+
+			timer = setTimeout(
 				(): void => setconnectionsNumber(connectionsNumber + 1),
 				closeTimeout * connectionsNumber,
 			)
+		}
+
+		return (): void => {
+			ws.close()
+
+			if (timer) {
+				clearTimeout(timer)
+			} else {
+				timer = null
+			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [connectionsNumber])
