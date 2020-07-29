@@ -41,8 +41,10 @@ export const useSockets = (): SocketsProps => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [connectionsNumber])
 
-	useEffect((): void => {
-		setconnectionsNumber(0)
+	useEffect((): (() => void) => {
+		return (): void => {
+			setconnectionsNumber(0)
+		}
 	}, [])
 
 	return { data }
