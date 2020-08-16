@@ -49,7 +49,7 @@ export class AuthenticationController {
       password?: string
     } => ({ ...friend, password: undefined }))
 
-    response.send({ ...user, password: undefined })
+    response.send(user)
   }
 
   @HttpCode(200)

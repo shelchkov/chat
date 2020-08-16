@@ -64,8 +64,10 @@ export class UsersService {
       )
     }
 
-    const newFriend = await this.getById(friendId)
-    const user = await this.getById(userId)
+    const [newFriend, user] = await Promise.all([
+      await this.getById(friendId), 
+      await this.getById(userId)
+    ])
 
     if (this.findUsersFriend(user, friendId)) {
       throw new HttpException(
