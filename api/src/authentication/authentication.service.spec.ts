@@ -1,18 +1,23 @@
 import { Test, TestingModule } from "@nestjs/testing"
 import { AuthenticationService } from "./authentication.service"
+import { UsersService } from "../users/users.service"
+import { Repository } from "typeorm"
+import User from "../users/user.entity"
+import { JwtService } from "@nestjs/jwt"
+import { ConfigService } from "@nestjs/config"
 
 describe("AuthenticationService", () => {
-  let service: AuthenticationService
+  const authenticationService = new AuthenticationService(
+    new UsersService(new Repository<User>()),
+    new JwtService({ secretOrPrivateKey: "Secret Key" }),
+    new ConfigService()
+  )
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthenticationService],
-    }).compile()
+  describe("when creating a cookie", () => {
+    it("should retrun a string", () => {
+      const userId = 1
 
-    service = module.get<AuthenticationService>(AuthenticationService)
-  })
-
-  it("should be defined", () => {
-    expect(service).toBeDefined()
+      expect(typeof authenticationService.getCookieWithJwtToken(userId)).toEqual("string")
+    })
   })
 })
