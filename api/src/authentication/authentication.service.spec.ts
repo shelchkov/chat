@@ -1,24 +1,57 @@
-// import { Test, TestingModule } from "@nestjs/testing"
+import { Test } from "@nestjs/testing"
 import { AuthenticationService } from "./authentication.service"
 import { UsersService } from "../users/users.service"
-import { Repository } from "typeorm"
+import { ConfigModule, ConfigService } from "@nestjs/config"
+import { JwtModule } from "@nestjs/jwt"
+import * as Joi from "joi"
 import User from "../users/user.entity"
-import { JwtService } from "@nestjs/jwt"
-import { ConfigService } from "@nestjs/config"
+import { getRepositoryToken } from "@nestjs/typeorm"
 
 describe("AuthenticationService", () => {
   let authenticationService: AuthenticationService
 
-  beforeEach(() => {
-    authenticationService = new AuthenticationService(
-      new UsersService(new Repository<User>()),
-      new JwtService({ secretOrPrivateKey: "Secret Key" }),
-      new ConfigService(),
-    )
-  })
+  beforeEach(
+    async (): Promise<void> => {
+      const module = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({
+            validationSchema: Joi.object({
+              POSTGRES_HOST: Joi.string().required(),
+              POSTGRES_PORT: Joi.string().required(),
+              POSTGRES_USER: Joi.string().required(),
+              POSTGRES_PASSWORD: Joi.string().required(),
+              POSTGRES_DB: Joi.string().required(),
+              JWT_SECRET: Joi.string().required(),
+              JWT_EXPIRATION_TIME: Joi.string().required(),
+              POST: Joi.number(),
+            }),
+          }),
+          JwtModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: async (configService: ConfigService) => ({
+              secret: configService.get("JWT_SECRET"),
+              signOptions: {
+                expiresIn: `${configService.get("JWT_EXPIRATION_TIME")}s`,
+              },
+            }),
+          }),
+        ],
+        providers: [
+          AuthenticationService,
+          UsersService,
+          { provide: getRepositoryToken(User), useValue: {} },
+        ],
+      }).compile()
 
-  describe("when creating a cookie", () => {
-    it("should retrun a string", () => {
+      authenticationService = await module.get<AuthenticationService>(
+        AuthenticationService,
+      )
+    },
+  )
+
+  describe("when creating a cookie", (): void => {
+    it("should retrun a string", (): void => {
       const userId = 1
 
       expect(
