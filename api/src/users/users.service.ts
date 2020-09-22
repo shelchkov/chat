@@ -11,14 +11,14 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async getByEmail(email: string): Promise<User> {
+  async getByEmail(email: string): Promise<User | never> {
     const user = await this.usersRepository.findOne(
       { email },
       { relations: ["friends"] },
     )
 
     if (!user) {
-      throw new HttpException("User wasn/t found", HttpStatus.NOT_FOUND)
+      throw new HttpException("User wasn't found", HttpStatus.NOT_FOUND)
     }
 
     return user
@@ -65,8 +65,8 @@ export class UsersService {
     }
 
     const [newFriend, user] = await Promise.all([
-      await this.getById(friendId),
-      await this.getById(userId),
+      this.getById(friendId),
+      this.getById(userId),
     ])
 
     if (this.findUsersFriend(user, friendId)) {

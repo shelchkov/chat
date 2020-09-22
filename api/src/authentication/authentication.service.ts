@@ -15,7 +15,7 @@ export class AuthenticationService {
     private readonly configService: ConfigService,
   ) {}
 
-  public async signUp(data: SignUpDto): Promise<User> {
+  public async signUp(data: SignUpDto): Promise<User | never> {
     const hashedPassword = await bcrypt.hash(data.password, 10)
 
     try {
@@ -77,6 +77,7 @@ export class AuthenticationService {
 
   public getUserIdFromToken(token: string): number {
     const { userId } = this.jwtService.decode(token) as TokenPayload
+
     return userId
   }
 }

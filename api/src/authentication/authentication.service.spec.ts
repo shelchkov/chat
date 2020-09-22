@@ -38,4 +38,22 @@ describe("AuthenticationService", () => {
       ).toEqual("string")
     })
   })
+
+  describe("when creating a cookie for sign out", (): void => {
+    it("should return a string", (): void => {
+      expect(typeof authenticationService.getCookieForLogOut()).toEqual(
+        "string",
+      )
+    })
+  })
+
+  describe("when getting user id from token", (): void => {
+    it("should return number", (): void => {
+      const token = "token"
+
+      expect(typeof authenticationService.getUserIdFromToken(token)).toEqual(
+        "number",
+      )
+    })
+  })
 })
