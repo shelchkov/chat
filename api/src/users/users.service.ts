@@ -65,8 +65,8 @@ export class UsersService {
     }
 
     const [newFriend, user] = await Promise.all([
-      await this.getById(friendId), 
-      await this.getById(userId)
+      await this.getById(friendId),
+      await this.getById(userId),
     ])
 
     if (this.findUsersFriend(user, friendId)) {
