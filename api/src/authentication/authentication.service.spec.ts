@@ -1,11 +1,12 @@
 import { Test } from "@nestjs/testing"
 import { AuthenticationService } from "./authentication.service"
 import { UsersService } from "../users/users.service"
-import { ConfigModule, ConfigService } from "@nestjs/config"
-import { JwtModule } from "@nestjs/jwt"
-import * as Joi from "joi"
+import { ConfigService } from "@nestjs/config"
+import { JwtService } from "@nestjs/jwt"
 import User from "../users/user.entity"
 import { getRepositoryToken } from "@nestjs/typeorm"
+import mockedConfigService from "../utils/mocks/config.service"
+import mockedJwtService from "../utils/mocks/jwt.service"
 
 describe("AuthenticationService", () => {
   let authenticationService: AuthenticationService
@@ -13,33 +14,11 @@ describe("AuthenticationService", () => {
   beforeEach(
     async (): Promise<void> => {
       const module = await Test.createTestingModule({
-        imports: [
-          ConfigModule.forRoot({
-            validationSchema: Joi.object({
-              POSTGRES_HOST: Joi.string().required(),
-              POSTGRES_PORT: Joi.string().required(),
-              POSTGRES_USER: Joi.string().required(),
-              POSTGRES_PASSWORD: Joi.string().required(),
-              POSTGRES_DB: Joi.string().required(),
-              JWT_SECRET: Joi.string().required(),
-              JWT_EXPIRATION_TIME: Joi.string().required(),
-              POST: Joi.number(),
-            }),
-          }),
-          JwtModule.registerAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: async (configService: ConfigService) => ({
-              secret: configService.get("JWT_SECRET"),
-              signOptions: {
-                expiresIn: `${configService.get("JWT_EXPIRATION_TIME")}s`,
-              },
-            }),
-          }),
-        ],
         providers: [
           AuthenticationService,
           UsersService,
+          { provide: ConfigService, useValue: mockedConfigService },
+          { provide: JwtService, useValue: mockedJwtService },
           { provide: getRepositoryToken(User), useValue: {} },
         ],
       }).compile()
