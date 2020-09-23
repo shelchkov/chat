@@ -18,6 +18,7 @@ describe("AuthenticationService", () => {
   let bcryptCompare: jest.Mock
   let findOne: jest.Mock
   let userData: User
+  let usersService: UsersService
 
   beforeEach(
     async (): Promise<void> => {
@@ -42,6 +43,7 @@ describe("AuthenticationService", () => {
       authenticationService = await module.get<AuthenticationService>(
         AuthenticationService,
       )
+      usersService = await module.get(UsersService)
     },
   )
 
@@ -72,12 +74,15 @@ describe("AuthenticationService", () => {
         })
 
         it("should return the user data", async (): Promise<void> => {
+          const getByEmailSpy = jest.spyOn(usersService, "getByEmail")
+
           const user = await authenticationService.getAuthenticatedUser(
             email,
             password,
           )
 
           expect(user).toStrictEqual(removePassword(userData))
+          expect(getByEmailSpy).toBeCalledTimes(1)
         })
       })
 
