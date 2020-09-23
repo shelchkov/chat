@@ -10,3 +10,6 @@ export const removePassword = (user: User): UserWithoutPassword => {
 
   return userWithoutPassword
 }
+
+export const removePasswords = (users: User[]): UserWithoutPassword[] =>
+  users.map((user): UserWithoutPassword => removePassword(user))

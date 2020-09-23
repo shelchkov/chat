@@ -3,9 +3,11 @@ import { Test } from "@nestjs/testing"
 import { getRepositoryToken } from "@nestjs/typeorm"
 import User from "./user.entity"
 import { CreateUserDto } from "./dto/createUser.dto"
+import { removePasswords } from "../utils/utils"
 
 describe("UsersService", (): void => {
   let usersService: UsersService
+
   let findOne: jest.Mock
   let create: jest.Mock
   let find: jest.Mock
@@ -17,13 +19,14 @@ describe("UsersService", (): void => {
       create = jest.fn()
       find = jest.fn()
       save = jest.fn()
+      const usersRepository = { findOne, create, find, save }
 
       const module = await Test.createTestingModule({
         providers: [
           UsersService,
           {
             provide: getRepositoryToken(User),
-            useValue: { findOne, create, find, save },
+            useValue: usersRepository,
           },
         ],
       }).compile()
@@ -120,6 +123,7 @@ describe("UsersService", (): void => {
       const foundUsers = await usersService.searchUsers(query, userId)
 
       expect(foundUsers).toHaveLength(users.length)
+      expect(foundUsers).toStrictEqual(removePasswords(users))
     })
 
     it("returned users shouldn't have passwords", async (): Promise<
@@ -133,6 +137,7 @@ describe("UsersService", (): void => {
     })
   })
 
+  // TODO: Add other tests
   describe("adding new friend", (): void => {
     const userId = 1
 

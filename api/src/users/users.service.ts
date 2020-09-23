@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm"
 import User from "./user.entity"
 import { Repository } from "typeorm"
 import { CreateUserDto } from "./dto/createUser.dto"
+import { removePasswords } from "../utils/utils"
 
 @Injectable()
 export class UsersService {
@@ -49,7 +50,7 @@ export class UsersService {
       where: `(name ILIKE '%${query}%') AND ("id" != '${String(userId)}')`,
     })
 
-    return users.map((user): User => ({ ...user, password: undefined }))
+    return removePasswords(users)
   }
 
   private findUsersFriend(user: User, friendId: number): User | undefined {
