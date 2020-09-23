@@ -10,24 +10,39 @@ import mockedJwtService from "../utils/mocks/jwt.service"
 import * as bcrypt from "bcrypt"
 import mockedUser from "../utils/mocks/user.mock"
 import { copy, removePassword } from "../utils/utils"
+import { SignUpDto } from "./dto/signUp.dto"
+import PostgresErrorCode from "../database/postgresErrorCode.enum"
 
 jest.mock("bcrypt")
 
 describe("AuthenticationService", () => {
   let authenticationService: AuthenticationService
-  let bcryptCompare: jest.Mock
-  let findOne: jest.Mock
-  let userData: User
   let usersService: UsersService
+
+  let bcryptCompare: jest.Mock
+  let bcryptHash: jest.Mock
+
+  let findOne: jest.Mock
+  let create: jest.Mock
+  let save: jest.Mock
+
+  let userData: User
 
   beforeEach(
     async (): Promise<void> => {
       bcryptCompare = jest.fn().mockReturnValue(true)
       ;(bcrypt.compare as jest.Mock) = bcryptCompare
+      bcryptHash = jest.fn().mockResolvedValue("hashedPassword")
+      ;(bcrypt.hash as jest.Mock) = bcryptHash
+
       userData = copy(mockedUser)
       findOne = jest.fn().mockResolvedValue(userData)
+      create = jest.fn().mockReturnValue(userData)
+      save = jest.fn().mockResolvedValue(userData)
       const userRepository = {
         findOne,
+        create,
+        save,
       }
 
       const module = await Test.createTestingModule({
@@ -46,6 +61,57 @@ describe("AuthenticationService", () => {
       usersService = await module.get(UsersService)
     },
   )
+
+  describe("when creating a new user", (): void => {
+    let data: SignUpDto
+
+    describe("and user doesn't exist", (): void => {
+      beforeEach((): void => {
+        create.mockReturnValue(userData)
+        data = new SignUpDto()
+        data.password = userData.password
+        data.email = userData.email
+        bcryptHash.mockResolvedValue("hashedPassword")
+        save.mockResolvedValue(userData)
+      })
+
+      it("should return new user", async (): Promise<void> => {
+        const createSpy = jest.spyOn(usersService, "create")
+        const createdUser = await authenticationService.signUp(data)
+
+        expect(createdUser).toStrictEqual(removePassword(userData))
+        expect(createSpy).toBeCalledTimes(1)
+      })
+    })
+
+    describe("and user exists", (): void => {
+      beforeEach((): void => {
+        data = new SignUpDto()
+        data.password = userData.password
+        data.email = userData.email
+        create.mockRejectedValue({ code: PostgresErrorCode.UniqueViolation })
+        bcryptHash.mockResolvedValue("hashedPassword")
+        save.mockResolvedValue(userData)
+      })
+
+      it("should throw an error", async (): Promise<void> => {
+        await expect(authenticationService.signUp(data)).rejects.toThrow(
+          "User already exists",
+        )
+      })
+    })
+
+    describe("and something goes wrong", (): void => {
+      beforeEach((): void => {
+        data = new SignUpDto()
+        create.mockRejectedValue({ code: "errorCode" })
+      })
+
+      it("should throw an error", async (): Promise<void> => {
+        await expect(authenticationService.signUp(data)).rejects.toThrow()
+      })
+    })
+  })
 
   describe("when accessing the data of authenticated user", (): void => {
     const email = "test@test.com"

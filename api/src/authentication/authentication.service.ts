@@ -26,7 +26,7 @@ export class AuthenticationService {
         password: hashedPassword,
       })
 
-      return { ...newUser, password: undefined }
+      return removePassword(newUser)
     } catch (error) {
       if (error && error.code === PostgresErrorCode.UniqueViolation) {
         throw new HttpException(
