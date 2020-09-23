@@ -6,6 +6,7 @@ import PostgresErrorCode from "../database/postgresErrorCode.enum"
 import User from "../users/user.entity"
 import { JwtService } from "@nestjs/jwt"
 import { ConfigService } from "@nestjs/config"
+import { removePassword } from "../utils/utils"
 
 @Injectable()
 export class AuthenticationService {
@@ -56,7 +57,7 @@ export class AuthenticationService {
         throw new HttpException("Wrong credentials", HttpStatus.BAD_REQUEST)
       }
 
-      return { ...user, password: undefined }
+      return removePassword(user)
     } catch {
       throw new HttpException("Wrong credentials", HttpStatus.BAD_REQUEST)
     }
