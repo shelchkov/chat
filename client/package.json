@@ -24,7 +24,9 @@
     "eject": "react-scripts eject",
     "lint": "eslint */**/*.{js,ts,tsx}",
     "lint:fix": "eslint */**/*.{js,ts,tsx} --quiet --fix",
-    "format": "prettier --write 'src/**/*.{ts,tsx}'"
+    "format": "prettier --write 'src/**/*.{ts,tsx}'",
+    "test:updateSnapshots": "npm run test -- -u",
+    "test:watch": "npm run test -- --watchAll"
   },
   "eslintConfig": {
     "extends": "react-app"
