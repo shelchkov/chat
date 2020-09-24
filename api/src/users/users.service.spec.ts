@@ -137,7 +137,6 @@ describe("UsersService", (): void => {
     })
   })
 
-  // TODO: Add other tests
   describe("adding new friend", (): void => {
     const userId = 1
 
@@ -148,6 +147,85 @@ describe("UsersService", (): void => {
         await expect(
           usersService.addFriend(userId, friendId),
         ).rejects.toThrow()
+      })
+    })
+
+    describe("and that friend was already added to friend's list", (): void => {
+      const friendId = userId + 1
+
+      beforeEach((): void => {
+        const user = new User()
+        const friend = new User()
+        friend.id = friendId
+        user.friends = [friend]
+        findOne.mockResolvedValue(user)
+      })
+
+      it("should throw an error", async (): Promise<void> => {
+        await expect(
+          usersService.addFriend(userId, friendId),
+        ).rejects.toThrow()
+      })
+    })
+
+    describe("and that friend wasn't added yet", (): void => {
+      const friendId = userId + 1
+      let user: User
+
+      beforeEach((): void => {
+        user = new User()
+        user.friends = []
+        findOne.mockResolvedValue(user)
+      })
+
+      it("should return user with new friend", async (): Promise<void> => {
+        const newUser = await usersService.addFriend(userId, friendId)
+
+        expect(newUser.friends.length).toEqual(
+          (user.friends || []).length + 1,
+        )
+      })
+    })
+  })
+
+  describe("getting user's friend", (): void => {
+    const userId = 1
+    const friendId = userId + 1
+
+    describe("and user doesn't have a frined with that id", (): void => {
+      beforeEach((): void => {
+        const user = new User()
+        user.friends = []
+        findOne.mockResolvedValue(user)
+      })
+
+      it("should return undefined", async (): Promise<void> => {
+        const foundFriend = await usersService.getUsersFriend(
+          userId,
+          friendId,
+        )
+        expect(foundFriend).not.toBeDefined()
+      })
+    })
+
+    describe("and user has a friend with provided id", (): void => {
+      let friend: User
+
+      beforeEach((): void => {
+        const user = new User()
+        friend = new User()
+        friend.id = friendId
+        user.friends = [friend]
+        findOne.mockResolvedValue(user)
+      })
+
+      it("should return friend", async (): Promise<void> => {
+        const foundFriend = await usersService.getUsersFriend(
+          userId,
+          friendId,
+        )
+
+        expect(foundFriend).toEqual(friend)
       })
     })
   })
