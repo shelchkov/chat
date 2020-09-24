@@ -69,7 +69,10 @@ export const SignedOutPage = ({ setUser }: Props): ReactElement => {
 				<SignUpForm setUser={setUser} />
 			)}
 
-			<SignedOutSwitchForm onClick={handleSwitchForm}>
+			<SignedOutSwitchForm
+				onClick={handleSwitchForm}
+				id="signed-out-switch"
+			>
 				{getSwitchFormText(form)}
 			</SignedOutSwitchForm>
 		</SignedOutContainer>
