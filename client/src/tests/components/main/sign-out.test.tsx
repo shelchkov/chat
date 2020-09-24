@@ -26,7 +26,7 @@ describe("sign out", (): void => {
 			expect(fetchSpy).not.toBeCalled()
 
 			setTimeout((): void => {
-				expect(signOut.contains(signOutText)).toEqual(true)
+				expect(signOut.contains("...")).toEqual(false)
 				expect(handleSignOut).not.toHaveBeenCalled()
 			})
 		})
@@ -40,7 +40,7 @@ describe("sign out", (): void => {
 			expect(fetchSpy).toBeCalled()
 
 			setTimeout((): void => {
-				expect(signOut.contains(signOutText)).toEqual(true)
+				expect(signOut.contains("...")).toEqual(false)
 				expect(handleSignOut).toHaveBeenCalled()
 			})
 		})
@@ -55,6 +55,10 @@ describe("sign out", (): void => {
 			it("should change button text", (): void => {
 				signOut.simulate("click")
 				signOut.contains(errorText)
+
+				setTimeout((): void => {
+					expect(handleSignOut).not.toHaveBeenCalled()
+				})
 			})
 		})
 	})
