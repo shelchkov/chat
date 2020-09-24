@@ -11,7 +11,7 @@
     "client:build": "cd client && npm run build",
     "api": "cd api && npm run start:dev",
     "dev": "concurrently --kill-others-on-fail \"npm run api\" \"npm run client\"",
-    "lint": "cd api && npm run format && npm run lint && cd ../client && npm run format",
+    "lint": "cd api && npm run format && npm run lint && cd ../client && npm run format && npm run lint:fix",
     "install:all": "npm install && cd api && npm install && cd ../client && npm install",
     "client:test": "cd client && npm run test"
   },
