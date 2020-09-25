@@ -41,7 +41,7 @@ export class MessagesService {
     if (!friend) {
       await Promise.all([
         await this.usersService.addFriend(from, to),
-        await this.usersService.addFriend(to, from)
+        await this.usersService.addFriend(to, from),
       ])
     }
 
