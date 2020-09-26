@@ -1,9 +1,7 @@
 import React from "react"
 import { shallow } from "enzyme"
-import {
-	SignedOutPage,
-	SignedOutSwitchForm,
-} from "../../pages/signed-out.page"
+
+import { SignedOutPage } from "../../pages/signed-out.page"
 import { SignInForm } from "../../components/sign-forms/sign-in-form"
 import { SignUpForm } from "../../components/sign-forms/sign-up-form"
 import { noop } from "../../utils/utils"

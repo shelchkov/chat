@@ -1,12 +1,14 @@
 import React from "react"
-import { SignOut } from "../../../components/main/sign-out"
 import { shallow } from "enzyme"
+
+import { SignOut } from "../../../components/main/sign-out"
+import { noop } from "../../../utils/utils"
 
 const signOutText = "Sign Out"
 const errorText = "Error"
 
 describe("sign out", (): void => {
-	const handleSignOut = jest.fn().mockImplementation((): void => {})
+	const handleSignOut = jest.fn().mockImplementation(noop)
 
 	describe("when clicking sign out button", (): void => {
 		let fetch

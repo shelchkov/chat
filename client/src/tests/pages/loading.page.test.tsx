@@ -1,5 +1,6 @@
 import React from "react"
 import { shallow } from "enzyme"
+
 import { LoadingPage } from "../../pages/loading.page"
 
 describe("loading page", (): void => {

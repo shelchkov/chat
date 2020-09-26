@@ -1,6 +1,7 @@
 import React from "react"
-import { ErrorPage } from "../../pages/error.page"
 import { shallow } from "enzyme"
+
+import { ErrorPage } from "../../pages/error.page"
 import { somethingWentWrong } from "../../utils/utils"
 import { LoadingContainer } from "../../pages/loading.page"
 
