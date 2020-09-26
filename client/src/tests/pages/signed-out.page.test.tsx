@@ -6,6 +6,7 @@ import {
 } from "../../pages/signed-out.page"
 import { SignInForm } from "../../components/sign-forms/sign-in-form"
 import { SignUpForm } from "../../components/sign-forms/sign-up-form"
+import { noop } from "../../utils/utils"
 
 const createAccount = "Create Account"
 const signIn = "Sign in"
@@ -15,8 +16,7 @@ describe("signed out page", (): void => {
 	let signedOutPage
 
 	beforeEach((): void => {
-		const setUser = (): void => {}
-		signedOutPage = shallow(<SignedOutPage setUser={setUser} />)
+		signedOutPage = shallow(<SignedOutPage setUser={noop} />)
 	})
 
 	describe("when clicking on switch", (): void => {
