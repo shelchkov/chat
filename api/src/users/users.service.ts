@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm"
 import User from "./user.entity"
 import { Repository } from "typeorm"
 import { CreateUserDto } from "./dto/createUser.dto"
+import { removePasswords } from "../utils/utils"
 
 @Injectable()
 export class UsersService {
@@ -11,14 +12,14 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async getByEmail(email: string): Promise<User> {
+  async getByEmail(email: string): Promise<User | never> {
     const user = await this.usersRepository.findOne(
       { email },
       { relations: ["friends"] },
     )
 
     if (!user) {
-      throw new HttpException("User wasn/t found", HttpStatus.NOT_FOUND)
+      throw new HttpException("User wasn't found", HttpStatus.NOT_FOUND)
     }
 
     return user
@@ -49,7 +50,7 @@ export class UsersService {
       where: `(name ILIKE '%${query}%') AND ("id" != '${String(userId)}')`,
     })
 
-    return users.map((user): User => ({ ...user, password: undefined }))
+    return removePasswords(users)
   }
 
   private findUsersFriend(user: User, friendId: number): User | undefined {
@@ -65,8 +66,8 @@ export class UsersService {
     }
 
     const [newFriend, user] = await Promise.all([
-      await this.getById(friendId), 
-      await this.getById(userId)
+      this.getById(friendId),
+      this.getById(userId),
     ])
 
     if (this.findUsersFriend(user, friendId)) {
@@ -78,7 +79,10 @@ export class UsersService {
 
     newFriend.friends = undefined
 
-    const newUser = { ...user, friends: [...user.friends, newFriend] }
+    const newUser = {
+      ...user,
+      friends: [...(user.friends || []), newFriend],
+    }
     this.usersRepository.save(newUser)
 
     return newUser

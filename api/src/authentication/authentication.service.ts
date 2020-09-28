@@ -6,6 +6,7 @@ import PostgresErrorCode from "../database/postgresErrorCode.enum"
 import User from "../users/user.entity"
 import { JwtService } from "@nestjs/jwt"
 import { ConfigService } from "@nestjs/config"
+import { removePassword } from "../utils/utils"
 
 @Injectable()
 export class AuthenticationService {
@@ -15,7 +16,7 @@ export class AuthenticationService {
     private readonly configService: ConfigService,
   ) {}
 
-  public async signUp(data: SignUpDto): Promise<User> {
+  public async signUp(data: SignUpDto): Promise<User | never> {
     const hashedPassword = await bcrypt.hash(data.password, 10)
 
     try {
@@ -25,7 +26,7 @@ export class AuthenticationService {
         password: hashedPassword,
       })
 
-      return { ...newUser, password: undefined }
+      return removePassword(newUser)
     } catch (error) {
       if (error && error.code === PostgresErrorCode.UniqueViolation) {
         throw new HttpException(
@@ -56,7 +57,7 @@ export class AuthenticationService {
         throw new HttpException("Wrong credentials", HttpStatus.BAD_REQUEST)
       }
 
-      return { ...user, password: undefined }
+      return removePassword(user)
     } catch {
       throw new HttpException("Wrong credentials", HttpStatus.BAD_REQUEST)
     }
@@ -77,6 +78,7 @@ export class AuthenticationService {
 
   public getUserIdFromToken(token: string): number {
     const { userId } = this.jwtService.decode(token) as TokenPayload
+
     return userId
   }
 }
