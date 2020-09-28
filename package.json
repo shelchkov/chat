@@ -14,7 +14,8 @@
     "lint": "cd api && npm run format && npm run lint && cd ../client && npm run format",
     "install:all": "npm install && cd api && npm install && cd ../client && npm install",
     "api:test:cov": "cd api && npm run test:cov",
-    "api:test": "cd api && npm run test"
+    "api:test": "cd api && npm run test",
+    "api:test:integration": "cd api && npm run test:integration"
   },
   "repository": {
     "type": "git",
