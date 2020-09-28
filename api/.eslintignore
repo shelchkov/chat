@@ -1,2 +1,2 @@
-src/app.controller.spec.ts
+node_modules
 test/app.e2e-spec.ts

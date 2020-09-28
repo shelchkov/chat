@@ -7,14 +7,15 @@
     "node": "12.x"
   },
   "scripts": {
+    "install:all": "npm install && cd api && npm install && cd ../client && npm install",
     "client": "cd client && npm start",
-    "client:build": "cd client && npm run build",
     "api": "cd api && npm run start:dev",
     "dev": "concurrently --kill-others-on-fail \"npm run api\" \"npm run client\"",
-    "lint": "cd api && npm run format && npm run lint && cd ../client && npm run format",
-    "install:all": "npm install && cd api && npm install && cd ../client && npm install",
+    "lint": "cd api && npm run format && npm run lint && cd ../client && npm run format && npm run lint:fix",
+    "client:build": "cd client && npm run build",
     "api:test:cov": "cd api && npm run test:cov",
-    "api:test": "cd api && npm run test"
+    "api:test": "cd api && npm run test",
+    "client:test": "cd client && npm run test"
   },
   "repository": {
     "type": "git",

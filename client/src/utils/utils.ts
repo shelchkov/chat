@@ -23,3 +23,5 @@ const remSize = 16
 
 export const getPixelsFromRem = (rem: string): number =>
 	parseInt(rem) * remSize
+
+export const noop = (): undefined => undefined
