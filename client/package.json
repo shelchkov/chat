@@ -27,7 +27,7 @@
     "format": "prettier --write \"src/**/*.{js,ts,tsx}\"",
     "test:updateSnapshots": "npm run test -- -u",
     "test:watch": "npm run test -- --watchAll",
-    "test:cov": "npm run test -- --coverage"
+    "test:cov": "npm test -- --coverage --watchAll=false"
   },
   "eslintConfig": {
     "extends": "react-app"
