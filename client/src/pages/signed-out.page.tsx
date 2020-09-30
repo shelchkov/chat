@@ -3,7 +3,6 @@ import styled from "styled-components"
 
 import { SignInForm } from "../components/sign-forms/sign-in-form"
 import { SignUpForm } from "../components/sign-forms/sign-up-form"
-
 import { theme } from "../style-guide/theme"
 import { getSignedOutInputWidth } from "../utils/utils"
 import { User } from "../utils/interfaces"
@@ -69,7 +68,10 @@ export const SignedOutPage = ({ setUser }: Props): ReactElement => {
 				<SignUpForm setUser={setUser} />
 			)}
 
-			<SignedOutSwitchForm onClick={handleSwitchForm}>
+			<SignedOutSwitchForm
+				onClick={handleSwitchForm}
+				id="signed-out-switch"
+			>
 				{getSwitchFormText(form)}
 			</SignedOutSwitchForm>
 		</SignedOutContainer>

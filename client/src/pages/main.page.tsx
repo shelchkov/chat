@@ -1,10 +1,9 @@
 import React, { ReactElement, useState, useEffect } from "react"
 import styled from "styled-components"
-import { useSockets } from "../effects/use-sockets"
 
+import { useSockets } from "../effects/use-sockets"
 import { SignOut } from "../components/main/sign-out"
 import { Messages } from "../components/main/messages"
-
 import { User, Message } from "../utils/interfaces"
 import { theme } from "../style-guide/theme"
 
