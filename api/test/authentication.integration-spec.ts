@@ -161,6 +161,15 @@ describe("authentication", (): void => {
           .expect(200)
           .expect(expectedData)
 
+        userCookie = response.header["set-cookie"][0]
+        const cookieParams = getCookieParams(userCookie)
+
+        expect(cookieParams["Authentication"]).toBeDefined()
+        expect(cookieParams["Authentication"].length).toBeGreaterThan(0)
+        expect(cookieParams["HttpOnly"]).toBeDefined()
+        expect(cookieParams["Max-Age"]).toBeDefined()
+        expect(cookieParams["Max-Age"].length).toBeGreaterThan(0)
+
         return
       })
     })
@@ -198,18 +207,6 @@ describe("authentication", (): void => {
   })
 
   describe("when signing out", (): void => {
-    // describe("and user is logged in", (): void => {
-    //   it("should respond with 200 code", (): Test => {
-    //     userCookie = "Authentication=Hi"
-    //     return request(app.getHttpServer())
-    //       .post(routes.signOut)
-    //       .set("Authentication", userCookie)
-    //       .send()
-    //       .expect(200)
-    //       .expect({ success: true })
-    //   })
-    // })
-
     describe("and user is not logged in", (): void => {
       it("should throw an error", (): Test => {
         return request(app.getHttpServer())
