@@ -13,3 +13,15 @@ export const removePassword = (user: User): UserWithoutPassword => {
 
 export const removePasswords = (users: User[]): UserWithoutPassword[] =>
   users.map((user): UserWithoutPassword => removePassword(user))
+
+interface CookieParams {
+  [key: string]: string
+}
+
+export const getCookieParams = (cookie: string): CookieParams =>
+  cookie.split(/; ?/).reduce((acc: CookieParams, param): CookieParams => {
+    const [key, value] = param.split("=")
+    acc[key] = value || ""
+
+    return acc
+  }, {})

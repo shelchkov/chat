@@ -15,6 +15,7 @@
     "client:build": "cd client && npm run build",
     "api:test:cov": "cd api && npm run test:cov",
     "api:test": "cd api && npm run test",
+    "api:test:integration": "cd api && npm run test:integration",
     "client:test": "cd client && npm run test"
   },
   "repository": {
