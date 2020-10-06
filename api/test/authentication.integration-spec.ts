@@ -12,11 +12,18 @@ import mockedUser from "../src/utils/mocks/user"
 import * as request from "supertest"
 import * as bcrypt from "bcrypt"
 import PostgresErrorCode from "../src/database/postgresErrorCode.enum"
-import { copy, removePassword, getCookieParams } from "../src/utils/utils"
+import {
+  copy,
+  removePassword,
+  getCookieParams,
+  removePasswords,
+} from "../src/utils/utils"
 import { JwtStrategy } from "../src/authentication/jwt.strategy"
+import { LocalStrategy } from "../src/authentication/local.strategy"
 
 const routes = {
   signUp: "/authentication/sign-up",
+  signIn: "/authentication/sign-in",
   signOut: "/authentication/sign-out",
   authentication: "/authentication",
 }
@@ -28,8 +35,10 @@ describe("authentication", (): void => {
   let userData: User
 
   let create: jest.Mock
+  let findOne: jest.Mock
 
   let bcryptHash: jest.Mock
+  let bcryptCompare: jest.Mock
 
   let userCookie: string
 
@@ -37,13 +46,17 @@ describe("authentication", (): void => {
     async (): Promise<void> => {
       userData = copy(mockedUser)
       create = jest.fn().mockResolvedValue(userData)
+      findOne = jest.fn().mockResolvedValue(userData)
       const usersRepository = {
         create,
         save: jest.fn().mockReturnValue(Promise.resolve()),
+        findOne,
       }
 
       bcryptHash = jest.fn().mockResolvedValue("hashedPassword")
       ;(bcrypt.hash as jest.Mock) = bcryptHash
+      bcryptCompare = jest.fn().mockResolvedValue(true)
+      ;(bcrypt.compare as jest.Mock) = bcryptCompare
 
       const module = await Test.createTestingModule({
         imports: [
@@ -65,6 +78,7 @@ describe("authentication", (): void => {
             useValue: usersRepository,
           },
           JwtStrategy,
+          LocalStrategy,
         ],
       }).compile()
 
@@ -126,6 +140,59 @@ describe("authentication", (): void => {
         expect(cookieParams["Max-Age"].length).toBeGreaterThan(0)
 
         return
+      })
+    })
+  })
+
+  describe("when logging in", (): void => {
+    describe("and authentication data is corect", (): void => {
+      const signInData = {
+        email: mockedUser.email,
+        password: mockedUser.password,
+      }
+
+      it("should return user data", async (): Promise<void> => {
+        const expectedData = removePassword(mockedUser)
+        expectedData.friends = removePasswords(expectedData.friends)
+
+        const response = await request(app.getHttpServer())
+          .post(routes.signIn)
+          .send(signInData)
+          .expect(200)
+          .expect(expectedData)
+
+        return
+      })
+    })
+
+    describe("and authentication data is incorrect", (): void => {
+      const signInData = {
+        email: mockedUser.email,
+        password: mockedUser.password + "1",
+      }
+
+      beforeEach((): void => {
+        bcryptCompare.mockResolvedValue(false)
+      })
+
+      it("should throw an error if password is incorrect", (): Test => {
+        return request(app.getHttpServer())
+          .post(routes.signIn)
+          .send(signInData)
+          .expect(400)
+          .expect(HttpStatus.BAD_REQUEST)
+      })
+
+      it("should throw an error if email is incorrect", (): Test => {
+        signInData.email = signInData.email + "a"
+        findOne.mockRejectedValue(undefined)
+        bcryptCompare.mockResolvedValue(true)
+
+        return request(app.getHttpServer())
+          .post(routes.signIn)
+          .send(signInData)
+          .expect(400)
+          .expect(HttpStatus.BAD_REQUEST)
       })
     })
   })
