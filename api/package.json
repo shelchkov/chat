@@ -88,6 +88,6 @@
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
-    "coveragePathIgnorePatterns": [".entity.ts"]
+    "coveragePathIgnorePatterns": [".entity.ts", "src/utils/", "node_modules"]
   }
 }
