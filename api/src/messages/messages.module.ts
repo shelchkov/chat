@@ -8,7 +8,6 @@ import { MessagesController } from "./messages.controller"
 import { MessagesService } from "./messages.service"
 import Message from "./message.entity"
 
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([Message]),
