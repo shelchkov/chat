@@ -7,11 +7,13 @@ import {
   UseGuards,
   Req,
 } from "@nestjs/common"
+
+import JwtAuthenticationGuard from "../authentication/jwt-authentication.guard"
+import RequestWithUser from "../authentication/requestWithUser.interface"
+
 import { MessagesService } from "./messages.service"
 import { SendMessageDto, SendMessageParamsDto } from "./dto/sendMessage.dto"
 import Message from "./message.entity"
-import JwtAuthenticationGuard from "../authentication/jwt-authentication.guard"
-import RequestWithUser from "../authentication/requestWithUser.interface"
 import { GetMessagesDto } from "./dto/getMessages.dto"
 
 @Controller("messages")

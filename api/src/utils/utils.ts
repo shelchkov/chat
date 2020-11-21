@@ -25,3 +25,18 @@ export const getCookieParams = (cookie: string): CookieParams =>
 
     return acc
   }, {})
+
+export const convertToArray = <T>(obj: T): T[keyof T][] => {
+  const array = []
+  let index = 0
+
+  while (true) {
+    if (!obj.hasOwnProperty(index)) {
+      break
+    }
+
+    array.push(obj[index++])
+  }
+
+  return array
+}
