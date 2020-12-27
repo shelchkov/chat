@@ -18,7 +18,7 @@ const closeTimeout = 100
 
 export const useSockets = (): SocketsProps => {
 	const [connectionsNumber, setconnectionsNumber] = useState(1)
-	const [data, setData] = useState()
+	const [data, setData] = useState<Data>()
 
 	useEffect((): (() => void) | undefined => {
 		if (!connectionsNumber) {
