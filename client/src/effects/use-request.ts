@@ -19,8 +19,8 @@ interface Props {
 
 export const useRequest = ({ url, body, method }: Props): Request => {
 	const [isLoading, setIsLoading] = useState(false)
-	const [data, setData] = useState()
-	const [error, setError] = useState()
+	const [data, setData] = useState<any>()
+	const [error, setError] = useState<string>()
 
 	const start = (newBody?: any, urlAddon?: string): void => {
 		if (isLoading) {
