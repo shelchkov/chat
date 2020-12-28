@@ -31,7 +31,7 @@ interface CustomInputProps {
 const InputContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	width: ${getSignedOutInputWidth(0)};
+	width: ${(p: CustomInputProps): string => getSignedOutInputWidth(0, p.isSendMessageForm)};
 	margin: 0.5rem 0 0.8rem
 		${(p: CustomInputProps): string =>
 			p.isAddFriendForm ? ".4rem" : "0"};
@@ -51,11 +51,14 @@ const InputLabel = styled.label`
 `
 
 const InputComponent = styled.input`
+	// max-height: 1.925rem;
+	margin: 0;
 	padding: 0.4rem 0.6rem;
 	border-radius: 0.4rem;
 	border: 1px solid ${theme.colors.greys[1]};
 	font-size: 1rem;
 	outline: none;
+	-webkit-appearance: none;
 `
 
 const ErrorContainer = styled.p`

@@ -46,6 +46,7 @@ export const Loading = styled.div`
 
 const BackButtonContainer = styled.div`
 	height: 2.125rem;
+	min-height: 2.125rem;
 	display: flex;
 	border-bottom: 1px solid ${theme.colors.greys[1]};
 `
@@ -102,6 +103,7 @@ export const MessagesListAndForm = ({
 					<UserName>{selectedUser && selectedUser.name}</UserName>
 				</BackButtonContainer>
 			)}
+			
 			<MessagesListContent
 				ref={messagesListRef}
 				shouldShowBackBtn={shouldShowBackBtn}
