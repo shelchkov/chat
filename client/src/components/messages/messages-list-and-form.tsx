@@ -1,10 +1,10 @@
 import React, { ReactElement, createRef, useEffect } from "react"
 import styled from "styled-components"
 
-import { SendMessageForm } from "./send-message.form"
-
 import { Message, User } from "../../utils/interfaces"
 import { theme } from "../../style-guide/theme"
+
+import { SendMessageForm } from "./send-message.form"
 
 interface Props {
 	messages: Message[] | undefined
@@ -103,7 +103,7 @@ export const MessagesListAndForm = ({
 					<UserName>{selectedUser && selectedUser.name}</UserName>
 				</BackButtonContainer>
 			)}
-			
+
 			<MessagesListContent
 				ref={messagesListRef}
 				shouldShowBackBtn={shouldShowBackBtn}

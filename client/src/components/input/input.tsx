@@ -31,7 +31,8 @@ interface CustomInputProps {
 const InputContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	width: ${(p: CustomInputProps): string => getSignedOutInputWidth(0, p.isSendMessageForm)};
+	width: ${(p: CustomInputProps): string =>
+		getSignedOutInputWidth(0, p.isSendMessageForm)};
 	margin: 0.5rem 0 0.8rem
 		${(p: CustomInputProps): string =>
 			p.isAddFriendForm ? ".4rem" : "0"};
