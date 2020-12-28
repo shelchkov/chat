@@ -1,11 +1,11 @@
 import React, { ReactElement } from "react"
 import styled from "styled-components"
 
-import { AddFriendForm } from "./add-friend.form"
-import { UsersListContent } from "./users-list-content"
-
 import { User } from "../../utils/interfaces"
 import { theme } from "../../style-guide/theme"
+
+import { AddFriendForm } from "./add-friend.form"
+import { UsersListContent } from "./users-list-content"
 
 interface Props {
 	users: User[] | undefined
@@ -50,6 +50,7 @@ const formatUsers = (
 
 	return users
 }
+
 export const UsersList = ({
 	users,
 	updateUsersList,

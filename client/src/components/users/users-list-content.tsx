@@ -1,9 +1,11 @@
 import React, { ReactElement } from "react"
 import styled from "styled-components"
 
-import { UserCard } from "./user-card"
-
 import { User } from "../../utils/interfaces"
+import { splitUsers } from "../../utils/utils"
+
+import { UserCard } from "./user-card"
+import { Divider } from "./divider"
 
 interface Props {
 	users: User[] | undefined
@@ -46,9 +48,24 @@ export const UsersListContent = ({
 		)
 	}
 
+	const { friends, notFriends } = splitUsers(users)
+
 	return (
 		<>
-			{users.map(
+			{friends.map(
+				(user): ReactElement => (
+					<UserCard
+						user={user}
+						key={user.id}
+						handleUserSelect={handleUserSelect}
+						isSelected={user.id === selectedUserId}
+					/>
+				),
+			)}
+
+			{notFriends.length > 0 && <Divider />}
+
+			{notFriends.map(
 				(user): ReactElement => (
 					<UserCard
 						user={user}
