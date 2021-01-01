@@ -1,11 +1,10 @@
-import React, { ReactElement, useEffect } from "react"
+import React, { ReactElement, useEffect, createRef } from "react"
 import styled from "styled-components"
-import { useRequest } from "../../effects/use-request"
 import { useForm } from "react-hook-form"
 
+import { useRequest } from "../../effects/use-request"
 import { Input } from "../input/input"
 import { Button } from "../button/button"
-
 import { Message } from "../../utils/interfaces"
 import { theme } from "../../style-guide/theme"
 import { ButtonTypes } from "../../utils/enums"
@@ -36,6 +35,7 @@ export const SendMessageForm = ({
 }: Props): ReactElement => {
 	const { data, start } = useRequest(getSendMessageInput())
 	const { register, handleSubmit, reset } = useForm<Inputs>()
+	const inputRef = createRef<HTMLInputElement>()
 
 	const onSubmit = (data: Inputs): void => {
 		start({ text: data.message }, String(selectedUserId))
@@ -51,16 +51,25 @@ export const SendMessageForm = ({
 
 	const isDisabled = !selectedUserId || isLoading || !!error
 
+	useEffect(() => {
+		if (inputRef.current) {
+			register({
+				required: true,
+				validate: (value): boolean => !!value.trim(),
+			})(inputRef.current)
+
+			inputRef.current.scrollIntoView()
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
 	return (
 		<SendMessageContainer onSubmit={handleSubmit(onSubmit)}>
 			<Input
 				name="message"
 				isSendMessageForm
 				disabled={isDisabled}
-				reference={register({
-					required: true,
-					validate: (value): boolean => !!value.trim(),
-				})}
+				reference={inputRef}
 				placeholder="Type your message"
 			/>
 			<Button
