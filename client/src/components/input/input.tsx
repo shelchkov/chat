@@ -52,7 +52,6 @@ const InputLabel = styled.label`
 `
 
 const InputComponent = styled.input`
-	// max-height: 1.925rem;
 	margin: 0;
 	padding: 0.4rem 0.6rem;
 	border-radius: 0.4rem;
