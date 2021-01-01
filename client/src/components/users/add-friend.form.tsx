@@ -1,11 +1,10 @@
 import React, { ReactElement, useEffect, ChangeEvent } from "react"
 import styled from "styled-components"
-import { useRequest } from "../../effects/use-request"
 import { useForm } from "react-hook-form"
 
+import { useRequest } from "../../effects/use-request"
 import { Input } from "../input/input"
 import { Button } from "../button/button"
-
 import { getUsersSearchInput } from "../../utils/api-utils"
 import { ButtonTypes } from "../../utils/enums"
 import { User } from "../../utils/interfaces"

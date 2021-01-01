@@ -5,6 +5,7 @@ import { useSockets } from "../effects/use-sockets"
 import { SignOut } from "../components/main/sign-out"
 import { Messages } from "../components/main/messages"
 import { User, Message } from "../utils/interfaces"
+import { markNotFriends } from "../utils/utils"
 import { theme } from "../style-guide/theme"
 
 interface Props {
@@ -66,7 +67,7 @@ export const MainPage = ({
 
 	const updateUsersList = (users?: User[] | null): void => {
 		if (users) {
-			setFriends(users)
+			setFriends(markNotFriends(users, originalFriends))
 
 			return
 		}
