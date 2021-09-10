@@ -32,6 +32,12 @@ import { ConfigModule, ConfigService } from "@nestjs/config"
           database: urlParams[3].split("/")[1],
           entities: [__dirname + "/../**/*.entity.{ts,js}"],
           synchronize: true,
+          ssl: true,
+          extra: {
+            ssl: {
+              rejectUnauthorized: false,
+            },
+          },
         }
       },
     }),
