@@ -11,8 +11,6 @@ export const getSignedOutInputWidth = (
 	return breakpoint === 0 ? "16rem" : "18rem"
 }
 
-export const apiUrl = "http://localhost:5000"
-
 export const requiredFieldError = "Required field"
 export const minLengthFieldError = "At least 6 characters"
 export const validateFieldError = "Shouldn't end or start w/ space"

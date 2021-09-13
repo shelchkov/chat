@@ -10,7 +10,13 @@ import { UsersService } from "../users/users.service"
 
 import { SubscriptionsService } from "./subscriptions.service"
 
-@WebSocketGateway({ port: 8080, path: "/events" })
+const options: Record<string, string | number> = { path: "/events" }
+
+if (process.env.NODE_ENV === "development") {
+  options.port = 8080
+}
+
+@WebSocketGateway(options)
 export class SubscriptionsGateway
   implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(

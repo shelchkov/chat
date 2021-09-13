@@ -8,7 +8,4 @@
 # build
 /client/build
 /api/src/static
-
-# environment variables
-/api/.env
-docker.env
+/tools/*.js

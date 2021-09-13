@@ -1,7 +1,7 @@
 import { RequestMethod } from "./enums"
 
-export const host = process.env.API_URL || "http://localhost:5000"
-export const socketUrl = "ws://localhost:8080/events"
+export const apiUrl = process.env.API_URL || "http://localhost:5000"
+export const socketUrl = process.env.SOCKET_URL || "ws://localhost:8080/events"
 
 interface RequestInput {
 	body?: any
@@ -13,7 +13,7 @@ export const getSignInInput = (
 	email: string,
 	password: string,
 ): RequestInput => ({
-	url: `${host}/authentication/sign-in`,
+	url: `${apiUrl}/authentication/sign-in`,
 	body: {
 		email,
 		password,
@@ -26,7 +26,7 @@ export const getSignUpInput = (
 	name: string,
 	password: string,
 ): RequestInput => ({
-	url: `${host}/authentication/sign-up`,
+	url: `${apiUrl}/authentication/sign-up`,
 	body: {
 		email,
 		name,
@@ -36,17 +36,17 @@ export const getSignUpInput = (
 })
 
 export const getAuthenticateInput = (): RequestInput => ({
-	url: `${host}/authentication/`,
+	url: `${apiUrl}/authentication/`,
 	method: RequestMethod.GET,
 })
 
 export const getUsersSearchInput = (): RequestInput => ({
-	url: `${host}/users?q=`,
+	url: `${apiUrl}/users?q=`,
 	method: RequestMethod.GET,
 })
 
 export const getUsersMessagesInput = (): RequestInput => ({
-	url: `${host}/messages/`,
+	url: `${apiUrl}/messages/`,
 	method: RequestMethod.GET,
 })
 
@@ -54,7 +54,7 @@ export const getSendMessageInput = (
 	text?: string,
 	id?: string,
 ): RequestInput => ({
-	url: `${host}/messages/${id || ""}`,
+	url: `${apiUrl}/messages/${id || ""}`,
 	body: {
 		text: text || "",
 	},
@@ -62,6 +62,6 @@ export const getSendMessageInput = (
 })
 
 export const getSignOutInput = (): RequestInput => ({
-	url: `${host}/authentication/sign-out`,
+	url: `${apiUrl}/authentication/sign-out`,
 	method: RequestMethod.POST,
 })
