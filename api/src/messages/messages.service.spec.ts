@@ -1,49 +1,40 @@
 import { Test } from "@nestjs/testing"
 import { getRepositoryToken } from "@nestjs/typeorm"
-import { ConfigService } from "@nestjs/config"
-import { JwtService } from "@nestjs/jwt"
 
 import { UsersService } from "../users/users.service"
 import { SubscriptionsGateway } from "../subscriptions/subscriptions.gateway"
-import User from "../users/user.entity"
 import { copy, convertToArray } from "../utils/utils"
 import mockedUser from "../utils/mocks/user"
 import mockedMessages from "../utils/mocks/messages"
 import mockedMessage from "../utils/mocks/message"
-import { AuthenticationService } from "../authentication/authentication.service"
-import mockedConfigService from "../utils/mocks/config.service"
-import mockedJwtService from "../utils/mocks/jwt.service"
 
 import { MessagesService } from "./messages.service"
 import Message from "./message.entity"
 
 describe("MessagesService", (): void => {
   let messagesService: MessagesService
-  let subscriptionsGateway: SubscriptionsGateway
-  let usersService: UsersService
-
-  // User repository
-  let findOne: jest.Mock
-  let saveUser: jest.Mock
 
   // Message repository
-  let find: jest.Mock
-  let create: jest.Mock
-  let save: jest.Mock
+  const messagesList = copy(mockedMessages)
+  const message = copy(mockedMessage)
+  const find = jest.fn().mockResolvedValue(messagesList)
+  const create = jest.fn().mockResolvedValue(message)
+  const save = jest.fn().mockResolvedValue(true)
 
-  beforeEach(
+  // Users service
+  const addFriend = jest.fn().mockResolvedValue(undefined)
+  const getUsersFriend = jest.fn().mockResolvedValue(undefined)
+
+  // Subscriptions Gateway
+  const sendMessageToUser = jest.fn().mockResolvedValue(undefined)
+
+  const userData = copy(mockedUser)
+
+  beforeAll(
     async (): Promise<void> => {
-      const userData = copy(mockedUser)
-      findOne = jest.fn().mockResolvedValue(userData)
-      saveUser = jest.fn().mockResolvedValue(true)
-      const userRepository = { findOne, save: saveUser }
-
-      const messagesList = copy(mockedMessages)
-      const message = copy(mockedMessage)
-      find = jest.fn().mockResolvedValue(messagesList)
-      create = jest.fn().mockResolvedValue(message)
-      save = jest.fn().mockResolvedValue(true)
       const messageRepository = { find, create, save }
+      const usersService = { addFriend, getUsersFriend }
+      const subscriptionsGateway = { sendMessageToUser }
 
       const module = await Test.createTestingModule({
         providers: [
@@ -52,28 +43,20 @@ describe("MessagesService", (): void => {
             provide: getRepositoryToken(Message),
             useValue: messageRepository,
           },
-          UsersService,
-          SubscriptionsGateway,
-          { provide: getRepositoryToken(User), useValue: userRepository },
-          { provide: ConfigService, useValue: mockedConfigService },
-          { provide: JwtService, useValue: mockedJwtService },
-          AuthenticationService,
+          { provide: UsersService, useValue: usersService },
+          { provide: SubscriptionsGateway, useValue: subscriptionsGateway },
         ],
       }).compile()
 
       messagesService = await module.get<MessagesService>(MessagesService)
-      subscriptionsGateway = await module.get<SubscriptionsGateway>(
-        SubscriptionsGateway,
-      )
-      usersService = await module.get<UsersService>(UsersService)
     },
   )
 
-  describe("when getting users messages", (): void => {
+  describe("when getting user's messages", (): void => {
     const id = 2
     const userId = 1
 
-    describe("and users is not a friend", (): void => {
+    describe("and user is not a friend", (): void => {
       it("should throw an error", async (): Promise<void> => {
         await expect(
           messagesService.getMessagesFromUser(id + 1, userId),
@@ -82,6 +65,14 @@ describe("MessagesService", (): void => {
     })
 
     describe("and user is a friend", (): void => {
+      beforeEach(() => {
+        getUsersFriend.mockResolvedValue(userData.friends[0])
+      })
+
+      afterAll(() => {
+        getUsersFriend.mockReset()
+      })
+
       it("should return list of messages", async (): Promise<void> => {
         const result = await messagesService.getMessagesFromUser(id, userId)
 
@@ -97,6 +88,10 @@ describe("MessagesService", (): void => {
     const userId = 1
 
     describe("and user is added to friends", (): void => {
+      beforeEach(() => {
+        sendMessageToUser.mockClear()
+      })
+
       it("should create new message", async (): Promise<void> => {
         const result = await messagesService.sendMessageToUser(
           id,
@@ -109,21 +104,18 @@ describe("MessagesService", (): void => {
       })
 
       it("should call subscriptions module", async (): Promise<void> => {
-        const sendMessageToUserSpy = jest.spyOn(
-          subscriptionsGateway,
-          "sendMessageToUser",
-        )
-
         await messagesService.sendMessageToUser(id, userId, text, fromName)
 
-        expect(sendMessageToUserSpy).toBeCalledTimes(1)
+        expect(sendMessageToUser).toBeCalledTimes(1)
       })
     })
 
     describe("and user is not added to friends", (): void => {
-      it("should add user to friends list", async (): Promise<void> => {
-        const addFriendSpy = jest.spyOn(usersService, "addFriend")
+      beforeEach(() => {
+        addFriend.mockClear()
+      })
 
+      it("should add user to friends list", async (): Promise<void> => {
         const result = await messagesService.sendMessageToUser(
           id + 2,
           userId,
@@ -131,7 +123,7 @@ describe("MessagesService", (): void => {
           fromName,
         )
 
-        expect(addFriendSpy).toBeCalledTimes(2)
+        expect(addFriend).toBeCalledTimes(2)
         expect(result).toStrictEqual(mockedMessage)
       })
     })

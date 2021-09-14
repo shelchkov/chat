@@ -8,17 +8,13 @@ import { removePasswords } from "../utils/utils"
 describe("UsersService", (): void => {
   let usersService: UsersService
 
-  let findOne: jest.Mock
-  let create: jest.Mock
-  let find: jest.Mock
-  let save: jest.Mock
+  const findOne = jest.fn()
+  const create = jest.fn()
+  const find = jest.fn()
+  const save = jest.fn()
 
-  beforeEach(
+  beforeAll(
     async (): Promise<void> => {
-      findOne = jest.fn()
-      create = jest.fn()
-      find = jest.fn()
-      save = jest.fn()
       const usersRepository = { findOne, create, find, save }
 
       const module = await Test.createTestingModule({
@@ -37,11 +33,10 @@ describe("UsersService", (): void => {
 
   describe("when getting a user by email", (): void => {
     describe("and the user is matched", (): void => {
-      let user: User
+      const user = new User()
 
       beforeEach((): void => {
-        user = new User()
-        findOne.mockReturnValue(Promise.resolve(user))
+        findOne.mockResolvedValue(user)
       })
 
       it("should return the user", async (): Promise<void> => {
@@ -65,14 +60,14 @@ describe("UsersService", (): void => {
   })
 
   describe("when creating a new user", (): void => {
-    let user: User
-    let data: CreateUserDto
+    const user = new User()
+    const data = new CreateUserDto()
+
+    beforeEach(() => {
+      create.mockResolvedValue(user)
+    })
 
     it("should return new user", async (): Promise<void> => {
-      data = new CreateUserDto()
-      user = new User()
-      create.mockResolvedValue(user)
-
       const createdUser = await usersService.create(data)
 
       expect(createdUser).toEqual(user)
@@ -80,7 +75,7 @@ describe("UsersService", (): void => {
   })
 
   describe("when getting user by id", (): void => {
-    let user: User
+    const user = new User()
     const userId = 1
 
     describe("and user is not found", (): void => {
@@ -95,7 +90,6 @@ describe("UsersService", (): void => {
 
     describe("and user is found", (): void => {
       beforeEach((): void => {
-        user = new User()
         findOne.mockResolvedValue(user)
       })
 
@@ -110,12 +104,11 @@ describe("UsersService", (): void => {
   describe("searching users by name", (): void => {
     const query = "query"
     const userId = 1
-    let users: User[]
+    const user = new User()
+    user.password = "password"
+    const users = [user]
 
     beforeEach((): void => {
-      const user = new User()
-      user.password = "password"
-      users = [user]
       find.mockResolvedValue(users)
     })
 
@@ -141,11 +134,9 @@ describe("UsersService", (): void => {
     const userId = 1
 
     describe("and user id match friend id", (): void => {
-      const friendId = userId
-
       it("should throw an error", async (): Promise<void> => {
         await expect(
-          usersService.addFriend(userId, friendId),
+          usersService.addFriend(userId, userId),
         ).rejects.toThrow()
       })
     })
@@ -170,11 +161,10 @@ describe("UsersService", (): void => {
 
     describe("and that friend wasn't added yet", (): void => {
       const friendId = userId + 1
-      let user: User
+      const user = new User()
+      user.friends = []
 
       beforeEach((): void => {
-        user = new User()
-        user.friends = []
         findOne.mockResolvedValue(user)
       })
 
@@ -209,13 +199,12 @@ describe("UsersService", (): void => {
     })
 
     describe("and user has a friend with provided id", (): void => {
-      let friend: User
+      const user = new User()
+      const friend = new User()
+      friend.id = friendId
+      user.friends = [friend]
 
       beforeEach((): void => {
-        const user = new User()
-        friend = new User()
-        friend.id = friendId
-        user.friends = [friend]
         findOne.mockResolvedValue(user)
       })
 
