@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "lib": ["esnext"],
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+  },
+  "include": ["tools"],
+  "exclude": []
+}

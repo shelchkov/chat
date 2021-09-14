@@ -1,29 +1,30 @@
 {
   "name": "chat",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Chat",
   "engines": {
     "node": "12.x"
   },
   "scripts": {
     "install:all": "npm install && cd api && npm install && cd ../client && npm install",
-    "client": "cd client && npm start",
-    "api": "cd api && npm run start:dev",
     "dev": "concurrently --kill-others-on-fail \"npm run api\" \"npm run client\"",
     "lint": "cd api && npm run format && npm run lint && cd ../client && npm run format && npm run lint:fix",
+    "build": "npm run client:build && node tools/build.js",
     "client:build": "cd client && npm run build",
     "api:test:cov": "cd api && npm run test:cov",
-    "api:test": "cd api && npm run test",
     "api:test:integration": "cd api && npm run test:integration",
-    "client:test": "cd client && npm run test"
+    "client:test:cov": "cd client && npm run test:cov",
+    "client": "cd client && npm start",
+    "api": "cd api && npm run start:dev",
+    "postclient:build": "tsc --project tsconfig.build.json",
+    "prebuild": "rm -rf api/src/static && rm -rf deploy",
+    "postbuild": "echo 'web: npm run start:prod' > deploy/Procfile"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shelchkov/chat.git"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/shelchkov/chat/issues"

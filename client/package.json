@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -29,9 +29,6 @@
     "test:updateSnapshots": "npm run test -- -u",
     "test:watch": "npm run test -- --watchAll",
     "test:cov": "npm test -- --coverage --watchAll=false"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [

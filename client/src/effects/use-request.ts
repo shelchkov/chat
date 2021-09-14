@@ -1,7 +1,7 @@
 import { useState } from "react"
+import { apiUrl } from "../utils/api-utils"
 
 import { RequestMethod } from "../utils/enums"
-import { apiUrl } from "../utils/utils"
 
 interface Request {
 	data?: any
