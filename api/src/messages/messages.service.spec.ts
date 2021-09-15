@@ -65,7 +65,7 @@ describe("MessagesService", (): void => {
     })
 
     describe("and user is a friend", (): void => {
-      beforeEach(() => {
+      beforeAll(() => {
         getUsersFriend.mockResolvedValue(userData.friends[0])
       })
 
@@ -100,7 +100,7 @@ describe("MessagesService", (): void => {
           fromName,
         )
 
-        expect(result).toStrictEqual(mockedMessage)
+        expect(result).toEqual(mockedMessage)
       })
 
       it("should call subscriptions module", async (): Promise<void> => {

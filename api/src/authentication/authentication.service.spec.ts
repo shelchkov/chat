@@ -1,15 +1,17 @@
 import { Test } from "@nestjs/testing"
-import { AuthenticationService } from "./authentication.service"
-import { UsersService } from "../users/users.service"
 import { ConfigService } from "@nestjs/config"
 import { JwtService } from "@nestjs/jwt"
+import * as bcrypt from "bcrypt"
+
+import { UsersService } from "../users/users.service"
 import mockedConfigService from "../utils/mocks/config.service"
 import mockedJwtService from "../utils/mocks/jwt.service"
-import * as bcrypt from "bcrypt"
 import mockedUser from "../utils/mocks/user"
 import { copy, removePassword } from "../utils/utils"
-import { SignUpDto } from "./dto/signUp.dto"
 import PostgresErrorCode from "../database/postgresErrorCode.enum"
+
+import { SignUpDto } from "./dto/signUp.dto"
+import { AuthenticationService } from "./authentication.service"
 
 jest.mock("bcrypt")
 
@@ -55,7 +57,7 @@ describe("AuthenticationService", () => {
       it("should return new user", async (): Promise<void> => {
         const createdUser = await authenticationService.signUp(data)
 
-        expect(createdUser).toStrictEqual(removePassword(userData))
+        expect(createdUser).toEqual(removePassword(userData))
         expect(create).toBeCalledTimes(1)
       })
     })
@@ -88,8 +90,12 @@ describe("AuthenticationService", () => {
     const password = "password"
 
     describe("and the provided password is not valid", (): void => {
-      beforeEach((): void => {
+      beforeAll((): void => {
         bcryptCompare.mockReturnValue(false)
+      })
+
+      afterAll(() => {
+        bcryptCompare.mockResolvedValue(true)
       })
 
       it("should throw an error", async (): Promise<void> => {
@@ -101,7 +107,6 @@ describe("AuthenticationService", () => {
 
     describe("and the provided password is valid", (): void => {
       beforeAll(() => {
-        bcryptCompare.mockResolvedValue(true)
         getByEmail.mockClear()
       })
 

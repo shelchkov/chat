@@ -1,9 +1,11 @@
-import { UsersService } from "./users.service"
 import { Test } from "@nestjs/testing"
 import { getRepositoryToken } from "@nestjs/typeorm"
+
+import { removePasswords } from "../utils/utils"
+
+import { UsersService } from "./users.service"
 import User from "./user.entity"
 import { CreateUserDto } from "./dto/createUser.dto"
-import { removePasswords } from "../utils/utils"
 
 describe("UsersService", (): void => {
   let usersService: UsersService
@@ -32,29 +34,29 @@ describe("UsersService", (): void => {
   )
 
   describe("when getting a user by email", (): void => {
+    const email = "test@test.com"
+
     describe("and the user is matched", (): void => {
       const user = new User()
 
-      beforeEach((): void => {
+      beforeAll((): void => {
         findOne.mockResolvedValue(user)
       })
 
       it("should return the user", async (): Promise<void> => {
-        const fetchedUser = await usersService.getByEmail("test@test.com")
+        const fetchedUser = await usersService.getByEmail(email)
 
         expect(fetchedUser).toEqual(user)
       })
     })
 
     describe("and the user is not matched", (): void => {
-      beforeEach((): void => {
+      beforeAll((): void => {
         findOne.mockReturnValue(undefined)
       })
 
       it("should throw an error", async (): Promise<void> => {
-        await expect(
-          usersService.getByEmail("test@test.com"),
-        ).rejects.toThrow()
+        await expect(usersService.getByEmail(email)).rejects.toThrow()
       })
     })
   })
@@ -63,7 +65,7 @@ describe("UsersService", (): void => {
     const user = new User()
     const data = new CreateUserDto()
 
-    beforeEach(() => {
+    beforeAll(() => {
       create.mockResolvedValue(user)
     })
 
@@ -79,7 +81,7 @@ describe("UsersService", (): void => {
     const userId = 1
 
     describe("and user is not found", (): void => {
-      beforeEach((): void => {
+      beforeAll((): void => {
         findOne.mockResolvedValue(undefined)
       })
 
@@ -89,7 +91,7 @@ describe("UsersService", (): void => {
     })
 
     describe("and user is found", (): void => {
-      beforeEach((): void => {
+      beforeAll((): void => {
         findOne.mockResolvedValue(user)
       })
 
@@ -108,7 +110,7 @@ describe("UsersService", (): void => {
     user.password = "password"
     const users = [user]
 
-    beforeEach((): void => {
+    beforeAll((): void => {
       find.mockResolvedValue(users)
     })
 
@@ -119,9 +121,7 @@ describe("UsersService", (): void => {
       expect(foundUsers).toStrictEqual(removePasswords(users))
     })
 
-    it("returned users shouldn't have passwords", async (): Promise<
-      void
-    > => {
+    it("returns users without passwords", async (): Promise<void> => {
       const foundUsers = await usersService.searchUsers(query, userId)
 
       foundUsers.forEach((user): void => {
@@ -144,7 +144,7 @@ describe("UsersService", (): void => {
     describe("and that friend was already added to friend's list", (): void => {
       const friendId = userId + 1
 
-      beforeEach((): void => {
+      beforeAll((): void => {
         const user = new User()
         const friend = new User()
         friend.id = friendId
@@ -164,7 +164,7 @@ describe("UsersService", (): void => {
       const user = new User()
       user.friends = []
 
-      beforeEach((): void => {
+      beforeAll((): void => {
         findOne.mockResolvedValue(user)
       })
 
@@ -182,8 +182,8 @@ describe("UsersService", (): void => {
     const userId = 1
     const friendId = userId + 1
 
-    describe("and user doesn't have a frined with that id", (): void => {
-      beforeEach((): void => {
+    describe("and user doesn't have a friend with that id", (): void => {
+      beforeAll((): void => {
         const user = new User()
         user.friends = []
         findOne.mockResolvedValue(user)
@@ -204,7 +204,7 @@ describe("UsersService", (): void => {
       friend.id = friendId
       user.friends = [friend]
 
-      beforeEach((): void => {
+      beforeAll((): void => {
         findOne.mockResolvedValue(user)
       })
 
