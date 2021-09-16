@@ -1,0 +1,20 @@
+environment:
+  nodejs_version: "6"
+  COVERALLS_SERVICE_NAME: appveyor
+  COVERALLS_GIT_BRANCH: APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH
+
+install:
+  - ps: Install-Product node 14.17
+  - npm run install:all
+
+test_script:
+  - node --version
+  - npm --version
+  - npm run api:test:cov
+  - npm run api:test:integration
+  - npm run client:test:cov
+
+after_test:
+  - cd client && npm run upload:cov
+
+build: off
