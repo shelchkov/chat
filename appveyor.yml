@@ -10,7 +10,6 @@ install:
 test_script:
   - node --version
   - npm --version
-  - npm run api:test:cov
   - npm run api:test:integration
   - npm run client:test:cov
 
