@@ -21,15 +21,15 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint \"src/**/*.{js,ts,tsx}\"",
-    "lint:fix": "eslint \"src/**/*.{js,ts,tsx}\" --quiet --fix",
     "format": "prettier --write \"src/**/*.{js,ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{js,ts,tsx}\" --quiet --fix",
     "test:updateSnapshots": "npm run test -- -u",
     "test:watch": "npm run test -- --watchAll",
     "test:cov": "npm test -- --coverage --watchAll=false",
-    "upload:cov": "coveralls < coverage/lcov.info"
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint \"src/**/*.{js,ts,tsx}\"",
+    "upload:cov": "coveralls < coverage/cobertura-coverage.xml"
   },
   "browserslist": {
     "production": [
@@ -56,5 +56,8 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.3",
     "prettier": "^2.0.5"
+  },
+  "jest": {
+    "coverageReporters": ["cobertura", "lcov", "text"]
   }
 }

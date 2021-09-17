@@ -8,12 +8,12 @@ install:
   - npm run install:all
 
 test_script:
-  - node --version
-  - npm --version
+  - npm run api:test:cov
   - npm run api:test:integration
   - npm run client:test:cov
 
 after_test:
   - cd client && npm run upload:cov
+  - echo branch %COVERALLS_GIT_BRANCH%
 
 build: off
