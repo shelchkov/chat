@@ -88,7 +88,7 @@
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       ".entity.ts",
-      "src/utils/",
+      "src/utils/mocks/",
       "node_modules"
     ]
   }

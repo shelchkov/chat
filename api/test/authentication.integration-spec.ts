@@ -1,16 +1,17 @@
 import { INestApplication, ValidationPipe, HttpStatus } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
+import { ConfigService } from "@nestjs/config"
+import { JwtModule } from "@nestjs/jwt"
+import { getRepositoryToken } from "@nestjs/typeorm"
+import * as request from "supertest"
+import * as bcrypt from "bcrypt"
+
 import { AuthenticationController } from "../src/authentication/authentication.controller"
 import { AuthenticationService } from "../src/authentication/authentication.service"
 import { UsersService } from "../src/users/users.service"
-import { ConfigService } from "@nestjs/config"
 import mockedConfigService from "../src/utils/mocks/config.service"
-import { JwtModule } from "@nestjs/jwt"
-import { getRepositoryToken } from "@nestjs/typeorm"
 import User from "../src/users/user.entity"
 import mockedUser from "../src/utils/mocks/user"
-import * as request from "supertest"
-import * as bcrypt from "bcrypt"
 import PostgresErrorCode from "../src/database/postgresErrorCode.enum"
 import {
   copy,
@@ -30,33 +31,37 @@ const routes = {
 
 jest.mock("bcrypt")
 
+const checkAuthenticationCookie = (cookie: string) => {
+  const cookieParams = getCookieParams(cookie)
+
+  expect(cookieParams["Authentication"]).toBeDefined()
+  expect(cookieParams["Authentication"].length).toBeGreaterThan(0)
+  expect(cookieParams["HttpOnly"]).toBeDefined()
+  expect(cookieParams["Max-Age"]).toBeDefined()
+  expect(cookieParams["Max-Age"].length).toBeGreaterThan(0)
+}
+
 describe("authentication", (): void => {
   let app: INestApplication
-  let userData: User
-
-  let create: jest.Mock
-  let findOne: jest.Mock
-
-  let bcryptHash: jest.Mock
-  let bcryptCompare: jest.Mock
 
   let userCookie: string
 
-  beforeEach(
+  const userData = copy(mockedUser)
+  const create = jest.fn().mockResolvedValue(userData)
+  const findOne = jest.fn().mockResolvedValue(userData)
+
+  const bcryptHash = jest.fn().mockResolvedValue("hashedPassword")
+  ;(bcrypt.hash as jest.Mock) = bcryptHash
+  const bcryptCompare = jest.fn().mockResolvedValue(true)
+  ;(bcrypt.compare as jest.Mock) = bcryptCompare
+
+  beforeAll(
     async (): Promise<void> => {
-      userData = copy(mockedUser)
-      create = jest.fn().mockResolvedValue(userData)
-      findOne = jest.fn().mockResolvedValue(userData)
       const usersRepository = {
         create,
         save: jest.fn().mockReturnValue(Promise.resolve()),
         findOne,
       }
-
-      bcryptHash = jest.fn().mockResolvedValue("hashedPassword")
-      ;(bcrypt.hash as jest.Mock) = bcryptHash
-      bcryptCompare = jest.fn().mockResolvedValue(true)
-      ;(bcrypt.compare as jest.Mock) = bcryptCompare
 
       const module = await Test.createTestingModule({
         imports: [
@@ -69,14 +74,8 @@ describe("authentication", (): void => {
         providers: [
           AuthenticationService,
           UsersService,
-          {
-            provide: ConfigService,
-            useValue: mockedConfigService,
-          },
-          {
-            provide: getRepositoryToken(User),
-            useValue: usersRepository,
-          },
+          { provide: ConfigService, useValue: mockedConfigService },
+          { provide: getRepositoryToken(User), useValue: usersRepository },
           JwtStrategy,
           LocalStrategy,
         ],
@@ -96,26 +95,29 @@ describe("authentication", (): void => {
     }
 
     describe("and using invalid data", (): void => {
-      it("should throw an error", (): Test => {
-        return request(app.getHttpServer())
+      it("should throw an error", (): Test =>
+        request(app.getHttpServer())
           .post(routes.signUp)
           .send({ name: mockedUser.name })
           .expect(400)
-      })
+          .expect(HttpStatus.BAD_REQUEST))
     })
 
     describe("and user is already exists", (): void => {
-      beforeEach((): void => {
+      beforeAll((): void => {
         create.mockRejectedValue({ code: PostgresErrorCode.UniqueViolation })
       })
 
-      it("should throw an error", (): Test => {
-        return request(app.getHttpServer())
+      afterAll((): void => {
+        create.mockResolvedValue(userData)
+      })
+
+      it("should throw an error", (): Test =>
+        request(app.getHttpServer())
           .post(routes.signUp)
           .send(signUpData)
           .expect(400)
-          .expect(HttpStatus.BAD_REQUEST)
-      })
+          .expect(HttpStatus.BAD_REQUEST))
     })
 
     describe("and using valid data", (): void => {
@@ -131,26 +133,18 @@ describe("authentication", (): void => {
           .expect(expectedData)
 
         userCookie = response.header["set-cookie"][0]
-        const cookieParams = getCookieParams(userCookie)
-
-        expect(cookieParams["Authentication"]).toBeDefined()
-        expect(cookieParams["Authentication"].length).toBeGreaterThan(0)
-        expect(cookieParams["HttpOnly"]).toBeDefined()
-        expect(cookieParams["Max-Age"]).toBeDefined()
-        expect(cookieParams["Max-Age"].length).toBeGreaterThan(0)
-
-        return
+        return checkAuthenticationCookie(userCookie)
       })
     })
   })
 
   describe("when logging in", (): void => {
-    describe("and authentication data is corect", (): void => {
-      const signInData = {
-        email: mockedUser.email,
-        password: mockedUser.password,
-      }
+    const signInData = {
+      email: mockedUser.email,
+      password: mockedUser.password,
+    }
 
+    describe("and authentication data is corect", (): void => {
       it("should return user data", async (): Promise<void> => {
         const expectedData = removePassword(mockedUser)
         expectedData.friends = removePasswords(expectedData.friends)
@@ -162,69 +156,62 @@ describe("authentication", (): void => {
           .expect(expectedData)
 
         userCookie = response.header["set-cookie"][0]
-        const cookieParams = getCookieParams(userCookie)
-
-        expect(cookieParams["Authentication"]).toBeDefined()
-        expect(cookieParams["Authentication"].length).toBeGreaterThan(0)
-        expect(cookieParams["HttpOnly"]).toBeDefined()
-        expect(cookieParams["Max-Age"]).toBeDefined()
-        expect(cookieParams["Max-Age"].length).toBeGreaterThan(0)
-
-        return
+        return checkAuthenticationCookie(userCookie)
       })
     })
 
-    describe("and authentication data is incorrect", (): void => {
-      const signInData = {
-        email: mockedUser.email,
-        password: mockedUser.password + "1",
-      }
-
-      beforeEach((): void => {
+    describe("and passwird is incorrect", (): void => {
+      beforeAll((): void => {
         bcryptCompare.mockResolvedValue(false)
       })
 
-      it("should throw an error if password is incorrect", (): Test => {
-        return request(app.getHttpServer())
-          .post(routes.signIn)
-          .send(signInData)
-          .expect(400)
-          .expect(HttpStatus.BAD_REQUEST)
-      })
-
-      it("should throw an error if email is incorrect", (): Test => {
-        signInData.email = signInData.email + "a"
-        findOne.mockRejectedValue(undefined)
+      afterAll((): void => {
         bcryptCompare.mockResolvedValue(true)
+      })
 
-        return request(app.getHttpServer())
+      it("should throw an error", (): Test =>
+        request(app.getHttpServer())
           .post(routes.signIn)
           .send(signInData)
           .expect(400)
-          .expect(HttpStatus.BAD_REQUEST)
+          .expect(HttpStatus.BAD_REQUEST))
+    })
+
+    describe("and email is incorrect", () => {
+      beforeAll(() => {
+        findOne.mockRejectedValue(undefined)
       })
+
+      afterAll(() => {
+        findOne.mockResolvedValue(userData)
+      })
+
+      it("should throw an error", (): Test =>
+        request(app.getHttpServer())
+          .post(routes.signIn)
+          .send(signInData)
+          .expect(400)
+          .expect(HttpStatus.BAD_REQUEST))
     })
   })
 
   describe("when signing out", (): void => {
     describe("and user is not logged in", (): void => {
-      it("should throw an error", (): Test => {
-        return request(app.getHttpServer())
+      it("should throw an error", (): Test =>
+        request(app.getHttpServer())
           .post(routes.signOut)
           .send()
-          .expect(401)
-      })
+          .expect(401))
     })
   })
 
   describe("when requesting authenticated user", (): void => {
     describe("and user is not authorized", (): void => {
-      it("should throw an error", (): Test => {
-        return request(app.getHttpServer())
+      it("should throw an error", (): Test =>
+        request(app.getHttpServer())
           .get(routes.authentication)
           .send()
-          .expect(401)
-      })
+          .expect(401))
     })
   })
 })
