@@ -2,18 +2,61 @@ environment:
   nodejs_version: "6"
   COVERALLS_SERVICE_NAME: appveyor
   COVERALLS_GIT_BRANCH: APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH
+  GIT_BRANCH: APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH
+  GIT_COMMIT_SHA: APPVEYOR_REPO_COMMIT
 
-install:
-  - ps: Install-Product node 14.17
-  - npm run install:all
+  matrix:
+    - job_name: Api Tests
+      job_group: Tests
+    - job_name: Client Tests
+      job_group: Tests
+    - job_name: Deploy
+      job_depends_on: Tests
 
-test_script:
-  - npm run api:test:cov
-  - npm run api:test:integration
-  - npm run client:test:cov
+init:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 
-after_test:
-  - cd client && npm run upload:cov
-  - echo branch %COVERALLS_GIT_BRANCH%
+for:
+  -
+    matrix:
+      only:
+        - job_group: Tests
+    build: off
+    branches:
+      only:
+        - master
 
-build: off
+  -
+    matrix:
+      only:
+        - job_name: Api Tests
+    install:
+      - cd api && npm install
+    test_script:
+      - pwd
+      - npm run test:cov
+      - npm run test:integration
+    after_test:
+      - cd .. && ./cc-test-reporter after-build --prefix /api
+
+  -
+    matrix:
+      only:
+        - job_name: Client Tests
+    install:
+      - cd client && npm install
+    test_script:
+      - npm run test:cov
+    after_test:
+      - npm run upload:cov
+      - echo branch %COVERALLS_GIT_BRANCH%
+  
+  -
+    matrix:
+      only:
+        - job_name: Deploy
+    install:
+      - npm run install && cd client && npm install
+    build: off
