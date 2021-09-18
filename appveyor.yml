@@ -6,10 +6,13 @@ environment:
   GIT_COMMIT_SHA: APPVEYOR_REPO_COMMIT
 
   matrix:
+    - job_name: Tests Prepare
     - job_name: Api Tests
       job_group: Tests
+      job_depends_on: Tests
     - job_name: Client Tests
       job_group: Tests
+      job_depends_on: Tests
     - job_name: Deploy
       job_depends_on: Tests
 
@@ -17,11 +20,21 @@ for:
   -
     matrix:
       only:
-        - job_group: Tests
+        - job_name: Tests Prepare
     init:
       - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
       - chmod +x ./cc-test-reporter
-      - cc-test-reporter before-build
+      - ls
+      - ps: /cc-test-reporter before-build
+    build: off
+    branches:
+      only:
+        - master
+
+  -
+    matrix:
+      only:
+        - job_group: Tests
     build: off
     on_failure:
       - echo Failed
@@ -42,7 +55,7 @@ for:
       - npm run test:cov
       - npm run test:integration
     after_test:
-      - cd .. && cc-test-reporter after-build --prefix /api
+      - cd .. && /cc-test-reporter after-build --prefix /api
 
   -
     matrix:
