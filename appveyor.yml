@@ -36,12 +36,11 @@ for:
       - ./cc-test-reporter before-build -d
     test_script:
       - ps: echo dir $env:APPVEYOR_BUILD_FOLDER
-      - cd ..
-      - npm run api:test:cov
-      - npm run api:test:integration
+      - npm run test:cov
+      # - npm run test:integration
     after_test:
       - git status
-      - pwd && cd api && ls
+      - pwd && ls
       - ./cc-test-reporter after-build -d
       - ls && cd coverage && ls
     build: off
@@ -53,7 +52,7 @@ for:
     install:
       - cd client && npm install
     test_script:
-      - npm run client:test:cov
+      - npm run test:cov
     after_test:
       - git status && cd client
       - npm run upload:cov || true
