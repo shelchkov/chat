@@ -28,17 +28,16 @@ for:
     install:
       - cd api && npm install
     before_test:
-      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-      - chmod +x ./cc-test-reporter
-      - cd api
-      - ps: npm run prepare:cov
+      - cd api && curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      - pwd && chmod +x ./cc-test-reporter
+      - ps: ./cc-test-reporter before-build -d
     test_script:
       - npm run api:test:cov
       - npm run api:test:integration
     after_test:
       - git status
       - pwd && cd api && ls
-      - ps: npm run upload:cov
+      - ps: ./cc-test-reporter after-build -d
       - ls && cd coverage && ls
     build: off
 
@@ -53,7 +52,7 @@ for:
     after_test:
       - git status && cd client
       - pwd
-      - ps: npm run upload:cov
+      - cmd: npm run upload:cov
     build: off
   
   -
