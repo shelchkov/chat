@@ -20,7 +20,7 @@ environment:
     - job_name: Deploy
       # job_depends_on: Tests
 
-image: Ubuntu
+image: macOS
 
 for:
   -
@@ -54,7 +54,7 @@ for:
     test_script:
       - npm run test:cov
     after_test:
-      - git status && cd client
+      - git status
       - npm run upload:cov || true
     build: off
   
