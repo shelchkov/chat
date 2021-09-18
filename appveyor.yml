@@ -13,17 +13,20 @@ environment:
     - job_name: Deploy
       job_depends_on: Tests
 
-init:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
-
 for:
   -
     matrix:
       only:
         - job_group: Tests
+    init:
+      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      - chmod +x ./cc-test-reporter
+      - cc-test-reporter before-build
     build: off
+    on_failure:
+      - echo Failed
+    on_success:
+      - echo Success
     branches:
       only:
         - master
@@ -39,7 +42,7 @@ for:
       - npm run test:cov
       - npm run test:integration
     after_test:
-      - cd .. && ./cc-test-reporter after-build --prefix /api
+      - cd .. && cc-test-reporter after-build --prefix /api
 
   -
     matrix:
@@ -52,6 +55,7 @@ for:
     after_test:
       - npm run upload:cov
       - echo branch %COVERALLS_GIT_BRANCH%
+      - cd .. && git status
   
   -
     matrix:
@@ -59,4 +63,6 @@ for:
         - job_name: Deploy
     install:
       - npm run install && cd client && npm install
-    build: off
+    build_script:
+      - echo Build New tag
+    skip_non_tags: true
