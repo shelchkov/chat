@@ -33,15 +33,6 @@ for:
   -
     matrix:
       only:
-        - job_group: Tests
-    build: off
-    branches:
-      only:
-        - master
-
-  -
-    matrix:
-      only:
         - job_name: Api Tests
     install:
       - cd api && npm install
@@ -51,6 +42,7 @@ for:
       - npm run test:integration
     after_test:
       - ps: cd .. && ./cc-test-reporter after-build --prefix /api
+    build: off
 
   -
     matrix:
@@ -64,6 +56,7 @@ for:
       - npm run upload:cov
       - echo branch %COVERALLS_GIT_BRANCH%
       - cd .. && git status
+    build: off
   
   -
     matrix:
@@ -71,6 +64,12 @@ for:
         - job_name: Deploy
     install:
       - npm run install && cd client && npm install
+      - ps: cd .. && curl https://cli-assets.heroku.com/install.sh | sh
+      - ps: heroku --version
     build_script:
-      - echo Build New tag
+      - ps: echo Build New tag $env:APPVEYOR_REPO_TAG_NAME
+      - npm run build
+    after_build:
+      - ps: cd api && git init && git add . && git commit -m'Deploy $env:APPVEYOR_REPO_TAG_NAME'
+      - ps: git push -f https://heroku:$env:HEROKU_API_KEY@git.heroku.com/$env:HEROKU_APP_NAME.git
     skip_non_tags: true
