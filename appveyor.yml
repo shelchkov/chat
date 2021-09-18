@@ -6,8 +6,7 @@ environment:
   GIT_COMMIT_SHA: $(APPVEYOR_REPO_COMMIT)
   COVERALLS_REPO_TOKEN:
     secure: Gq6f8BxVwEemfL6miWIns4T24eQ1t77AApss4cYkZf4k4Kn/fEOtd9F0CVjjB+tj
-  CC_TEST_REPORTER_ID:
-    secure: hupCEUQXKNBOyVkIY15JakwRRcV3SoT8zEIGwQeMSA6gE86oYyuFgUJ6uzicxfpFwHSio7cWX/gt2z3vOxkynFmct8HKcV46E8GmxC4sdDo=
+  CC_TEST_REPORTER_ID: 6236cfcb1fda6970790e1494d8f2425235296d0a63bd449eaed95a18c6cb2257
   HEROKU_API_KEY:
     secure: jPWq020PLzj6m4aJkjSCJcXuwD/CYjSLNs1tPNPBRP8Hs5YvF0cGJCZR+X/BiSJL
   HEROKU_APP_NAME: peaceful-river-48954
@@ -18,7 +17,7 @@ environment:
     - job_name: Client Tests
       job_group: Tests
     - job_name: Deploy
-      # job_depends_on: Tests
+      job_depends_on: Tests
 
 image: macOS
 
@@ -42,6 +41,7 @@ for:
     after_test:
       - git status
       - pwd && ls
+      - ./cc-test-reporter after-build -d
       - ./cc-test-reporter after-build -d --id $CC_TEST_REPORTER_ID
       - ls && cd coverage && ls
     build: off
