@@ -33,6 +33,15 @@ for:
   -
     matrix:
       only:
+        - job_group: Tests
+    build: off
+    branches:
+      only:
+        - master
+
+  -
+    matrix:
+      only:
         - job_name: Api Tests
     install:
       - cd api && npm install
@@ -42,9 +51,6 @@ for:
       - npm run test:integration
     after_test:
       - ps: cd .. && ./cc-test-reporter after-build --prefix /api
-    on_failure:
-      - echo Exit code $?
-      - ps: cd .. && ./cc-test-reporter --exit-code $?
 
   -
     matrix:
