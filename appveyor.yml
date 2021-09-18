@@ -32,7 +32,7 @@ for:
       - cd api
       - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
       - pwd && chmod +x ./cc-test-reporter
-      - ps: ./cc-test-reporter before-build -d
+      - ./cc-test-reporter before-build -d
     test_script:
       - echo dir ${APPVEYOR_BUILD_FOLDER}
       - cd ..
@@ -41,7 +41,7 @@ for:
     after_test:
       - git status
       - pwd && cd api && ls
-      - ps: ./cc-test-reporter after-build -d
+      - ./cc-test-reporter after-build -d
       - ls && cd coverage && ls
     build: off
 
@@ -56,7 +56,7 @@ for:
     after_test:
       - git status && cd client
       - pwd
-      - cmd: npm run upload:cov
+      - npm run upload:cov || true
     build: off
   
   -
