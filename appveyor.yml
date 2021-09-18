@@ -31,7 +31,7 @@ for:
       - cd api && npm install
     before_test:
       - pwd
-      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-darwin-amd64 > ./cc-test-reporter
       - pwd && chmod +x ./cc-test-reporter
       - ./cc-test-reporter before-build -d
     test_script:
