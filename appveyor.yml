@@ -4,6 +4,13 @@ environment:
   COVERALLS_GIT_BRANCH: APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH
   GIT_BRANCH: APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH
   GIT_COMMIT_SHA: APPVEYOR_REPO_COMMIT
+  COVERALLS_REPO_TOKEN:
+    secure: Gq6f8BxVwEemfL6miWIns4T24eQ1t77AApss4cYkZf4k4Kn/fEOtd9F0CVjjB+tj
+  CC_TEST_REPORTER_ID:
+    secure: hupCEUQXKNBOyVkIY15JakwRRcV3SoT8zEIGwQeMSA6gE86oYyuFgUJ6uzicxfpFwHSio7cWX/gt2z3vOxkynFmct8HKcV46E8GmxC4sdDo=
+  HEROKU_API_KEY:
+    secure: jPWq020PLzj6m4aJkjSCJcXuwD/CYjSLNs1tPNPBRP8Hs5YvF0cGJCZR+X/BiSJL
+  HEROKU_APP_NAME: peaceful-river-48954
 
   matrix:
     - job_name: Tests Prepare
@@ -36,12 +43,13 @@ for:
         - job_name: Api Tests
     install:
       - cd api && npm install
+      - pwd
     test_script:
       - pwd
-      - npm run test:cov
-      - npm run test:integration
+      - npm run api:test:cov
+      - npm run api:test:integration
     after_test:
-      - ps: cd .. && ./cc-test-reporter after-build --prefix /api
+      - ps: ./cc-test-reporter after-build --prefix /api
     build: off
 
   -
@@ -51,9 +59,9 @@ for:
     install:
       - cd client && npm install
     test_script:
-      - npm run test:cov
+      - npm run client:test:cov
     after_test:
-      - npm run upload:cov
+      - cd client && npm run upload:cov
       - echo branch %COVERALLS_GIT_BRANCH%
       - cd .. && git status
     build: off
@@ -73,3 +81,5 @@ for:
       - ps: cd api && git init && git add . && git commit -m'Deploy $env:APPVEYOR_REPO_TAG_NAME'
       - ps: git push -f https://heroku:$env:HEROKU_API_KEY@git.heroku.com/$env:HEROKU_APP_NAME.git
     skip_non_tags: true
+
+skip_branch_with_pr: true
