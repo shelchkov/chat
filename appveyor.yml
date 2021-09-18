@@ -37,8 +37,8 @@ for:
     after_test:
       - git status
       - pwd && cd api && ls
-      - ps: (ls) -and (../cc-test-reporter after-build -d --coverage-input-type lcov)
-      - ls && cd api && ls && cd coverage && ls
+      - ps: ../cc-test-reporter after-build -d --coverage-input-type lcov
+      - ls && cd coverage && ls
     build: off
 
   -
@@ -51,6 +51,7 @@ for:
       - npm run client:test:cov
     after_test:
       - git status
+      - pwd
       - ps: (cd client) -and (ls) -and (npm run upload:cov)
     build: off
   
