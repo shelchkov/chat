@@ -30,15 +30,14 @@ for:
     before_test:
       - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
       - chmod +x ./cc-test-reporter
-      - ps: .\cc-test-reporter before-build -d
+      - cd api && npm run prepare:cov
     test_script:
       - npm run api:test:cov
       - npm run api:test:integration
     after_test:
       - git status
       - pwd && cd api && ls
-      - ps: ..\cc-test-reporter format-coverage -d
-      - ps: ..\cc-test-reporter upload-coverage -d
+      - ps: npm run upload:cov
       - ls && cd coverage && ls
     build: off
 
@@ -51,9 +50,9 @@ for:
     test_script:
       - npm run client:test:cov
     after_test:
-      - git status
+      - git status && cd client
       - pwd
-      - ps: (cd client) -and (ls) -and (npm run upload:cov)
+      - ps: npm run upload:cov
     build: off
   
   -
