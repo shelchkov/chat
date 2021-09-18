@@ -35,13 +35,16 @@ for:
       - pwd && chmod +x ./cc-test-reporter
       - ./cc-test-reporter before-build -d
     test_script:
-      - ps: echo dir $env:APPVEYOR_BUILD_FOLDER
+      - echo dir %APPVEYOR_BUILD_FOLDER%
+      - echo dir $APPVEYOR_BUILD_FOLDER
+      - echo dir $(APPVEYOR_BUILD_FOLDER)
+      - echo dir ${APPVEYOR_BUILD_FOLDER}
       - npm run test:cov
       # - npm run test:integration
     after_test:
       - git status
       - pwd && ls
-      - ./cc-test-reporter after-build -d
+      - ps: ./cc-test-reporter after-build -d --id $env:CC_TEST_REPORTER_ID
       - ls && cd coverage && ls
     build: off
 
