@@ -36,7 +36,9 @@ for:
       - npm run api:test:integration
     after_test:
       - ls && git status
-      - ps: ./cc-test-reporter after-build --prefix /api
+      - ps: ./cc-test-reporter format-coverage /api/coverage/lcov.info
+      - ls && git status
+      - ps: ./cc-test-reporter upload-coverage
     build: off
 
   -
@@ -48,11 +50,8 @@ for:
     test_script:
       - npm run client:test:cov
     after_test:
-      - echo branch %COVERALLS_GIT_BRANCH%
-      - echo branch $(APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH)
-      - echo name {APPVEYOR_PROJECT_NAME}
-      - echo branch job {{APPVEYOR_JOB_NAME}}
-      - ps: echo commit sha $env:GIT_COMMIT_SHA
+      - echo commit sha %GIT_COMMIT_SHA%
+      - ps: echo branch $env:GIT_BRANCH
       - git status
       - cd client && npm run upload:cov
     build: off
