@@ -1,9 +1,9 @@
 environment:
   nodejs_version: "6"
   COVERALLS_SERVICE_NAME: appveyor
-  COVERALLS_GIT_BRANCH: $APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH
-  GIT_BRANCH: $APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH
-  GIT_COMMIT_SHA: $APPVEYOR_REPO_COMMIT
+  COVERALLS_GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
+  GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
+  GIT_COMMIT_SHA: $(APPVEYOR_REPO_COMMIT)
   COVERALLS_REPO_TOKEN:
     secure: Gq6f8BxVwEemfL6miWIns4T24eQ1t77AApss4cYkZf4k4Kn/fEOtd9F0CVjjB+tj
   CC_TEST_REPORTER_ID:
@@ -49,8 +49,10 @@ for:
       - npm run client:test:cov
     after_test:
       - echo branch %COVERALLS_GIT_BRANCH%
-      - echo branch %GIT_BRANCH%
-      - echo branch %GIT_COMMIT_SHA%
+      - echo branch $(APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH)
+      - echo name {APPVEYOR_PROJECT_NAME}
+      - echo branch job {{APPVEYOR_JOB_NAME}}
+      - ps: echo commit sha $env:GIT_COMMIT_SHA
       - git status
       - cd client && npm run upload:cov
     build: off
