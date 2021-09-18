@@ -8,6 +8,7 @@ import { Button } from "../button/button"
 import { getUsersSearchInput } from "../../utils/api-utils"
 import { ButtonTypes } from "../../utils/enums"
 import { User } from "../../utils/interfaces"
+import { validationRules } from "../../utils/utils"
 
 interface Props {
 	updateUsersList: (users?: User[] | null) => void
@@ -57,10 +58,7 @@ export const AddFriendForm = ({
 				name="addFriend"
 				placeholder="Search Users"
 				isAddFriendForm
-				reference={register({
-					required: true,
-					validate: (value): boolean => !!value.trim(),
-				})}
+				reference={register(validationRules)}
 				onChange={handleEmptyInput}
 			/>
 			<Button text="Search" isMessagesPage type={ButtonTypes.SUBMIT} />

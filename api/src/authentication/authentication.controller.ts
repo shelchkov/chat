@@ -8,12 +8,15 @@ import {
   Res,
   Get,
 } from "@nestjs/common"
+import { Response } from "express"
+
+import { removePasswords } from "../utils/utils"
+import User from "../users/user.entity"
+
 import { SignUpDto } from "./dto/signUp.dto"
 import { AuthenticationService } from "./authentication.service"
-import User from "../users/user.entity"
 import { LocalAuthenticationGuard } from "./localAuthentication.guard"
 import RequestWithUser from "./requestWithUser.interface"
-import { Response } from "express"
 import JwtAuthenticationGuard from "./jwt-authentication.guard"
 
 @Controller("authentication")
@@ -44,10 +47,7 @@ export class AuthenticationController {
     const user = request.user
     const cookie = this.authenticationService.getCookieWithJwtToken(user.id)
     response.setHeader("Set-Cookie", cookie)
-
-    user.friends = user.friends.map((friend): User & {
-      password?: string
-    } => ({ ...friend, password: undefined }))
+    user.friends = removePasswords(user.friends)
 
     response.send(user)
   }
@@ -68,9 +68,7 @@ export class AuthenticationController {
   @Get()
   authenticate(@Req() request: RequestWithUser): User {
     const user = request.user
-    user.friends = user.friends.map((friend): User & {
-      password?: string
-    } => ({ ...friend, password: undefined }))
+    user.friends = removePasswords(user.friends)
 
     return { ...user, password: undefined }
   }
