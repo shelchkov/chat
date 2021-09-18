@@ -13,13 +13,10 @@ environment:
   HEROKU_APP_NAME: peaceful-river-48954
 
   matrix:
-    - job_name: Tests Prepare
     - job_name: Api Tests
       job_group: Tests
-      job_depends_on: Tests Prepare
     - job_name: Client Tests
       job_group: Tests
-      job_depends_on: Tests Prepare
     - job_name: Deploy
       job_depends_on: Tests
 
@@ -27,28 +24,18 @@ for:
   -
     matrix:
       only:
-        - job_name: Tests Prepare
+        - job_name: Api Tests
+    install:
+      - cd api && npm install
     before_test:
       - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
       - chmod +x ./cc-test-reporter
       - ps: ./cc-test-reporter before-build
-    build: off
-    branches:
-      only:
-        - master
-
-  -
-    matrix:
-      only:
-        - job_name: Api Tests
-    install:
-      - cd api && npm install
-      - pwd
     test_script:
-      - pwd
       - npm run api:test:cov
       - npm run api:test:integration
     after_test:
+      - ls && git status
       - ps: ./cc-test-reporter after-build --prefix /api
     build: off
 
@@ -61,9 +48,9 @@ for:
     test_script:
       - npm run client:test:cov
     after_test:
-      - cd client && npm run upload:cov
       - echo branch %COVERALLS_GIT_BRANCH%
-      - cd .. && git status
+      - git status
+      - cd client && npm run upload:cov
     build: off
   
   -
@@ -72,7 +59,7 @@ for:
         - job_name: Deploy
     install:
       - npm run install && cd client && npm install
-      - ps: cd .. && curl https://cli-assets.heroku.com/install.sh | sh
+      - ps: curl https://cli-assets.heroku.com/install.sh | sh
       - ps: heroku --version
     build_script:
       - ps: echo Build New tag $env:APPVEYOR_REPO_TAG_NAME
