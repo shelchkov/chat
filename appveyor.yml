@@ -36,7 +36,7 @@ for:
       - npm run api:test:integration
     after_test:
       - git status
-      - cmd: cd api && ../cc-test-reporter after-build -d --coverage-input-type lcov
+      - ps: (cd api) -and (../cc-test-reporter after-build -d --coverage-input-type lcov)
       - cd api/coverage && ls
     build: off
 
