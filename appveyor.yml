@@ -9,10 +9,10 @@ environment:
     - job_name: Tests Prepare
     - job_name: Api Tests
       job_group: Tests
-      job_depends_on: Tests
+      job_depends_on: Tests Prepare
     - job_name: Client Tests
       job_group: Tests
-      job_depends_on: Tests
+      job_depends_on: Tests Prepare
     - job_name: Deploy
       job_depends_on: Tests
 
@@ -42,6 +42,9 @@ for:
       - npm run test:integration
     after_test:
       - ps: cd .. && ./cc-test-reporter after-build --prefix /api
+    on_failure:
+      - echo Exit code $?
+      - ps: cd .. && ./cc-test-reporter --exit-code $?
 
   -
     matrix:
