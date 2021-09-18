@@ -35,8 +35,8 @@ for:
       - npm run api:test:cov
       - npm run api:test:integration
     after_test:
-      - ls && git status
-      - ps: cd api && ../cc-test-reporter after-build -d --coverage-input-type lcov
+      - git status
+      - cmd: cd api && ../cc-test-reporter after-build -d --coverage-input-type lcov
       - cd api/coverage && ls
     build: off
 
@@ -49,10 +49,8 @@ for:
     test_script:
       - npm run client:test:cov
     after_test:
-      - echo commit sha %GIT_COMMIT_SHA%
-      - ps: echo branch $env:GIT_BRANCH
       - git status
-      - ps: cd client && npm run upload:cov
+      - ps: (cd client) -and (npm run upload:cov)
     build: off
   
   -
