@@ -37,7 +37,8 @@ for:
     after_test:
       - git status
       - pwd && cd api && ls
-      - ps: ../cc-test-reporter after-build -d --coverage-input-type lcov
+      - ps: ../cc-test-reporter format-coverage -d
+      - ps: ../cc-test-reporter upload-coverage -d
       - ls && cd coverage && ls
     build: off
 
