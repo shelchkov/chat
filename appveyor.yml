@@ -14,7 +14,7 @@ environment:
   GIT_USER_EMAIL: shelchkovy@yandex.ru
   GIT_USER_NAME: Yaroslav Shelchkov
   REACT_APP_API_URL: /
-  REACT_APP_SOCKET_URL: wss://${HEROKU_APP_NAME}.herokuapp.com
+  REACT_APP_SOCKET_URL: wss://${HEROKU_APP_NAME}.herokuapp.com/events
 
   matrix:
     - job_name: Api Tests
