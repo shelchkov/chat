@@ -74,7 +74,7 @@ for:
       - heroku --version
       - cd ..
     build_script:
-      - echo api "${API_URL}""
+      - echo api "${API_URL}"
       - echo socket url ${SOCKET_URL}
       - npm run build
     after_build:
