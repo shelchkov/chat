@@ -12,4 +12,4 @@
 /.DS_Store
 
 # Tools
-/cc-test-reporter
+cc-test-reporter

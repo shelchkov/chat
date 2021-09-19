@@ -20,6 +20,7 @@ environment:
       job_depends_on: Tests
 
 image: macOS
+skip_branch_with_pr: true
 
 for:
   -
@@ -29,21 +30,15 @@ for:
     install:
       - cd api && npm install
     before_test:
-      - pwd
-      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-darwin-amd64 > ./cc-test-reporter
-      - pwd && chmod +x ./cc-test-reporter
-      - ./cc-test-reporter before-build -d
+      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-darwin-amd64 > ./cc-test-reporter || true
+      - chmod +x ./cc-test-reporter || true
+      - ./cc-test-reporter before-build -d || true
     test_script:
-      - echo reporter id $CC_TEST_REPORTER_ID
-      - echo dir ${APPVEYOR_BUILD_FOLDER}
       - npm run test:cov
-      # - npm run test:integration
+      - npm run test:integration
     after_test:
+      - ./cc-test-reporter after-build -d || true
       - git status
-      - pwd && ls
-      - ./cc-test-reporter after-build -d
-      - ./cc-test-reporter after-build -d --id $CC_TEST_REPORTER_ID
-      - ls && cd coverage && ls
     build: off
 
   -
@@ -64,9 +59,9 @@ for:
       only:
         - job_name: Deploy
     install:
-      - npm run install && cd client && npm install
-      - ps: curl https://cli-assets.heroku.com/install.sh | sh
-      - ps: heroku --version
+      - npm install && cd client && npm install
+      - curl https://cli-assets.heroku.com/install.sh | sh
+      - heroku --version
     build_script:
       - ps: echo Build New tag $env:APPVEYOR_REPO_TAG_NAME
       - npm run build
@@ -74,5 +69,3 @@ for:
       - ps: cd api && git init && git add . && git commit -m'Deploy $env:APPVEYOR_REPO_TAG_NAME'
       - ps: git push -f https://heroku:$env:HEROKU_API_KEY@git.heroku.com/$env:HEROKU_APP_NAME.git
     skip_non_tags: true
-
-skip_branch_with_pr: true
