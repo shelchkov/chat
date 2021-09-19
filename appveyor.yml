@@ -10,6 +10,8 @@ environment:
   HEROKU_API_KEY:
     secure: jPWq020PLzj6m4aJkjSCJcXuwD/CYjSLNs1tPNPBRP8Hs5YvF0cGJCZR+X/BiSJL
   HEROKU_APP_NAME: peaceful-river-48954
+  CC_TEST_REPORTER: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+  HEROKU_CLI: https://cli-assets.heroku.com/install.sh
 
   matrix:
     - job_name: Api Tests
@@ -31,10 +33,9 @@ for:
       - api/node_modules -> api/package-lock.json
     install:
       - nvm use ${NODE_VERSION}
-      - node -v && npm -v
       - cd api && npm install
     before_test:
-      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-darwin-amd64 > ./cc-test-reporter || true
+      - curl -L ${CC_TEST_REPORTER} > ./cc-test-reporter || true
       - chmod +x ./cc-test-reporter || true
       - ./cc-test-reporter before-build || true
     test_script:
@@ -65,9 +66,8 @@ for:
         - job_name: Deploy
     install:
       - nvm use ${NODE_VERSION}
-      - node -v && npm -v
       - npm install && cd client && npm install
-      - curl https://cli-assets.heroku.com/install.sh | sh
+      - curl ${HEROKU_CLI} | sh
       - heroku --version
       - cd ..
     build_script:
