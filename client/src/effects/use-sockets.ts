@@ -27,41 +27,33 @@ export const useSockets = (): SocketsProps => {
 
 		const ws = new WebSocket(socketUrl)
 
-		ws.onmessage = (event): void => {
-			const data = JSON.parse(event.data)
-
-			setData(data)
-		}
+		ws.onmessage = (event): void => setData(JSON.parse(event.data))
 
 		let timer: number | null
 
 		ws.onclose = (): void => {
-			if (timer === null) {
-				return
+			if (timer !== null) {
+				timer = setTimeout(
+					(): void => setconnectionsNumber(connectionsNumber + 1),
+					closeTimeout * connectionsNumber,
+				)
 			}
-
-			timer = setTimeout(
-				(): void => setconnectionsNumber(connectionsNumber + 1),
-				closeTimeout * connectionsNumber,
-			)
 		}
 
 		return (): void => {
 			ws.close()
 
 			if (timer) {
-				clearTimeout(timer)
-			} else {
-				timer = null
+				return clearTimeout(timer)
 			}
+			
+			timer = null
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [connectionsNumber])
 
 	useEffect((): (() => void) => {
-		return (): void => {
-			setconnectionsNumber(0)
-		}
+		return (): void => setconnectionsNumber(0)
 	}, [])
 
 	return { data }

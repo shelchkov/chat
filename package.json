@@ -10,12 +10,12 @@
     "dev": "concurrently --kill-others-on-fail \"npm run api\" \"npm run client\"",
     "lint": "cd api && npm run format && npm run lint && cd ../client && npm run format && npm run lint:fix",
     "build": "npm run client:build && node tools/build.js",
-    "client:build": "cd client && npm run build",
     "api:test:cov": "cd api && npm run test:cov",
     "api:test:integration": "cd api && npm run test:integration",
     "client:test:cov": "cd client && npm run test:cov",
     "client": "cd client && npm start",
     "api": "cd api && npm run start:dev",
+    "client:build": "cd client && npm run build",
     "postclient:build": "tsc --project tsconfig.build.json",
     "prebuild": "rm -rf api/src/static && rm -rf deploy",
     "postbuild": "echo 'web: npm run start:prod' > deploy/Procfile"

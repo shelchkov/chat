@@ -15,6 +15,8 @@ describe("UsersService", (): void => {
   const find = jest.fn()
   const save = jest.fn()
 
+  const findOneMockUser = (user: User | undefined) => findOne.mockResolvedValue(user)
+
   beforeAll(
     async (): Promise<void> => {
       const usersRepository = { findOne, create, find, save }
@@ -40,7 +42,7 @@ describe("UsersService", (): void => {
       const user = new User()
 
       beforeAll((): void => {
-        findOne.mockResolvedValue(user)
+        findOneMockUser(user)
       })
 
       it("should return the user", async (): Promise<void> => {
@@ -52,7 +54,7 @@ describe("UsersService", (): void => {
 
     describe("and the user is not matched", (): void => {
       beforeAll((): void => {
-        findOne.mockReturnValue(undefined)
+        findOneMockUser(undefined)
       })
 
       it("should throw an error", async (): Promise<void> => {
@@ -82,7 +84,7 @@ describe("UsersService", (): void => {
 
     describe("and user is not found", (): void => {
       beforeAll((): void => {
-        findOne.mockResolvedValue(undefined)
+        findOneMockUser(undefined)
       })
 
       it("should return found user", async (): Promise<void> => {
@@ -92,7 +94,7 @@ describe("UsersService", (): void => {
 
     describe("and user is found", (): void => {
       beforeAll((): void => {
-        findOne.mockResolvedValue(user)
+        findOneMockUser(user)
       })
 
       it("returns the user", async (): Promise<void> => {
@@ -149,7 +151,7 @@ describe("UsersService", (): void => {
         const friend = new User()
         friend.id = friendId
         user.friends = [friend]
-        findOne.mockResolvedValue(user)
+        findOneMockUser(user)
       })
 
       it("should throw an error", async (): Promise<void> => {
@@ -165,7 +167,7 @@ describe("UsersService", (): void => {
       user.friends = []
 
       beforeAll((): void => {
-        findOne.mockResolvedValue(user)
+        findOneMockUser(user)
       })
 
       it("should return user with new friend", async (): Promise<void> => {
@@ -186,7 +188,7 @@ describe("UsersService", (): void => {
       beforeAll((): void => {
         const user = new User()
         user.friends = []
-        findOne.mockResolvedValue(user)
+        findOneMockUser(user)
       })
 
       it("should return undefined", async (): Promise<void> => {
@@ -205,7 +207,7 @@ describe("UsersService", (): void => {
       user.friends = [friend]
 
       beforeAll((): void => {
-        findOne.mockResolvedValue(user)
+        findOneMockUser(user)
       })
 
       it("should return friend", async (): Promise<void> => {

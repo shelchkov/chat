@@ -3,9 +3,13 @@
 /api/node_modules
 /client/node_modules
 
-/.DS_Store
-
 # build
 /client/build
 /api/src/static
 /tools/*.js
+
+# OS files
+/.DS_Store
+
+# Tools
+cc-test-reporter
