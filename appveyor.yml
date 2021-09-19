@@ -31,7 +31,8 @@ for:
       - api/node_modules -> api/package-lock.json
     install:
       - node -v && npm -v
-      - ps: Install-Product node $env:NODE_VERSION
+      - nvm ls-remote
+      - nvm use 14.17
       - node -v && npm -v
       - cd api && npm install
     before_test:
