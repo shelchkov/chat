@@ -1,5 +1,5 @@
 environment:
-  nodejs_version: "6"
+  NODE_VERSION: "14.17"
   COVERALLS_SERVICE_NAME: appveyor
   COVERALLS_GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
   GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
@@ -19,7 +19,7 @@ environment:
     - job_name: Deploy
       job_depends_on: Tests
 
-image: macOS
+image: Ubuntu2004
 skip_branch_with_pr: true
 
 for:
@@ -30,16 +30,20 @@ for:
     cache:
       - api/node_modules -> api/package-lock.json
     install:
+      - node -v && npm -v
+      - nvm ls-remote
+      - nvm use 14.17
+      - node -v && npm -v
       - cd api && npm install
     before_test:
       - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-darwin-amd64 > ./cc-test-reporter || true
       - chmod +x ./cc-test-reporter || true
-      - ./cc-test-reporter before-build -d || true
+      - ./cc-test-reporter before-build || true
     test_script:
       - npm run test:cov
       - npm run test:integration
     after_test:
-      - ./cc-test-reporter after-build -d || true
+      - ./cc-test-reporter after-build || true
       - git status
     build: off
 
@@ -48,6 +52,7 @@ for:
       only:
         - job_name: Client Tests
     install:
+      - node -v && npm -v
       - cd client && npm install
     test_script:
       - npm run test:cov
@@ -61,14 +66,15 @@ for:
       only:
         - job_name: Deploy
     install:
+      - ps: Install-Product node $env:NODE_VERSION
+      - node -v && npm -v
       - npm install && cd client && npm install
       - curl https://cli-assets.heroku.com/install.sh | sh
       - heroku --version
+      - cd ..
     build_script:
-      - echo Building new tag $(APPVEYOR_REPO_TAG_NAME)
-      - echo Building new tag ${APPVEYOR_REPO_TAG_NAME}
       - npm run build
     after_build:
-      - ps: cd ../api && git init && git add . && git commit -m'Deploy $env:APPVEYOR_REPO_TAG_NAME'
-      - ps: git push -f https://heroku:$env:HEROKU_API_KEY@git.heroku.com/$env:HEROKU_APP_NAME.git
+      - cd api && git init && git add . && git commit -m'Deploy ${APPVEYOR_REPO_TAG_NAME}'
+      - git push -f https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP_NAME}.git
     skip_non_tags: true

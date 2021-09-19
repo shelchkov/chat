@@ -17,8 +17,8 @@
     "api": "cd api && npm run start:dev",
     "client:build": "cd client && npm run build",
     "postclient:build": "tsc --project tsconfig.build.json",
-    "prebuild": "rm -rf api/src/static && rm -rf deploy",
-    "postbuild": "echo 'web: npm run start:prod' > deploy/Procfile",
+    "prebuild": "rm -rf api/src/static",
+    "postbuild": "echo 'web: npm run start:prod' > api/Procfile",
     "postversion": "git push && git push --tags"
   },
   "repository": {
