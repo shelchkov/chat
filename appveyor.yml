@@ -13,7 +13,7 @@ environment:
   CC_TEST_REPORTER: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
   GIT_USER_EMAIL: shelchkovy@yandex.ru
   GIT_USER_NAME: Yaroslav Shelchkov
-  API_URL: ""
+  API_URL: /
   SOCKET_URL: wss://${HEROKU_APP_NAME}.herokuapp.com
 
   matrix:
@@ -74,8 +74,6 @@ for:
       - heroku --version
       - cd ..
     build_script:
-      - echo api "${API_URL}"
-      - echo socket url ${SOCKET_URL}
       - npm run build
     after_build:
       - cd api && git init && git config user.email "${GIT_USER_EMAIL}" && git config user.name "${GIT_USER_NAME}"
