@@ -12,5 +12,4 @@
 
 ## Deployment
 
-1. Run `npm run build`;
-2. Deploy api.
+1. Run `npm version patch`.

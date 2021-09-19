@@ -90,6 +90,11 @@ describe("MessagesService", (): void => {
     describe("and user is added to friends", (): void => {
       beforeEach(() => {
         sendMessageToUser.mockClear()
+        getUsersFriend.mockResolvedValue(userData.friends[0])
+      })
+
+      afterAll(() => {
+        getUsersFriend.mockReset()
       })
 
       it("should create new message", async (): Promise<void> => {

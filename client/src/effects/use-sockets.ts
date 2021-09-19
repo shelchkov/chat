@@ -46,7 +46,7 @@ export const useSockets = (): SocketsProps => {
 			if (timer) {
 				return clearTimeout(timer)
 			}
-			
+
 			timer = null
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
