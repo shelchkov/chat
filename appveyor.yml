@@ -12,6 +12,8 @@ environment:
   HEROKU_APP_NAME: peaceful-river-48954
   CC_TEST_REPORTER: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
   HEROKU_CLI: https://cli-assets.heroku.com/install.sh
+  GIT_USER_EMAIL: shelchkovy@yandex.ru
+  GIT_USER_NAME: Yaroslav Shelchkov
 
   matrix:
     - job_name: Api Tests
@@ -73,6 +75,7 @@ for:
     build_script:
       - npm run build
     after_build:
-      - cd api && git init && git add . && git commit -m'Deploy ${APPVEYOR_REPO_TAG_NAME}'
+      - cd api && git init && git config user.email "${GIT_USER_EMAIL}" && git config user.name "${GIT_USER_NAME}"
+      - git add . && git commit -m'Deploy ${APPVEYOR_REPO_TAG_NAME}'
       - git push -f https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP_NAME}.git
     skip_non_tags: true
