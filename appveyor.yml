@@ -1,5 +1,5 @@
 environment:
-  nodejs_version: "6"
+  NODE_VERSION: "14.17"
   COVERALLS_SERVICE_NAME: appveyor
   COVERALLS_GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
   GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
@@ -21,6 +21,10 @@ environment:
 
 image: Ubuntu2004
 skip_branch_with_pr: true
+
+init:
+  - node -v && npm -v
+  - ps: Install-Product node $env:NODE_VERSION
 
 for:
   -
