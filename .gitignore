@@ -7,6 +7,7 @@
 /client/build
 /api/src/static
 /tools/*.js
+/api/Procfile
 
 # OS files
 /.DS_Store
