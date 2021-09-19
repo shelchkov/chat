@@ -15,7 +15,7 @@ const options =
         credentials: true,
         origin: devClientUrl,
       }
-      
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
 

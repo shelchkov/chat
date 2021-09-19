@@ -27,6 +27,8 @@ for:
     matrix:
       only:
         - job_name: Api Tests
+    cache:
+      - api/node_modules -> api/package-lock.json
     install:
       - cd api && npm install
     before_test:
@@ -63,9 +65,10 @@ for:
       - curl https://cli-assets.heroku.com/install.sh | sh
       - heroku --version
     build_script:
-      - ps: echo Build New tag $env:APPVEYOR_REPO_TAG_NAME
+      - echo Building new tag $(APPVEYOR_REPO_TAG_NAME)
+      - echo Building new tag ${APPVEYOR_REPO_TAG_NAME}
       - npm run build
     after_build:
-      - ps: cd api && git init && git add . && git commit -m'Deploy $env:APPVEYOR_REPO_TAG_NAME'
+      - ps: cd ../api && git init && git add . && git commit -m'Deploy $env:APPVEYOR_REPO_TAG_NAME'
       - ps: git push -f https://heroku:$env:HEROKU_API_KEY@git.heroku.com/$env:HEROKU_APP_NAME.git
     skip_non_tags: true

@@ -1,4 +1,5 @@
 import { ValidationRules } from "react-hook-form"
+
 import { User } from "./interfaces"
 
 export const getSignedOutInputWidth = (
@@ -54,6 +55,12 @@ export const splitUsers = (users: User[]) =>
 		},
 	)
 
-export const validationRules: ValidationRules = { required: true,	validate: (value): boolean => !!value.trim() }
+export const validationRules: ValidationRules = {
+	required: true,
+	validate: (value): boolean => !!value.trim(),
+}
 
-export const passwordValidationRules = { ...validationRules, minLength: 6 }
+export const passwordValidationRules = {
+	...validationRules,
+	minLength: 6,
+}

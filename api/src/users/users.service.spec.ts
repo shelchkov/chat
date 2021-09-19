@@ -15,7 +15,8 @@ describe("UsersService", (): void => {
   const find = jest.fn()
   const save = jest.fn()
 
-  const findOneMockUser = (user: User | undefined) => findOne.mockResolvedValue(user)
+  const findOneMockUser = (user: User | undefined) =>
+    findOne.mockResolvedValue(user)
 
   beforeAll(
     async (): Promise<void> => {
