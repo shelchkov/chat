@@ -15,7 +15,9 @@ describe("main page", (): void => {
 
 	beforeEach((): void => {
 		user = { name: "UserName" }
-		mainPage = shallow(<MainPage handleSignOut={noop} user={user as User} />)
+		mainPage = shallow(
+			<MainPage handleSignOut={noop} user={user as User} />,
+		)
 		close = jest.fn()
 		webSocket = jest.fn().mockImplementation(() => ({ close }))
 		;(global.WebSocket as any) = webSocket
@@ -23,7 +25,9 @@ describe("main page", (): void => {
 
 	describe("renders passed data", (): void => {
 		it("should render user's name", (): void => {
-			expect(mainPage.text()).toEqual(expect.stringMatching(user.name || ""))
+			expect(mainPage.text()).toEqual(
+				expect.stringMatching(user.name || ""),
+			)
 		})
 
 		it("should render sign out button", (): void => {
@@ -56,14 +60,19 @@ describe("main page", (): void => {
 			setTimeout((): void => {
 				;(webSocket as any).invoke("onmessage")({ data: newMessage })
 
-				const props = mainPage.props() as { friends: User[], newMessage: Message, onlineFriends: number[] }
+				const props = mainPage.props() as {
+					friends: User[]
+					newMessage: Message
+					onlineFriends: number[]
+				}
 				const sender = props.friends.find(
 					(friend) => friend.id === newMessage.from,
 				)
 
 				expect(props.newMessage).toEqual(newMessage)
 
-				if (user.friends && 
+				if (
+					user.friends &&
 					!user.friends.find(
 						(friend): boolean => friend.id === newMessage.from,
 					)
@@ -97,9 +106,13 @@ describe("main page", (): void => {
 			const newOnlineUser = 3
 
 			setTimeout((): void => {
-				;(webSocket as any).invoke("newMessage")({ data: newOnlineUser })
+				;(webSocket as any).invoke("newMessage")({
+					data: newOnlineUser,
+				})
 				expect(
-					(mainPage.prop("onlineFriends") as number[]).indexOf(newOnlineUser),
+					(mainPage.prop("onlineFriends") as number[]).indexOf(
+						newOnlineUser,
+					),
 				).not.toEqual(-1)
 			})
 		})

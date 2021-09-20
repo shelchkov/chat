@@ -1,19 +1,19 @@
 import React, { ReactElement, useEffect, useState } from "react"
 import styled from "styled-components"
+
 import { useRequest } from "../../effects/use-request"
-
-import { MessagesListAndForm, Loading } from "./messages-list-and-form"
-
 import { getUsersMessagesInput } from "../../utils/api-utils"
 import { Message, User } from "../../utils/interfaces"
 
+import { MessagesListAndForm, Loading } from "./messages-list-and-form"
+
 interface Props {
-	selectedUser?: User
 	isSearching: boolean
 	user: User | undefined
 	newMessage: Message | undefined
-	addNewFriend: (userId: number) => void
+	selectedUser?: User
 	isMobile?: boolean
+	addNewFriend: (userId: number) => void
 	showUsersList?: () => void
 }
 
@@ -106,7 +106,7 @@ export const MessagesList = ({
 					error={error}
 					isLoading={isLoading}
 					addMessage={addMessage}
-					shouldShowBackBtn={isMobile}
+					isMobile={isMobile}
 					showUsersList={showUsersList}
 				/>
 			)}

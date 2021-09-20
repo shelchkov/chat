@@ -11,15 +11,15 @@ interface Props {
 	selectedUser: User | undefined
 	isLoading: boolean
 	error?: string
+	isMobile?: boolean
 	addMessage: (message: Message) => void
-	shouldShowBackBtn?: boolean
 	showUsersList?: () => void
 }
 
-const MessagesListContent = styled.div<{ shouldShowBackBtn?: boolean }>`
+const MessagesListContent = styled.div<{ isMobile?: boolean }>`
 	padding: 0.6rem 0.6rem 0.4rem 0.6rem;
 	overflow-y: auto;
-	${(p): string => (p.shouldShowBackBtn ? "height: 100%;" : "")}
+	${(p): string => (p.isMobile ? "height: 100%;" : "")}
 `
 
 interface CustomMessageContainerProps {
@@ -77,7 +77,7 @@ export const MessagesListAndForm = ({
 	isLoading,
 	error,
 	addMessage,
-	shouldShowBackBtn,
+	isMobile,
 	showUsersList,
 }: Props): ReactElement => {
 	const messagesListRef = createRef<HTMLDivElement>()
@@ -95,7 +95,7 @@ export const MessagesListAndForm = ({
 
 	return (
 		<>
-			{shouldShowBackBtn && (
+			{isMobile && (
 				<BackButtonContainer>
 					<BackButton onClick={showUsersList}>
 						{backButtonText}
@@ -104,10 +104,7 @@ export const MessagesListAndForm = ({
 				</BackButtonContainer>
 			)}
 
-			<MessagesListContent
-				ref={messagesListRef}
-				shouldShowBackBtn={shouldShowBackBtn}
-			>
+			<MessagesListContent ref={messagesListRef} isMobile={isMobile}>
 				{messages && messages.length > 0 ? (
 					messages.map(
 						(message: Message): ReactElement => (
@@ -137,6 +134,7 @@ export const MessagesListAndForm = ({
 				error={error}
 				selectedUserId={selectedUser && selectedUser.id}
 				addMessage={addMessage}
+				isMobile={isMobile}
 			/>
 		</>
 	)
