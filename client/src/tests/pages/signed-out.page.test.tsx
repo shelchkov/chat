@@ -1,5 +1,5 @@
 import React from "react"
-import { shallow } from "enzyme"
+import { shallow, ShallowWrapper } from "enzyme"
 
 import { SignedOutPage } from "../../pages/signed-out.page"
 import { SignInForm } from "../../components/sign-forms/sign-in-form"
@@ -11,15 +11,16 @@ const signIn = "Sign in"
 const signedOutText = "Fill out fields below to sign into your account"
 
 describe("signed out page", (): void => {
-	let signedOutPage
+	let signedOutPage: ShallowWrapper<any, any>
 
 	beforeEach((): void => {
 		signedOutPage = shallow(<SignedOutPage setUser={noop} />)
 	})
 
 	describe("when clicking on switch", (): void => {
-		const clickSwitch = (): void =>
+		const clickSwitch = (): void => {
 			signedOutPage.find("#signed-out-switch").simulate("click")
+		}
 
 		it("changes switch text", (): void => {
 			expect(signedOutPage.contains(createAccount)).toEqual(true)

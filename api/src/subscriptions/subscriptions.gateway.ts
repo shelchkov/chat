@@ -12,7 +12,7 @@ import { SubscriptionsService } from "./subscriptions.service"
 
 const options: Record<string, string | number> = { path: "/events" }
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV !== "production") {
   options.port = 8080
 }
 

@@ -17,5 +17,6 @@
     "resolveJsonModule": true,
     "jsx": "react",
   },
-  "include": ["api/src", "client/src"]
+  "include": ["api/src", "client/src"],
+  "exclude": ["api/src/static"]
 }

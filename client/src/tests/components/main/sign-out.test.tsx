@@ -1,5 +1,5 @@
 import React from "react"
-import { shallow } from "enzyme"
+import { shallow, ShallowWrapper } from "enzyme"
 
 import { SignOut } from "../../../components/main/sign-out"
 import { noop } from "../../../utils/utils"
@@ -13,7 +13,7 @@ describe("sign out", (): void => {
 	describe("when clicking sign out button", (): void => {
 		let fetch
 		let json
-		let signOut
+		let signOut: ShallowWrapper
 
 		beforeEach((): void => {
 			json = jest.fn().mockResolvedValue({ success: true })
