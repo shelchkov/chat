@@ -30,12 +30,13 @@ describe("SendMessageForm", () => {
 	const handleSubmit = jest
 		.fn()
 		.mockImplementation((fn) => () => fn(data))
+  const reset = jest.fn()
 	jest
 		.spyOn(hookForm, "useForm")
-		.mockReturnValue({ register, handleSubmit } as any)
+		.mockReturnValue({ register, handleSubmit, reset } as any)
 
 	const start = jest.fn()
-	jest.spyOn(useRequest, "useRequest").mockReturnValue({ start } as any)
+	const useRequestSpy = jest.spyOn(useRequest, "useRequest").mockReturnValue({ start } as any)
 
 	let component: ShallowWrapper<typeof props>
 
@@ -69,12 +70,31 @@ describe("SendMessageForm", () => {
 		})
 	})
 
-	it("form submits", () => {
-		;(component.dive().prop("onSubmit") as () => void)()
-		expect(start).toBeCalledWith(
-			{ text: data.message },
-			`${selectedUserId}`,
-		)
-		expect(start).toBeCalledTimes(1)
+	describe("form submit", () => {
+    it("calls start", () => {
+      ;(component.dive().prop("onSubmit") as () => void)()
+      expect(start).toBeCalledWith(
+        { text: data.message },
+        `${selectedUserId}`,
+      )
+      expect(start).toBeCalledTimes(1)
+    })
+		
+    it("calls addMessage and reset", async () => {
+      addMessage.mockClear()
+      reset.mockClear()
+
+      const message = { id: 1 }
+
+      start.mockResolvedValue(message)
+      useRequestSpy.mockReturnValue({ start, data: message } as any)
+      component = shallow(<SendMessageForm {...props} />)
+
+      setTimeout(() => {
+        expect(addMessage).toBeCalledTimes(1)
+        expect(addMessage).toBeCalledWith(message)
+        expect(reset).toBeCalledTimes(1)
+      })
+    })
 	})
 })
