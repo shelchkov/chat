@@ -1,31 +1,33 @@
 import React from "react"
-import { shallow } from "enzyme"
+import { shallow, ShallowWrapper } from "enzyme"
 
 import { MainPage } from "../../pages/main.page"
 import { noop } from "../../utils/utils"
-import { User } from "../../utils/interfaces"
+import { Message, User } from "../../utils/interfaces"
 import { SignOut } from "../../components/main/sign-out"
 import { Messages } from "../../components/main/messages"
 
 describe("main page", (): void => {
-	let mainPage
+	let mainPage: ShallowWrapper
 	let user: Partial<User>
 	let webSocket: jest.Mock
 	let close: jest.Mock
 
 	beforeEach((): void => {
 		user = { name: "UserName" }
-		mainPage = shallow(<MainPage handleSignOut={noop} user={user} />)
-		close = (): void => {
-			console.log("Close ws")
-		}
+		mainPage = shallow(
+			<MainPage handleSignOut={noop} user={user as User} />,
+		)
+		close = jest.fn()
 		webSocket = jest.fn().mockImplementation(() => ({ close }))
-		global.WebSocket = webSocket
+		;(global.WebSocket as any) = webSocket
 	})
 
 	describe("renders passed data", (): void => {
 		it("should render user's name", (): void => {
-			expect(mainPage.text()).toEqual(expect.stringMatching(user.name))
+			expect(mainPage.text()).toEqual(
+				expect.stringMatching(user.name || ""),
+			)
 		})
 
 		it("should render sign out button", (): void => {
@@ -43,7 +45,7 @@ describe("main page", (): void => {
 		})
 
 		it("should create websocket connection", (): void => {
-			const wsSpy = jest.spyOn(global, "WebSocket")
+			const wsSpy = jest.spyOn(global, "WebSocket" as any)
 			setTimeout((): void => {
 				expect(wsSpy).toBeCalled()
 			})
@@ -56,9 +58,13 @@ describe("main page", (): void => {
 			expect(mainPage.prop("newMessage")).toEqual(undefined)
 
 			setTimeout((): void => {
-				webSocket.invoke("onmessage")({ data: newMessage })
+				;(webSocket as any).invoke("onmessage")({ data: newMessage })
 
-				const props = mainPage.props()
+				const props = mainPage.props() as {
+					friends: User[]
+					newMessage: Message
+					onlineFriends: number[]
+				}
 				const sender = props.friends.find(
 					(friend) => friend.id === newMessage.from,
 				)
@@ -66,18 +72,19 @@ describe("main page", (): void => {
 				expect(props.newMessage).toEqual(newMessage)
 
 				if (
+					user.friends &&
 					!user.friends.find(
 						(friend): boolean => friend.id === newMessage.from,
 					)
 				) {
 					expect(props.friends.length).toEqual(user.friends.length + 1)
-					user.friends.push(sender)
+					sender && user.friends.push(sender)
 				} else {
-					expect(props.friends.length).toEqual(user.friends.length)
+					expect(props.friends.length).toEqual(user.friends?.length)
 				}
 
 				expect(sender).toBeDefined()
-				expect(sender.isOnline).toEqual(true)
+				expect((sender as User).isOnline).toEqual(true)
 
 				expect(
 					props.onlineFriends.indexOf(newMessage.from),
@@ -90,7 +97,7 @@ describe("main page", (): void => {
 			const expected = online.map(({ userId }): number => userId)
 
 			setTimeout((): void => {
-				webSocket.invoke("onmessage")({ data: online })
+				;(webSocket as any).invoke("onmessage")({ data: online })
 				expect(mainPage.prop("onlineFriends")).toStrictEqual(expected)
 			})
 		})
@@ -99,9 +106,13 @@ describe("main page", (): void => {
 			const newOnlineUser = 3
 
 			setTimeout((): void => {
-				webSocket.invoke("newMessage")({ data: newOnlineUser })
+				;(webSocket as any).invoke("newMessage")({
+					data: newOnlineUser,
+				})
 				expect(
-					mainPage.prop("onlineFriends").indexOf(newOnlineUser),
+					(mainPage.prop("onlineFriends") as number[]).indexOf(
+						newOnlineUser,
+					),
 				).not.toEqual(-1)
 			})
 		})

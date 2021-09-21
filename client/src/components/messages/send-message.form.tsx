@@ -10,11 +10,13 @@ import { theme } from "../../style-guide/theme"
 import { ButtonTypes } from "../../utils/enums"
 import { getSendMessageInput } from "../../utils/api-utils"
 import { validationRules } from "../../utils/utils"
+import { useInputFocus } from "../../effects/use-input-focus"
 
 interface Props {
 	isLoading: boolean
-	error?: string
 	selectedUserId: number | undefined
+	error?: string
+	isMobile?: boolean
 	addMessage: (message: Message) => void
 }
 
@@ -32,11 +34,14 @@ export const SendMessageForm = ({
 	isLoading,
 	error,
 	selectedUserId,
+	isMobile,
 	addMessage,
 }: Props): ReactElement => {
 	const { data, start } = useRequest(getSendMessageInput())
 	const { register, handleSubmit, reset } = useForm<Inputs>()
 	const inputRef = createRef<HTMLInputElement>()
+
+	useInputFocus(isMobile ? undefined : inputRef)
 
 	const onSubmit = (data: Inputs): void => {
 		start({ text: data.message }, String(selectedUserId))
