@@ -1,16 +1,16 @@
 environment:
   NODE_VERSION: "14.17"
-  COVERALLS_SERVICE_NAME: appveyor
-  COVERALLS_GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
   GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
   GIT_COMMIT_SHA: $(APPVEYOR_REPO_COMMIT)
+  COVERALLS_SERVICE_NAME: appveyor
+  COVERALLS_GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
   COVERALLS_REPO_TOKEN:
     secure: Gq6f8BxVwEemfL6miWIns4T24eQ1t77AApss4cYkZf4k4Kn/fEOtd9F0CVjjB+tj
   CC_TEST_REPORTER_ID: 6236cfcb1fda6970790e1494d8f2425235296d0a63bd449eaed95a18c6cb2257
+  CC_TEST_REPORTER: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+  HEROKU_APP_NAME: peaceful-river-48954
   HEROKU_API_KEY:
     secure: jPWq020PLzj6m4aJkjSCJcXuwD/CYjSLNs1tPNPBRP8Hs5YvF0cGJCZR+X/BiSJL
-  HEROKU_APP_NAME: peaceful-river-48954
-  CC_TEST_REPORTER: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
   GIT_USER_EMAIL: shelchkovy@yandex.ru
   GIT_USER_NAME: Yaroslav Shelchkov
   REACT_APP_API_URL: /
@@ -72,8 +72,8 @@ for:
       - npm install && cd client && npm install
       - curl https://cli-assets.heroku.com/install.sh | sh
       - heroku --version
-      - cd ..
     build_script:
+      - npm run typecheck && cd ..
       - npm run build
     after_build:
       - cd api && git init && git config user.email "${GIT_USER_EMAIL}" && git config user.name "${GIT_USER_NAME}"
