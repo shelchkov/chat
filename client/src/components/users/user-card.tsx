@@ -20,7 +20,8 @@ const UserCardContainer = styled.div<{ isSelected: boolean }>`
 	cursor: pointer;
 
 	&:hover {
-		background-color: ${(p): string => p.isSelected ? theme.colors.greys[2] : theme.colors.greys[3]};
+		background-color: ${(p): string =>
+			p.isSelected ? theme.colors.greys[2] : theme.colors.greys[3]};
 	}
 `
 

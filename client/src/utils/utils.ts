@@ -1,4 +1,4 @@
-import { ValidationRules } from "react-hook-form"
+import { ValidationRules } from "react-hook-form/dist/types/validator"
 
 import { User } from "./interfaces"
 

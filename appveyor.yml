@@ -5,7 +5,7 @@ environment:
   COVERALLS_SERVICE_NAME: appveyor
   COVERALLS_GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
   COVERALLS_REPO_TOKEN:
-    secure: Gq6f8BxVwEemfL6miWIns4T24eQ1t77AApss4cYkZf4k4Kn/fEOtd9F0CVjjB+tj
+    secure: ft6VgtaFKyQA6Jr9KPZpy7g/6CAE9BumBr9frxZxBhNywDZcz7XOy0pTnlTmpc/V
   CC_TEST_REPORTER_ID: 6236cfcb1fda6970790e1494d8f2425235296d0a63bd449eaed95a18c6cb2257
   CC_TEST_REPORTER: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
   HEROKU_APP_NAME: peaceful-river-48954
@@ -59,6 +59,9 @@ for:
     test_script:
       - npm run test:cov
     after_test:
+      - echo service ${COVERALLS_SERVICE_NAME}
+      - echo token ${COVERALLS_REPO_TOKEN}
+      - echo branch ${COVERALLS_GIT_BRANCH}
       - npm run upload:cov || true
       - git status
     build: off
