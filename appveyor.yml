@@ -17,10 +17,13 @@ environment:
   matrix:
     - job_name: Api Tests
       job_group: Tests
+      appveyor_build_worker_image: Ubuntu2004
     - job_name: Client Tests
       job_group: Tests
+      appveyor_build_worker_image: Visual Studio 2019
     - job_name: Deploy
       job_depends_on: Tests
+      appveyor_build_worker_image: Ubuntu2004
 
 skip_branch_with_pr: true
 
@@ -29,7 +32,6 @@ for:
     matrix:
       only:
         - job_name: Api Tests
-    image: Ubuntu2004
     cache:
       - api/node_modules -> api/package-lock.json
     install:
@@ -51,16 +53,15 @@ for:
     matrix:
       only:
         - job_name: Client Tests
-    image: Visual Studio 2019
     install:
       - node -v
       - cd client && npm install
     test_script:
-      - npm run test:cov
+      - npm run api:test:cov
     after_test:
       - echo service ${COVERALLS_SERVICE_NAME}
       - echo branch ${COVERALLS_GIT_BRANCH}
-      - npm run upload:cov || true
+      - cd client && npm run upload:cov || true
       - git status && git diff
     build: off
   
@@ -68,7 +69,6 @@ for:
     matrix:
       only:
         - job_name: Deploy
-    image: Ubuntu2004
     install:
       - nvm use ${NODE_VERSION}
       - npm install && cd client && npm install
