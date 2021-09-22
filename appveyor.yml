@@ -54,10 +54,9 @@ for:
       only:
         - job_name: Client Tests
     install:
-      - node -v
       - cd client && npm install
     test_script:
-      - npm run api:test:cov
+      - npm run client:test:cov
     after_test:
       - echo service ${COVERALLS_SERVICE_NAME}
       - echo branch ${COVERALLS_GIT_BRANCH}
