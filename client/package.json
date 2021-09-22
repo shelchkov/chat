@@ -28,7 +28,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint \"src/**/*.{js,ts,tsx}\"",
-    "upload:cov": "coveralls -v < coverage/lcov.info",
+    "upload:cov": "coveralls < coverage/lcov.info",
     "typecheck": "tsc"
   },
   "browserslist": {
@@ -58,6 +58,10 @@
     "prettier": "^2.0.5"
   },
   "jest": {
-    "coveragePathIgnorePatterns": ["src/index.tsx", "src/serviceWorker.ts", "src/style-guide/theme.ts"]
+    "coveragePathIgnorePatterns": [
+      "src/index.tsx",
+      "src/serviceWorker.ts",
+      "src/style-guide/theme.ts"
+    ]
   }
 }

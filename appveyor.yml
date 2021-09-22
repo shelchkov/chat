@@ -2,15 +2,12 @@ environment:
   NODE_VERSION: "14.17"
   GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
   GIT_COMMIT_SHA: $(APPVEYOR_REPO_COMMIT)
-  COVERALLS_SERVICE_NAME: appveyor
   COVERALLS_GIT_BRANCH: APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH
   CC_TEST_REPORTER_ID: 6236cfcb1fda6970790e1494d8f2425235296d0a63bd449eaed95a18c6cb2257
   CC_TEST_REPORTER: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
   HEROKU_APP_NAME: peaceful-river-48954
   HEROKU_API_KEY:
     secure: jPWq020PLzj6m4aJkjSCJcXuwD/CYjSLNs1tPNPBRP8Hs5YvF0cGJCZR+X/BiSJL
-  GIT_USER_EMAIL: shelchkovy@yandex.ru
-  GIT_USER_NAME: Yaroslav Shelchkov
   REACT_APP_API_URL: /
   REACT_APP_SOCKET_URL: wss://${HEROKU_APP_NAME}.herokuapp.com/events
 
@@ -20,7 +17,7 @@ environment:
       appveyor_build_worker_image: Ubuntu2004
     - job_name: Client Tests
       job_group: Tests
-      appveyor_build_worker_image: Visual Studio 2019
+      appveyor_build_worker_image: Visual Studio 2015
     - job_name: Deploy
       job_depends_on: Tests
       appveyor_build_worker_image: Ubuntu2004
@@ -54,12 +51,15 @@ for:
       only:
         - job_name: Client Tests
     install:
+      - node --version
+      - ps: Install-Product node $env:NODE_VERSION
+      - node --version
       - cd client && npm install
     test_script:
       - npm run client:test:cov
     after_test:
-      - echo service ${COVERALLS_SERVICE_NAME}
-      - echo branch ${COVERALLS_GIT_BRANCH}
+      - echo service $COVERALLS_SERVICE_NAME
+      - echo branch $(COVERALLS_GIT_BRANCH)
       - cd client && npm run upload:cov || true
       - git status && git diff
     build: off
