@@ -60,8 +60,8 @@ for:
       - echo service ${COVERALLS_SERVICE_NAME}
       - echo token ${COVERALLS_REPO_TOKEN}
       - echo branch ${COVERALLS_GIT_BRANCH}
-      - npm run upload:cov || true
-      - git status
+      - COVERALLS_GIT_BRANCH=${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH} COVERALLS_GIT_COMMIT=${APPVEYOR_REPO_COMMIT} npm run upload:cov || true
+      - git status && git diff
     build: off
   
   -
