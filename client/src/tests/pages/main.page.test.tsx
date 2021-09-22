@@ -215,37 +215,37 @@ describe("main page", (): void => {
 		})
 	})
 
-	describe("add new friend is added", () => {
-		const userId = (user.friends as User[])[0].id + 2
+	// describe("add new friend is added", () => {
+	// 	const userId = (user.friends as User[])[0].id + 2
 
-		beforeAll(() => {
-			const data = { newMessage: { from: userId } }
-			useSocketsSpy.mockReturnValue({ data } as any)
-			mainPage = mount(
-				<MainPage handleSignOut={handleSignOut} user={user} />,
-			)
-		})
+	// 	beforeAll(() => {
+	// 		const data = { newMessage: { from: userId } }
+	// 		useSocketsSpy.mockReturnValue({ data } as any)
+	// 		mainPage = mount(
+	// 			<MainPage handleSignOut={handleSignOut} user={user} />,
+	// 		)
+	// 	})
 
-		it("adds friend to original friends list", () => {
-			const addNewFriend = mainPage.find(Messages).prop("addNewFriend")
-			expect(
-				((mainPage.prop("originalFriends") as User[]) || []).find(
-					({ id }) => id === userId,
-				),
-			).not.toBeDefined()
+	// 	it("adds friend to original friends list", () => {
+	// 		const addNewFriend = mainPage.find(Messages).prop("addNewFriend")
+	// 		expect(
+	// 			((mainPage.prop("originalFriends") as User[]) || []).find(
+	// 				({ id }) => id === userId,
+	// 			),
+	// 		).not.toBeDefined()
 
-			act(() => {
-				addNewFriend(userId)
-			})
-			mainPage.update()
+	// 		act(() => {
+	// 			addNewFriend(userId)
+	// 		})
+	// 		mainPage.update()
 
-			setTimeout(() => {
-				expect(
-					((mainPage.prop("originalFriends") as User[]) || []).find(
-						({ id }) => id === userId,
-					),
-				).toBeDefined()
-			})
-		})
-	})
+	// 		setTimeout(() => {
+	// 			expect(
+	// 				((mainPage.prop("originalFriends") as User[]) || []).find(
+	// 					({ id }) => id === userId,
+	// 				),
+	// 			).toBeDefined()
+	// 		})
+	// 	})
+	// })
 })
