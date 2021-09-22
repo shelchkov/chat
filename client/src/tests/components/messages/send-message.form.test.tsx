@@ -1,4 +1,4 @@
-import { shallow, ShallowWrapper } from "enzyme"
+import { mount, ReactWrapper } from "enzyme"
 import React from "react"
 import * as hookForm from "react-hook-form"
 
@@ -30,18 +30,20 @@ describe("SendMessageForm", () => {
 	const handleSubmit = jest
 		.fn()
 		.mockImplementation((fn) => () => fn(data))
-  const reset = jest.fn()
+	const reset = jest.fn()
 	jest
 		.spyOn(hookForm, "useForm")
 		.mockReturnValue({ register, handleSubmit, reset } as any)
 
 	const start = jest.fn()
-	const useRequestSpy = jest.spyOn(useRequest, "useRequest").mockReturnValue({ start } as any)
+	const useRequestSpy = jest
+		.spyOn(useRequest, "useRequest")
+		.mockReturnValue({ start } as any)
 
-	let component: ShallowWrapper<typeof props>
+	let component: ReactWrapper<typeof props>
 
 	beforeAll(() => {
-		component = shallow(<SendMessageForm {...props} />)
+		component = mount(<SendMessageForm {...props} />)
 	})
 
 	describe("Components render", () => {
@@ -56,7 +58,7 @@ describe("SendMessageForm", () => {
 		})
 
 		it("focuses input", () => {
-			component = shallow(<SendMessageForm {...props} />)
+			component = mount(<SendMessageForm {...props} />)
 			const call = useInputFocusMock.mock.calls[0][0]
 			expect(call).toBeDefined()
 			expect(call).toHaveProperty("current")
@@ -64,37 +66,35 @@ describe("SendMessageForm", () => {
 
 		it("doesn't focus input on mobile", () => {
 			props.isMobile = true
-			component = shallow(<SendMessageForm {...props} />)
+			component = mount(<SendMessageForm {...props} />)
 
 			expect(useInputFocusMock.mock.calls[0]).toEqual([undefined])
 		})
 	})
 
 	describe("form submit", () => {
-    it("calls start", () => {
-      ;(component.dive().prop("onSubmit") as () => void)()
-      expect(start).toBeCalledWith(
-        { text: data.message },
-        `${selectedUserId}`,
-      )
-      expect(start).toBeCalledTimes(1)
-    })
-		
-    it("calls addMessage and reset", async () => {
-      addMessage.mockClear()
-      reset.mockClear()
+		it("calls start", () => {
+			;(component.childAt(0).prop("onSubmit") as () => void)()
+			expect(start).toBeCalledWith(
+				{ text: data.message },
+				`${selectedUserId}`,
+			)
+			expect(start).toBeCalledTimes(1)
+		})
 
-      const message = { id: 1 }
+		it("calls addMessage and reset", async () => {
+			addMessage.mockClear()
+			reset.mockClear()
 
-      start.mockResolvedValue(message)
-      useRequestSpy.mockReturnValue({ start, data: message } as any)
-      component = shallow(<SendMessageForm {...props} />)
+			const message = { id: 1 }
 
-      setTimeout(() => {
-        expect(addMessage).toBeCalledTimes(1)
-        expect(addMessage).toBeCalledWith(message)
-        expect(reset).toBeCalledTimes(1)
-      })
-    })
+			start.mockResolvedValue(message)
+			useRequestSpy.mockReturnValue({ start, data: message } as any)
+			component = mount(<SendMessageForm {...props} />)
+
+			expect(addMessage).toBeCalledTimes(1)
+			expect(addMessage).toBeCalledWith(message)
+			expect(reset).toBeCalledTimes(1)
+		})
 	})
 })
