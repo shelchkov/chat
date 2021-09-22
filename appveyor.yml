@@ -22,7 +22,6 @@ environment:
     - job_name: Deploy
       job_depends_on: Tests
 
-image: Ubuntu2004
 skip_branch_with_pr: true
 
 for:
@@ -30,6 +29,7 @@ for:
     matrix:
       only:
         - job_name: Api Tests
+    image: Ubuntu2004
     cache:
       - api/node_modules -> api/package-lock.json
     install:
@@ -51,16 +51,16 @@ for:
     matrix:
       only:
         - job_name: Client Tests
+    image: Visual Studio 2019
     install:
-      - nvm use ${NODE_VERSION}
+      - node -v
       - cd client && npm install
     test_script:
       - npm run test:cov
     after_test:
       - echo service ${COVERALLS_SERVICE_NAME}
-      - echo token ${COVERALLS_REPO_TOKEN}
       - echo branch ${COVERALLS_GIT_BRANCH}
-      - COVERALLS_GIT_BRANCH=${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH} COVERALLS_GIT_COMMIT=${APPVEYOR_REPO_COMMIT} npm run upload:cov || true
+      - npm run upload:cov || true
       - git status && git diff
     build: off
   
@@ -68,6 +68,7 @@ for:
     matrix:
       only:
         - job_name: Deploy
+    image: Ubuntu2004
     install:
       - nvm use ${NODE_VERSION}
       - npm install && cd client && npm install
