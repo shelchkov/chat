@@ -1,7 +1,7 @@
 environment:
   NODE_VERSION: "14.17"
   GIT_BRANCH: ${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH}
-  GIT_COMMIT_SHA: $(APPVEYOR_REPO_COMMIT)
+  GIT_COMMIT_SHA: $(APPVEYOR_PULL_REQUEST_HEAD_COMMIT)
   CC_TEST_REPORTER_ID: 6236cfcb1fda6970790e1494d8f2425235296d0a63bd449eaed95a18c6cb2257
   CC_TEST_REPORTER: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
   HEROKU_APP_NAME: peaceful-river-48954
@@ -54,17 +54,10 @@ for:
     test_script:
       - npm run test:cov
     after_test:
-      - echo service $COVERALLS_SERVICE_NAME
-      - echo branch $(APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH)
       - echo commit ${APPVEYOR_REPO_COMMIT}
-      - echo build branch ${APPVEYOR_REPO_BRANCH}
-      - echo pull request ${APPVEYOR_PULL_REQUEST_NUMBER}
       - echo build id ${APPVEYOR_BUILD_ID}
-      - echo build number ${APPVEYOR_BUILD_NUMBER}
-      - echo build version ${APPVEYOR_BUILD_VERSION}
-      - echo pull commit id ${APPVEYOR_PULL_REQUEST_HEAD_COMMIT}
       - echo job id ${APPVEYOR_JOB_ID}
-      - COVERALLS_GIT_BRANCH=${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH} COVERALLS_GIT_COMMIT=${APPVEYOR_REPO_COMMIT} CI_PULL_REQUEST=${APPVEYOR_PULL_REQUEST_NUMBER} npm run upload:cov || true
+      - COVERALLS_GIT_BRANCH=${APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH} COVERALLS_GIT_COMMIT=${APPVEYOR_PULL_REQUEST_HEAD_COMMIT} CI_PULL_REQUEST=${APPVEYOR_PULL_REQUEST_NUMBER} npm run upload:cov || true
       - git status && git diff
     build: off
   
