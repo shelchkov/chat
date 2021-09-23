@@ -18,6 +18,11 @@ const UserCardContainer = styled.div<{ isSelected: boolean }>`
 	background-color: ${(p): string =>
 		p.isSelected ? theme.colors.greys[2] : "transparent"};
 	cursor: pointer;
+
+	&:hover {
+		background-color: ${(p): string =>
+			p.isSelected ? theme.colors.greys[2] : theme.colors.greys[3]};
+	}
 `
 
 const UserNameContainer = styled.div`

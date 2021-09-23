@@ -1,9 +1,9 @@
 import React from "react"
-import { shallow, ShallowWrapper } from "enzyme"
+import { ReactWrapper, mount } from "enzyme"
+import { act } from "@testing-library/react"
 
 import { SignOut } from "../../../components/main/sign-out"
 import * as useRequest from "../../../effects/use-request"
-import { act } from "@testing-library/react"
 
 jest.mock("../../../effects/use-request")
 
@@ -14,12 +14,14 @@ describe("sign out", (): void => {
 	const handleSignOut = jest.fn()
 
 	const start = jest.fn()
-	const useRequestSpy = jest.spyOn(useRequest, "useRequest").mockReturnValue({ start } as any)
+	const useRequestSpy = jest
+		.spyOn(useRequest, "useRequest")
+		.mockReturnValue({ start } as any)
 
-	let signOut: ShallowWrapper
+	let signOut: ReactWrapper
 
 	beforeEach((): void => {
-		signOut = shallow(<SignOut handleSignOut={handleSignOut} />)
+		signOut = mount(<SignOut handleSignOut={handleSignOut} />)
 	})
 
 	it("shows sign out text", () => {
@@ -29,7 +31,7 @@ describe("sign out", (): void => {
 	it("doesn't make a request to the back-end before clicking", (): void => {
 		expect(start).not.toBeCalled()
 
-		setTimeout((): void => {
+		setImmediate((): void => {
 			expect(signOut.contains("...")).toEqual(false)
 			expect(handleSignOut).not.toHaveBeenCalled()
 		})
@@ -46,15 +48,18 @@ describe("sign out", (): void => {
 
 		it("indicates that loading is in progress", () => {
 			useRequestSpy.mockReturnValue({ isLoading: true } as any)
-			signOut = shallow(<SignOut handleSignOut={handleSignOut} />)
+			signOut = mount(<SignOut handleSignOut={handleSignOut} />)
 
 			expect(signOut.contains(`${signOutText}...`)).toBeTruthy()
 		})
 
-		describe('and request is unsuccessful', () => {
+		describe("and request is unsuccessful", () => {
 			beforeAll((): void => {
-				useRequestSpy.mockReturnValue({ isLoading: false, error: "Error message" } as any)
-				signOut.update()
+				useRequestSpy.mockReturnValue({
+					isLoading: false,
+					error: "Error message",
+				} as any)
+				signOut = mount(<SignOut handleSignOut={handleSignOut} />)
 			})
 
 			it("doesn't call handleSignOut", () => {
@@ -62,19 +67,19 @@ describe("sign out", (): void => {
 				expect(signOut.contains(errorText)).toBeTruthy()
 			})
 		})
-		
+
 		describe("and request is successful", (): void => {
 			beforeEach((): void => {
-				useRequestSpy.mockReturnValue({ isLoading: false, data: { success: true } } as any)
-				signOut = shallow(<SignOut handleSignOut={handleSignOut} />)
+				useRequestSpy.mockReturnValue({
+					isLoading: false,
+					data: { success: true },
+				} as any)
+				signOut = mount(<SignOut handleSignOut={handleSignOut} />)
 			})
 
 			it("changes button text and calls handleSignOut", (): void => {
 				expect(signOut.contains(errorText)).toBeFalsy()
-
-				setTimeout(() => {
-					expect(handleSignOut).toHaveBeenCalled()
-				})
+				expect(handleSignOut).toHaveBeenCalled()
 			})
 		})
 	})

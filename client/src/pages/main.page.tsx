@@ -67,15 +67,11 @@ export const MainPage = ({
 
 	const updateUsersList = (users?: User[] | null): void => {
 		if (users) {
-			setFriends(markNotFriends(users, originalFriends))
-
-			return
+			return setFriends(markNotFriends(users, originalFriends))
 		}
 
 		if (users === null) {
-			setFriends(undefined)
-
-			return
+			return setFriends(undefined)
 		}
 
 		setFriends(originalFriends)
