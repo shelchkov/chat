@@ -7,10 +7,12 @@ import { SubscriptionsModule } from "../subscriptions/subscriptions.module"
 import { MessagesController } from "./messages.controller"
 import { MessagesService } from "./messages.service"
 import Message from "./message.entity"
+import LatestMessage from "./latest-message.entity"
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Message]),
+    TypeOrmModule.forFeature([LatestMessage]),
     UsersModule,
     SubscriptionsModule,
   ],
