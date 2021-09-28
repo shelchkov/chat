@@ -65,11 +65,24 @@ export class MessagesService {
     return newMessage
   }
 
-  private async updateLatestMessage(message: Message, from: number, to: number): Promise<void> {
-    const latest = await this.latestMessageRepository.createQueryBuilder("latestMessage").where(":user1 = ANY (latestMessage.users) OR :user2 = ANY (latestMessage.users)", { user1: from, user2: to }).getOne()
+  private async updateLatestMessage(
+    message: Message,
+    from: number,
+    to: number,
+  ): Promise<void> {
+    const latest = await this.latestMessageRepository
+      .createQueryBuilder("latestMessage")
+      .where(
+        ":user1 = ANY (latestMessage.users) OR :user2 = ANY (latestMessage.users)",
+        { user1: from, user2: to },
+      )
+      .getOne()
 
     if (!latest) {
-      const newMessage = this.latestMessageRepository.create({ users: [from, to], message })
+      const newMessage = this.latestMessageRepository.create({
+        users: [from, to],
+        message,
+      })
       await this.latestMessageRepository.save(newMessage)
 
       return
@@ -79,8 +92,12 @@ export class MessagesService {
   }
 
   async getLatestMessages(userId: number): Promise<Message[]> {
-    const messages = await this.latestMessageRepository.createQueryBuilder("latestMessage").where(":user = ANY (latestMessage.users)", { user: userId }).leftJoinAndSelect("latestMessage.message", "message").getMany()
-    
+    const messages = await this.latestMessageRepository
+      .createQueryBuilder("latestMessage")
+      .where(":user = ANY (latestMessage.users)", { user: userId })
+      .leftJoinAndSelect("latestMessage.message", "message")
+      .getMany()
+
     return messages.map((message) => message.message)
   }
 }

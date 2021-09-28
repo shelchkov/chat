@@ -40,33 +40,41 @@ describe("MessagesService", (): void => {
   const latestGetOne = jest.fn()
   const latestGetMany = jest.fn().mockResolvedValue([])
 
-  beforeAll(
-    async (): Promise<void> => {
-      const messageRepository = { find, create, save }
-      const usersService = { addFriend, getUsersFriend }
-      const subscriptionsGateway = { sendMessageToUser }
-      const latestCreateQueryBuilder = jest.fn().mockReturnValue({ where: () => ({ getOne: latestGetOne, leftJoinAndSelect: () => ({ getMany: latestGetMany }) }) })
-      const latestMessageRepository = { create: latestCreate, save: latestSave, update: latestUpdate, createQueryBuilder: latestCreateQueryBuilder }
+  beforeAll(async (): Promise<void> => {
+    const messageRepository = { find, create, save }
+    const usersService = { addFriend, getUsersFriend }
+    const subscriptionsGateway = { sendMessageToUser }
+    const latestCreateQueryBuilder = jest.fn().mockReturnValue({
+      where: () => ({
+        getOne: latestGetOne,
+        leftJoinAndSelect: () => ({ getMany: latestGetMany }),
+      }),
+    })
+    const latestMessageRepository = {
+      create: latestCreate,
+      save: latestSave,
+      update: latestUpdate,
+      createQueryBuilder: latestCreateQueryBuilder,
+    }
 
-      const module = await Test.createTestingModule({
-        providers: [
-          MessagesService,
-          {
-            provide: getRepositoryToken(Message),
-            useValue: messageRepository,
-          },
-          {
-            provide: getRepositoryToken(LatestMessage),
-            useValue: latestMessageRepository,
-          },
-          { provide: UsersService, useValue: usersService },
-          { provide: SubscriptionsGateway, useValue: subscriptionsGateway },
-        ],
-      }).compile()
+    const module = await Test.createTestingModule({
+      providers: [
+        MessagesService,
+        {
+          provide: getRepositoryToken(Message),
+          useValue: messageRepository,
+        },
+        {
+          provide: getRepositoryToken(LatestMessage),
+          useValue: latestMessageRepository,
+        },
+        { provide: UsersService, useValue: usersService },
+        { provide: SubscriptionsGateway, useValue: subscriptionsGateway },
+      ],
+    }).compile()
 
-      messagesService = await module.get<MessagesService>(MessagesService)
-    },
-  )
+    messagesService = await module.get<MessagesService>(MessagesService)
+  })
 
   describe("when getting user's messages", (): void => {
     const id = 2
@@ -172,22 +180,24 @@ describe("MessagesService", (): void => {
     })
   })
 
-  describe('when getting latest messages', () => {
+  describe("when getting latest messages", () => {
     const userId = 1
 
-    it('searches repository', async () => {
+    it("searches repository", async () => {
       await messagesService.getLatestMessages(userId)
 
       expect(latestGetMany).toBeCalledTimes(1)
     })
 
-    describe('and messages are found', () => {
+    describe("and messages are found", () => {
       beforeAll(() => {
         latestGetMany.mockResolvedValue([latestMessage])
       })
 
       it("returns list of messages", async () => {
-        expect(await messagesService.getLatestMessages(userId)).toEqual([latestMessage.message])
+        expect(await messagesService.getLatestMessages(userId)).toEqual([
+          latestMessage.message,
+        ])
       })
     })
   })

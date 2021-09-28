@@ -18,23 +18,21 @@ describe("UsersService", (): void => {
   const findOneMockUser = (user: User | undefined) =>
     findOne.mockResolvedValue(user)
 
-  beforeAll(
-    async (): Promise<void> => {
-      const usersRepository = { findOne, create, find, save }
+  beforeAll(async (): Promise<void> => {
+    const usersRepository = { findOne, create, find, save }
 
-      const module = await Test.createTestingModule({
-        providers: [
-          UsersService,
-          {
-            provide: getRepositoryToken(User),
-            useValue: usersRepository,
-          },
-        ],
-      }).compile()
+    const module = await Test.createTestingModule({
+      providers: [
+        UsersService,
+        {
+          provide: getRepositoryToken(User),
+          useValue: usersRepository,
+        },
+      ],
+    }).compile()
 
-      usersService = await module.get(UsersService)
-    },
-  )
+    usersService = await module.get(UsersService)
+  })
 
   describe("when getting a user by email", (): void => {
     const email = "test@test.com"

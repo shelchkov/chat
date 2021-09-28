@@ -22,10 +22,12 @@ export class MessagesController {
 
   @Get("latest")
   @UseGuards(JwtAuthenticationGuard)
-  getLatestMessages(@Req() { user: { id: userId } }: RequestWithUser): Promise<Message[]> {
+  getLatestMessages(
+    @Req() { user: { id: userId } }: RequestWithUser,
+  ): Promise<Message[]> {
     return this.messagesService.getLatestMessages(userId)
   }
-  
+
   @Get(":id")
   @UseGuards(JwtAuthenticationGuard)
   getMessagesFromUser(

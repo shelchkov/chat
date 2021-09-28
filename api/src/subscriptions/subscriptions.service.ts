@@ -59,12 +59,12 @@ export class SubscriptionsService {
   // Users list
   addNewUser = (client: Socket, user: User): void => {
     const userId = user.id
-    const friends = user.friends.map(friend => friend.id)
+    const friends = user.friends.map((friend) => friend.id)
     this.users.push({ userId, client, friends })
   }
 
   deleteUserByClient = (client: Socket): void => {
-    const index = this.users.findIndex(user => user.client === client)
+    const index = this.users.findIndex((user) => user.client === client)
 
     if (index) {
       this.users.splice(index, 1)
@@ -72,7 +72,7 @@ export class SubscriptionsService {
   }
 
   findUserById = (id: number): SubscriptionUserDto =>
-    this.users.find(user => user.userId === id)
+    this.users.find((user) => user.userId === id)
 
   addUserFriend = (userId: number, friendId: number): boolean => {
     if (userId === friendId) {
