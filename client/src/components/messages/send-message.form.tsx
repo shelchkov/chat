@@ -9,7 +9,7 @@ import { Message } from "../../utils/interfaces"
 import { theme } from "../../style-guide/theme"
 import { ButtonTypes } from "../../utils/enums"
 import { getSendMessageInput } from "../../utils/api-utils"
-import { noop, validationRules } from "../../utils/utils"
+import { validationRules } from "../../utils/utils"
 import { useInputFocus } from "../../effects/use-input-focus"
 
 interface Props {
@@ -60,7 +60,9 @@ export const SendMessageForm = ({
 	useEffect(() => {
 		if (inputRef.current) {
 			register(validationRules)(inputRef.current)
-			;(inputRef.current.scrollIntoView || noop)()
+			try {
+				inputRef.current.scrollIntoView()
+			} catch {}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
