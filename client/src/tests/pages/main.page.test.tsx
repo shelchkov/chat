@@ -248,4 +248,19 @@ describe("main page", (): void => {
 	// 		})
 	// 	})
 	// })
+
+	describe("User's friends list is optional", () => {
+		beforeAll(() => {
+			user.friends = undefined
+			useSocketsSpy.mockReturnValue({} as any)
+			mainPage = mount(
+				<MainPage handleSignOut={handleSignOut} user={user} />,
+			)
+		})
+
+		it("passes empty array of friends to Messages", () => {
+			expect(getFriends()).toEqual([])
+		})
+	})
+	
 })
