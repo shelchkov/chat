@@ -55,37 +55,35 @@ describe("authentication", (): void => {
   const bcryptCompare = jest.fn().mockResolvedValue(true)
   ;(bcrypt.compare as jest.Mock) = bcryptCompare
 
-  beforeAll(
-    async (): Promise<void> => {
-      const usersRepository = {
-        create,
-        save: jest.fn().mockReturnValue(Promise.resolve()),
-        findOne,
-      }
+  beforeAll(async (): Promise<void> => {
+    const usersRepository = {
+      create,
+      save: jest.fn().mockReturnValue(Promise.resolve()),
+      findOne,
+    }
 
-      const module = await Test.createTestingModule({
-        imports: [
-          JwtModule.register({
-            secret: "secret",
-            signOptions: { expiresIn: "3600s" },
-          }),
-        ],
-        controllers: [AuthenticationController],
-        providers: [
-          AuthenticationService,
-          UsersService,
-          { provide: ConfigService, useValue: mockedConfigService },
-          { provide: getRepositoryToken(User), useValue: usersRepository },
-          JwtStrategy,
-          LocalStrategy,
-        ],
-      }).compile()
+    const module = await Test.createTestingModule({
+      imports: [
+        JwtModule.register({
+          secret: "secret",
+          signOptions: { expiresIn: "3600s" },
+        }),
+      ],
+      controllers: [AuthenticationController],
+      providers: [
+        AuthenticationService,
+        UsersService,
+        { provide: ConfigService, useValue: mockedConfigService },
+        { provide: getRepositoryToken(User), useValue: usersRepository },
+        JwtStrategy,
+        LocalStrategy,
+      ],
+    }).compile()
 
-      app = module.createNestApplication()
-      app.useGlobalPipes(new ValidationPipe())
-      await app.init()
-    },
-  )
+    app = module.createNestApplication()
+    app.useGlobalPipes(new ValidationPipe())
+    await app.init()
+  })
 
   describe("when registering", (): void => {
     const signUpData = {
@@ -121,9 +119,7 @@ describe("authentication", (): void => {
     })
 
     describe("and using valid data", (): void => {
-      it("should respond with the data of the user without password", async (): Promise<
-        void
-      > => {
+      it("should respond with the data of the user without password", async (): Promise<void> => {
         const expectedData = removePassword(userData)
 
         const response = await request(app.getHttpServer())
@@ -198,10 +194,7 @@ describe("authentication", (): void => {
   describe("when signing out", (): void => {
     describe("and user is not logged in", (): void => {
       it("should throw an error", (): Test =>
-        request(app.getHttpServer())
-          .post(routes.signOut)
-          .send()
-          .expect(401))
+        request(app.getHttpServer()).post(routes.signOut).send().expect(401))
     })
   })
 

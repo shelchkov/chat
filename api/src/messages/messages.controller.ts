@@ -20,6 +20,14 @@ import { GetMessagesDto } from "./dto/getMessages.dto"
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
+  @Get("latest")
+  @UseGuards(JwtAuthenticationGuard)
+  getLatestMessages(
+    @Req() { user: { id: userId } }: RequestWithUser,
+  ): Promise<Message[]> {
+    return this.messagesService.getLatestMessages(userId)
+  }
+
   @Get(":id")
   @UseGuards(JwtAuthenticationGuard)
   getMessagesFromUser(

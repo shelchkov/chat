@@ -18,7 +18,8 @@ if (process.env.NODE_ENV !== "production") {
 
 @WebSocketGateway(options)
 export class SubscriptionsGateway
-  implements OnGatewayConnection, OnGatewayDisconnect {
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   constructor(
     private readonly usersService: UsersService,
     private readonly subscriptionsService: SubscriptionsService,

@@ -29,24 +29,22 @@ describe("AuthenticationService", () => {
   const create = jest.fn().mockReturnValue(userData)
   const getByEmail = jest.fn().mockResolvedValue(userData)
 
-  beforeAll(
-    async (): Promise<void> => {
-      const usersService = { create, getByEmail }
+  beforeAll(async (): Promise<void> => {
+    const usersService = { create, getByEmail }
 
-      const module = await Test.createTestingModule({
-        providers: [
-          AuthenticationService,
-          { provide: ConfigService, useValue: mockedConfigService },
-          { provide: JwtService, useValue: mockedJwtService },
-          { provide: UsersService, useValue: usersService },
-        ],
-      }).compile()
-
-      authenticationService = await module.get<AuthenticationService>(
+    const module = await Test.createTestingModule({
+      providers: [
         AuthenticationService,
-      )
-    },
-  )
+        { provide: ConfigService, useValue: mockedConfigService },
+        { provide: JwtService, useValue: mockedJwtService },
+        { provide: UsersService, useValue: usersService },
+      ],
+    }).compile()
+
+    authenticationService = await module.get<AuthenticationService>(
+      AuthenticationService,
+    )
+  })
 
   describe("when creating a new user", (): void => {
     const data = new SignUpDto()

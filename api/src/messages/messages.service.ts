@@ -6,6 +6,7 @@ import { UsersService } from "../users/users.service"
 import { SubscriptionsGateway } from "../subscriptions/subscriptions.gateway"
 
 import Message from "./message.entity"
+import LatestMessage from "./latest-message.entity"
 
 @Injectable()
 export class MessagesService {
@@ -14,6 +15,8 @@ export class MessagesService {
     private messagesRepository: Repository<Message>,
     private readonly usersService: UsersService,
     private readonly subscriptionsProvider: SubscriptionsGateway,
+    @InjectRepository(LatestMessage)
+    private latestMessageRepository: Repository<LatestMessage>,
   ) {}
 
   async getMessagesFromUser(id: number, userId: number): Promise<Message[]> {
@@ -57,7 +60,44 @@ export class MessagesService {
     await this.messagesRepository.save(newMessage)
 
     this.subscriptionsProvider.sendMessageToUser(to, newMessage, fromName)
+    this.updateLatestMessage(newMessage, from, to)
 
     return newMessage
+  }
+
+  private async updateLatestMessage(
+    message: Message,
+    from: number,
+    to: number,
+  ): Promise<void> {
+    const latest = await this.latestMessageRepository
+      .createQueryBuilder("latestMessage")
+      .where(
+        ":user1 = ANY (latestMessage.users) OR :user2 = ANY (latestMessage.users)",
+        { user1: from, user2: to },
+      )
+      .getOne()
+
+    if (!latest) {
+      const newMessage = this.latestMessageRepository.create({
+        users: [from, to],
+        message,
+      })
+      await this.latestMessageRepository.save(newMessage)
+
+      return
+    }
+
+    await this.latestMessageRepository.update({ id: latest.id }, { message })
+  }
+
+  async getLatestMessages(userId: number): Promise<Message[]> {
+    const messages = await this.latestMessageRepository
+      .createQueryBuilder("latestMessage")
+      .where(":user = ANY (latestMessage.users)", { user: userId })
+      .leftJoinAndSelect("latestMessage.message", "message")
+      .getMany()
+
+    return messages.map((message) => message.message)
   }
 }
