@@ -8,9 +8,9 @@ import { LatestMessage } from "./latest-message"
 
 interface Props {
 	user: UserWithLatestMessage
-	handleUserSelect: (user?: User) => void
-	shouldHideUserStatus?: boolean
 	isSelected: boolean
+	shouldHideUserStatus?: boolean
+	handleUserSelect: (user?: User) => void
 }
 
 const UserCardContainer = styled.div<{ isSelected: boolean }>`
@@ -44,9 +44,9 @@ const UserStatus = styled.div<{ isOnline?: boolean }>`
 
 export const UserCard = ({
 	user,
-	handleUserSelect,
-	shouldHideUserStatus,
 	isSelected,
+	shouldHideUserStatus,
+	handleUserSelect,
 }: Props): ReactElement => {
 	const handleClick = (): void => {
 		handleUserSelect(user)
