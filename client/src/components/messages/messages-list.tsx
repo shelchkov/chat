@@ -4,6 +4,7 @@ import styled from "styled-components"
 import { useRequest } from "../../effects/use-request"
 import { getUsersMessagesInput } from "../../utils/api-utils"
 import { Message, User } from "../../utils/interfaces"
+import { noop } from "../../utils/utils"
 
 import { MessagesListAndForm, Loading } from "./messages-list-and-form"
 
@@ -15,6 +16,7 @@ interface Props {
 	isMobile?: boolean
 	addNewFriend: (userId: number) => void
 	showUsersList?: () => void
+	handleNewMessage?: (message: Message) => void
 }
 
 const MessagesListContainer = styled.div`
@@ -42,6 +44,7 @@ export const MessagesList = ({
 	addNewFriend,
 	isMobile,
 	showUsersList,
+	handleNewMessage = noop,
 }: Props): ReactElement => {
 	const { start, data, isLoading, error } = useRequest(
 		getUsersMessagesInput(),
@@ -77,6 +80,7 @@ export const MessagesList = ({
 		}
 
 		setMessages([...(messages || []), message])
+		handleNewMessage(message)
 	}
 
 	useEffect((): void => {

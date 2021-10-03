@@ -7,7 +7,8 @@ import { User } from "../../utils/interfaces"
 import { SignOut } from "../../components/main/sign-out"
 import { Messages } from "../../components/main/messages"
 import * as useSockets from "../../effects/use-sockets"
-import * as utils from "../../utils/utils"
+import * as userUtils from "../../utils/user-utils"
+import * as useLatestMessages from "../../effects/use-latest-messages"
 
 jest.mock("../../effects/use-sockets")
 jest.mock("react-hook-form", () => ({
@@ -16,11 +17,12 @@ jest.mock("react-hook-form", () => ({
 		handleSubmit: () => jest.fn(),
 	}),
 }))
-jest.mock("../../utils/utils", () => {
-	const original = jest.requireActual("../../utils/utils")
+jest.mock("../../utils/user-utils", () => {
+	const original = jest.requireActual("../../utils/user-utils")
 
 	return { ...original, markNotFriends: jest.fn() }
 })
+jest.mock("../../effects/use-latest-messages")
 
 describe("main page", (): void => {
 	let mainPage: ReactWrapper
@@ -31,11 +33,13 @@ describe("main page", (): void => {
 		.spyOn(useSockets, "useSockets")
 		.mockReturnValue({} as any)
 	const handleSignOut = jest.fn()
-	const markNotFriendsSpy = jest.spyOn(utils, "markNotFriends")
+	const markNotFriendsSpy = jest.spyOn(userUtils, "markNotFriends")
 
 	const getFriends = () => mainPage.find(Messages).prop("friends")
 	const getOnlineFriends = () =>
 		mainPage.find(Messages).prop("onlineFriends")
+	
+	jest.spyOn(useLatestMessages, "useLatestMessages").mockReturnValue({ updateLatestMessage: jest.fn(), latestMessages: undefined })
 
 	beforeEach((): void => {
 		mainPage = mount(
@@ -262,5 +266,4 @@ describe("main page", (): void => {
 			expect(getFriends()).toEqual([])
 		})
 	})
-	
 })

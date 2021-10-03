@@ -1,19 +1,18 @@
 import React, { ReactElement } from "react"
 import styled from "styled-components"
 
-import { User } from "../../utils/interfaces"
+import { User, UserWithLatestMessage } from "../../utils/interfaces"
 import { theme } from "../../style-guide/theme"
 
 import { AddFriendForm } from "./add-friend.form"
 import { UsersListContent } from "./users-list-content"
 
 interface Props {
-	users: User[] | undefined
+	users: UserWithLatestMessage[] | undefined
+	isSearching: boolean
 	updateUsersList: (users?: User[] | null) => void
 	handleUserSelect: (user?: User) => void
-	isSearching: boolean
 	setIsSearching: (isSearching: boolean) => void
-	onlineFriends?: number[]
 	isMobile?: boolean
 	selectedUserId?: number
 }
@@ -31,33 +30,12 @@ const UsersListContainer = styled.div`
 	overflow-y: auto;
 `
 
-const formatUsers = (
-	users?: User[],
-	onlineFriends?: number[],
-): User[] | undefined => {
-	if (!users) {
-		return
-	}
-
-	if (onlineFriends) {
-		return users.map(
-			(user): User =>
-				onlineFriends.includes(user.id)
-					? { ...user, isOnline: true }
-					: { ...user, isOnline: false },
-		)
-	}
-
-	return users
-}
-
 export const UsersList = ({
 	users,
+	isSearching,
 	updateUsersList,
 	handleUserSelect,
-	isSearching,
 	setIsSearching,
-	onlineFriends,
 	isMobile,
 	selectedUserId,
 }: Props): ReactElement => (
@@ -69,7 +47,7 @@ export const UsersList = ({
 
 		<UsersListContainer>
 			<UsersListContent
-				users={formatUsers(users, onlineFriends)}
+				users={users}
 				isSearching={isSearching}
 				handleUserSelect={handleUserSelect}
 				selectedUserId={selectedUserId}

@@ -13,3 +13,5 @@ export interface Message {
 	from: number
 	to: number
 }
+
+export type UserWithLatestMessage = User & { latestMessage?: Message }

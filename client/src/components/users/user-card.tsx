@@ -1,11 +1,13 @@
 import React, { ReactElement } from "react"
 import styled from "styled-components"
 
-import { User } from "../../utils/interfaces"
+import { User, UserWithLatestMessage } from "../../utils/interfaces"
 import { theme } from "../../style-guide/theme"
 
+import { LatestMessage } from "./latest-message"
+
 interface Props {
-	user: User
+	user: UserWithLatestMessage
 	handleUserSelect: (user?: User) => void
 	shouldHideUserStatus?: boolean
 	isSelected: boolean
@@ -58,6 +60,11 @@ export const UserCard = ({
 					<UserStatus isOnline={user.isOnline} />
 				)}
 			</UserNameContainer>
+
+			<LatestMessage
+				latestMessage={user.latestMessage}
+				userId={user.id}
+			/>
 		</UserCardContainer>
 	)
 }

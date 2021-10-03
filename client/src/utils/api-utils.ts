@@ -67,3 +67,8 @@ export const getSignOutInput = (): RequestInput => ({
 	url: `${apiUrl}authentication/sign-out`,
 	method: RequestMethod.POST,
 })
+
+export const getLatestMessagesInput = (): RequestInput => ({
+	url: `${apiUrl}messages/latest`,
+	method: RequestMethod.GET,
+})

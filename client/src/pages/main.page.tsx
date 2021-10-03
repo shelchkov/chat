@@ -5,8 +5,8 @@ import { useSockets } from "../effects/use-sockets"
 import { SignOut } from "../components/main/sign-out"
 import { Messages } from "../components/main/messages"
 import { User, Message } from "../utils/interfaces"
-import { markNotFriends } from "../utils/utils"
 import { theme } from "../style-guide/theme"
+import { markNotFriends } from "../utils/user-utils"
 
 interface Props {
 	user: User
