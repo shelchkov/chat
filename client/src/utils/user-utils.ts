@@ -66,3 +66,38 @@ export const markOnlineUsers = (
 
 	return users
 }
+
+const checkUsersPair = (
+	{ from, to }: Message,
+	{ from: from2, to: to2 }: Message,
+): boolean =>
+	(from === from2 && to === to2) || (from === to2 && to === from2)
+
+export const getUpdatedLatestMessages = (
+	message: Message,
+	messages?: Message[],
+): Message[] | undefined => {
+	if (!messages) {
+		return
+	}
+
+	let isFound = false
+
+	const newMessages = messages.map((latestMessage) => {
+		if (checkUsersPair(message, latestMessage)) {
+			isFound = true
+
+			return message
+		}
+
+		return latestMessage
+	})
+
+	return isFound ? newMessages : [...newMessages, message]
+}
+
+export const findFriend = (
+	user: User | undefined,
+	friendId: number,
+): User | undefined =>
+	user?.friends?.find((friend): boolean => friend.id === friendId)
