@@ -24,10 +24,8 @@ interface Props {
 export const Messages = ({
 	friends,
 	onlineFriends,
-	user,
-	newMessage,
 	updateUsersList,
-	addNewFriend,
+	...rest
 }: Props): ReactElement => {
 	const { isMore: isDesktop } = useWidth(
 		getPixelsFromRem(theme.breakpoints[1]),
@@ -60,10 +58,8 @@ export const Messages = ({
 				<MessagesList
 					selectedUser={selectedFriend}
 					isSearching={isSearching}
-					user={user}
-					newMessage={newMessage}
-					addNewFriend={addNewFriend}
 					handleNewMessage={updateLatestMessage}
+					{...rest}
 				/>
 			</>
 		)
@@ -74,12 +70,10 @@ export const Messages = ({
 			<MessagesList
 				selectedUser={selectedFriend}
 				isSearching={isSearching}
-				user={user}
-				newMessage={newMessage}
-				addNewFriend={addNewFriend}
-				isMobile
-				showUsersList={showUsersList}
 				handleNewMessage={updateLatestMessage}
+				showUsersList={showUsersList}
+				isMobile
+				{...rest}
 			/>
 		)
 	}
