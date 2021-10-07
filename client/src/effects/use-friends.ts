@@ -1,7 +1,6 @@
-import { useState } from "react"
-
 import { User } from "../utils/interfaces"
 import { markNotFriends } from "../utils/user-utils"
+import { useArrayState } from "./use-array-state"
 
 interface Result {
 	friends: User[] | undefined
@@ -14,21 +13,9 @@ interface Result {
 }
 
 export const useFriends = (userFriends: User[] = []): Result => {
-	const [friends, setFriends] = useState<User[] | undefined>(
-		userFriends,
-	)
-	const [onlineFriends, setOnlineFriends] = useState<number[]>()
-	const [originalFriends, setOriginalFriends] = useState<User[]>(
-		userFriends,
-	)
-
-	const addFriend = (friend: User) =>
-		setFriends([...(friends || []), friend])
-	const addNewOnlineFriend = (friendId: number) =>
-		setOnlineFriends([...(onlineFriends || []), friendId])
-	const resetFriends = () => setFriends(undefined)
-	const addOriginalFriend = (friend: User): void =>
-		setOriginalFriends([...(originalFriends || []), friend])
+	const [friends, setFriends, addFriend, resetFriends] = useArrayState(userFriends)
+	const [onlineFriends, setOnlineFriends, addNewOnlineFriend] = useArrayState<number>()
+	const [originalFriends = [], _, addOriginalFriend] = useArrayState(userFriends)
 
 	const updateUsersList = (users?: User[] | null): void => {
 		if (users) {
@@ -43,14 +30,8 @@ export const useFriends = (userFriends: User[] = []): Result => {
 	}
 
 	const addNewFriend = (userId: number): void => {
-		if (
-			friends &&
-			!originalFriends.find((friend): boolean => friend.id === userId)
-		) {
-			const newFriend = friends.find(
-				(friend): boolean => friend.id === userId,
-			)
-
+		if (friends && !originalFriends.find(({ id }) => id === userId)) {
+			const newFriend = friends.find(({ id }) => id === userId)
 			newFriend && addOriginalFriend(newFriend)
 		}
 	}

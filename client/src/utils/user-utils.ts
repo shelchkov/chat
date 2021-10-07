@@ -101,3 +101,5 @@ export const findFriend = (
 	friendId: number,
 ): User | undefined =>
 	user?.friends?.find((friend): boolean => friend.id === friendId)
+
+export const createFriend = (id: number, name?: string, isOnline?: boolean): User => ({ id, name: name || '', isOnline, email: '' })

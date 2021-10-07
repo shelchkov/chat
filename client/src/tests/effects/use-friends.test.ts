@@ -1,8 +1,8 @@
-import { renderHook } from "@testing-library/react-hooks"
+import { act, renderHook } from "@testing-library/react-hooks"
 
 import { useFriends } from "../../effects/use-friends"
-// import * as userUtils from "../../utils/user-utils"
-// import { userMock } from "../tests-utils"
+import * as userUtils from "../../utils/user-utils"
+import { userMock } from "../tests-utils"
 
 jest.mock("../../utils/user-utils", () => {
 	const original = jest.requireActual("../../utils/user-utils")
@@ -11,7 +11,7 @@ jest.mock("../../utils/user-utils", () => {
 })
 
 describe("useFriends hook", () => {
-	// const markNotFriendsSpy = jest.spyOn(userUtils, "markNotFriends")
+	const markNotFriendsSpy = jest.spyOn(userUtils, "markNotFriends")
 
 	it("friends are optional", () => {
 		const {
@@ -22,89 +22,77 @@ describe("useFriends hook", () => {
 		expect(friends).toEqual([])
 	})
 
-	// it("adds friend", () => {
-	//   const { result: { current: { addFriend, friends } } } = renderHook(() => useFriends())
-	//   expect(friends).toEqual([])
+	it("adds friend", () => {
+	  const { result } = renderHook(() => useFriends())
+	  expect(result.current.friends).toEqual([])
 
-	//   act(() => {
-	//     addFriend(userMock)
-	//   })
+	  act(() => {
+	    result.current.addFriend(userMock)
+	  })
 
-	//   setTimeout(() => {
-	//     expect(friends).toEqual([userMock])
-	//   })
-	// })
+		expect(result.current.friends).toEqual([userMock])
+	})
 
-	// it("adds online friend", () => {
-	//   const newFriendId = 5
-	//   const { result: { current: { addNewOnlineFriend, onlineFriends } } } = renderHook(() => useFriends())
+	it("adds online friend", () => {
+	  const newFriendId = 5
+	  const { result } = renderHook(() => useFriends())
 
-	//   act(() => {
-	//     addNewOnlineFriend(newFriendId)
-	//   })
+	  act(() => {
+	    result.current.addNewOnlineFriend(newFriendId)
+	  })
 
-	//   setTimeout(() => {
-	//     expect(onlineFriends).toEqual([newFriendId])
-	//   })
-	// })
+		expect(result.current.onlineFriends).toEqual([newFriendId])
+	})
 
-	// describe("and friends list is updated", () => {
-	// 	it("resets friends if undefined is passed", () => {
-	//     const { result: { current: { updateUsersList, friends, addFriend } } } = renderHook(() => useFriends())
+	describe("and friends list is updated", () => {
+		it("resets friends if undefined is passed", () => {
+	    const { result } = renderHook(() => useFriends())
 
-	//     act(() => {
-	//       addFriend(userMock)
-	//     })
+	    act(() => {
+	      result.current.addFriend(userMock)
+	    })
 
-	//     setTimeout(() => {
-	//       expect(friends?.length).toEqual(1)
-	//     })
+			expect(result.current.friends?.length).toEqual(1)
 
-	//     act(() => {
-	//       updateUsersList()
-	//     })
+	    act(() => {
+	      result.current.updateUsersList()
+	    })
 
-	// 		expect(friends).toEqual([])
-	// 	})
+			expect(result.current.friends).toEqual([])
+		})
 
-	// 	it("empties friends list if null is passed", () => {
-	//     const { result: { current: { updateUsersList, friends, addFriend } } } = renderHook(() => useFriends())
+		it("empties friends list if null is passed", () => {
+	    const { result } = renderHook(() => useFriends())
 
-	//     act(() => {
-	//       addFriend(userMock)
-	//     })
+	    act(() => {
+	      result.current.addFriend(userMock)
+	    })
 
-	//     setTimeout(() => {
-	//       expect(friends?.length).toEqual(1)
-	//     })
+			expect(result.current.friends?.length).toEqual(1)
 
-	//     act(() => {
-	//       updateUsersList(null)
-	//     })
+	    act(() => {
+	      result.current.updateUsersList(null)
+	    })
 
-	// 		setTimeout(() => {
-	//       expect(friends).toEqual(undefined)
-	//     })
-	// 	})
+			expect(result.current.friends).toEqual(undefined)
+		})
 
-	// 	describe("and array is passed", () => {
-	// 		const users = [{ id: 6 }, { id: 7 }] as any
+		describe("and array is passed", () => {
+			const users = [{ id: 6 }, { id: 7 }] as any
 
-	// 		beforeAll(() => {
-	// 			markNotFriendsSpy.mockReturnValue(users)
-	// 		})
+			beforeAll(() => {
+				markNotFriendsSpy.mockReturnValue(users)
+			})
 
-	// 		it("sets friends list", () => {
-	//       const { result: { current: { updateUsersList, friends } } } = renderHook(() => useFriends())
+			it("sets friends list", () => {
+	      const { result } = renderHook(() => useFriends())
 
-	//       act(() => {
-	//         updateUsersList(users)
-	//       })
+	      act(() => {
+	        result.current.updateUsersList(users)
+	      })
 
-	//       setTimeout(() => {
-	//         expect(friends).toEqual(users)
-	//       })
-	// 		})
-	// 	})
-	// })
+				expect(result.current.friends).toEqual(users)
+			})
+		})
+	})
 })

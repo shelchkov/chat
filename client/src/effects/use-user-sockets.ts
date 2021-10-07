@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { Message, User } from "../utils/interfaces"
+import { createFriend } from "../utils/user-utils"
 
 import { useSockets } from "./use-sockets"
 
@@ -23,32 +24,17 @@ export const useUserSockets = (
 		}
 
 		if (data.newMessage) {
-			const newMessage = data.newMessage
-			setNewMessage(newMessage)
+			const { from } = data.newMessage
+			setNewMessage(data.newMessage)
 
-			if (
-				!friends ||
-				!friends.find(({ id }): boolean => id === newMessage.from)
-			) {
-				const newFriend = {
-					id: newMessage.from,
-					name: data.fromName,
-					email: "",
-					isOnline: true,
-				} as User
-
-				addNewFriend(newFriend)
-
-				addNewOnlineFriend(newFriend.id)
+			if (!friends ||	!friends.find(({ id }) => id === from)) {
+				addNewFriend(createFriend(from, data.fromName, true))
+				addNewOnlineFriend(from)
 			}
 		}
 
 		if (data.online) {
-			setOnlineFriends(
-				data.online.map(
-					(onlineUser: { userId: number }): number => onlineUser.userId,
-				),
-			)
+			setOnlineFriends(data.online.map(({ userId }) => userId))
 		}
 
 		if (data.newUserOnline) {
