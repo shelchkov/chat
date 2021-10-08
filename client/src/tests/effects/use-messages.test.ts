@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-hooks"
+import { act, renderHook } from "@testing-library/react-hooks"
 
 import { useMessages } from "../../effects/use-messages"
 import * as useRequest from "../../effects/use-request"
@@ -102,16 +102,14 @@ describe("useMessages hook", () => {
 		})
 	})
 
-	// it("adds new message", async () => {
-	//   const message = messageMock
-	//   const { result: { current: { addNewMessage, messages } } } = renderHook(() => useMessages(isSearching, user))
+	it("adds new message", async () => {
+	  const message = messageMock
+	  const { result } = renderHook(() => useMessages(isSearching, user))
 
-	//   act(() => {
-	//     addNewMessage(message)
-	//   })
+	  act(() => {
+	    result.current.addNewMessage(message)
+	  })
 
-	//   setTimeout(() => {
-	//     expect(messages?.find(({ id }) => id === message.id)).toBeDefined()
-	//   })
-	// })
+		expect(result.current.messages?.find(({ id }) => id === message.id)).toBeDefined()
+	})
 })

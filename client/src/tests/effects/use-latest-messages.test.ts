@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-hooks"
+import { act, renderHook } from "@testing-library/react-hooks"
 
 import { useLatestMessages } from "../../effects/use-latest-messages"
 import * as useRequest from "../../effects/use-request"
@@ -33,23 +33,19 @@ describe("useLatestMessages hook", () => {
 			useRequestSpy.mockReturnValue({ ...useRequestMockDefault, data })
 		})
 
-		// it("returns received messages", async () => {
-		//   const { result: { current } } = renderHook(() => useLatestMessages())
-		//   setTimeout(() => {
-		//     expect(current.latestMessages).toEqual(data)
-		//   })
-		// })
+		it("returns received messages", async () => {
+		  const { result } = renderHook(() => useLatestMessages())
+			expect(result.current.latestMessages).toEqual(data)
+		})
 
-		// it("updates latest messages", async () => {
-		//   const { result: { current: { updateLatestMessage, latestMessages } } } = renderHook(() => useLatestMessages())
+		it("updates latest messages", async () => {
+		  const { result } = renderHook(() => useLatestMessages())
 
-		//   act(() => {
-		//     updateLatestMessage(messageMock)
-		//   })
+		  act(() => {
+		    result.current.updateLatestMessage(messageMock)
+		  })
 
-		//   setTimeout(() => {
-		//     expect(latestMessages).toEqual([])
-		//   })
-		// })
+			expect(result.current.latestMessages).toEqual([])
+		})
 	})
 })

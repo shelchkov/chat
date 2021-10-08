@@ -17,6 +17,15 @@ describe("userUserSockets hook", () => {
 	const addNewOnlineFriendSpy = jest.fn()
 	const setOnlineFriendsSpy = jest.fn()
 
+	it("doesn't run functions initially", () => {
+		const { result } = renderHook(() => useUserSockets(friends, addNewFriendSpy, addNewOnlineFriendSpy, setOnlineFriendsSpy))
+
+		expect(result.current.newMessage).toEqual(undefined)
+		expect(addNewFriendSpy).not.toBeCalled()
+		expect(addNewOnlineFriendSpy).not.toBeCalled()
+		expect(setOnlineFriendsSpy).not.toBeCalled()
+	})
+
 	describe("and receives new message via websocket", (): void => {
 		const data = {
 			newMessage: { from: (friends as User[])[0].id },
@@ -63,7 +72,6 @@ describe("userUserSockets hook", () => {
 
 			it("creates new friend", () => {
 				addNewFriendSpy.mockClear()
-				console.log({ friends })
 				renderHook(() =>
 					useUserSockets(
 						friends,

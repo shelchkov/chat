@@ -1,6 +1,7 @@
 import { Message, User } from "../../utils/interfaces"
 import {
 	addLatestMessagesToUsers,
+	findFriend,
 	getUpdatedLatestMessages,
 	markNotFriends,
 	markOnlineUsers,
@@ -76,6 +77,10 @@ describe("user-utils", () => {
 			expect((result || [])[0]).toHaveProperty("isOnline", true)
 			expect((result || [])[1]).toHaveProperty("isOnline", false)
 		})
+
+		it("users are optional", () => {
+			expect(markOnlineUsers()).toEqual(undefined)
+		})
 	})
 
 	describe("getUpdatedLatestMessages function", () => {
@@ -93,7 +98,7 @@ describe("user-utils", () => {
 				{
 					from: message.from,
 					to: message.to,
-					text: message + "2",
+					text: message.text + "2",
 					id: message.id + 1,
 				},
 			]
@@ -107,13 +112,33 @@ describe("user-utils", () => {
 				{
 					from: message.to,
 					to: message.from,
-					text: message + "3",
+					text: message.text + "3",
 					id: message.id + 2,
 				},
 			]
 			const result = getUpdatedLatestMessages(message, messages)
 			expect(result?.length).toEqual(1)
 			expect((result || [])[0]).toEqual(message)
+		})
+
+		it("messages are optional", () => {
+			expect(getUpdatedLatestMessages(message)).toEqual(undefined)
+		})
+
+		it("adds new message", () => {
+			const messages: Message[] = [{ from: message.from, to: message.to + 1, id: message.id + 3, text: 'message' }]
+			const result = getUpdatedLatestMessages(message, messages)
+			
+			expect(result?.length).toEqual(messages.length + 1)
+			expect((result || [])[1]).toEqual(message)
+		})
+	})
+
+	describe('findFriend function', () => {
+		const user: User = { ...userMock, friends: [userMock2] }
+
+		it("finds friend", () => {
+			expect(findFriend(user, (user.friends || [])[0].id)).toEqual((user.friends || [])[0])
 		})
 	})
 })
