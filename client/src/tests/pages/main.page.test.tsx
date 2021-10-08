@@ -8,6 +8,7 @@ import { Messages } from "../../components/main/messages"
 import * as useLatestMessages from "../../effects/use-latest-messages"
 import * as useFriends from "../../effects/use-friends"
 import * as useUserSockets from "../../effects/use-user-sockets"
+import * as useArrayState from "../../effects/use-array-state"
 
 jest.mock("react-hook-form", () => ({
 	useForm: () => ({
@@ -23,6 +24,7 @@ jest.mock("../../utils/user-utils", () => {
 jest.mock("../../effects/use-latest-messages")
 jest.mock("../../effects/use-friends")
 jest.mock("../../effects/use-user-sockets")
+jest.mock("../../effects/use-array-state")
 
 describe("main page", (): void => {
 	let mainPage: ReactWrapper
@@ -38,16 +40,14 @@ describe("main page", (): void => {
 	})
 	jest.spyOn(useFriends, "useFriends").mockReturnValue({
 		friends: [],
-		onlineFriends: undefined,
 		addFriend: jest.fn(),
-		addNewOnlineFriend: jest.fn(),
-		setOnlineFriends: jest.fn(),
 		updateUsersList: jest.fn(),
 		addNewFriend: jest.fn(),
 	})
 	jest
 		.spyOn(useUserSockets, "useUserSockets")
 		.mockReturnValue({ newMessage: undefined })
+	jest.spyOn(useArrayState, "useArrayState").mockReturnValue([undefined, jest.fn(),	jest.fn(), jest.fn()])
 
 	beforeEach((): void => {
 		mainPage = mount(

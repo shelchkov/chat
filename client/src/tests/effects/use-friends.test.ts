@@ -33,17 +33,6 @@ describe("useFriends hook", () => {
 		expect(result.current.friends).toEqual([userMock])
 	})
 
-	it("adds online friend", () => {
-	  const newFriendId = 5
-	  const { result } = renderHook(() => useFriends())
-
-	  act(() => {
-	    result.current.addNewOnlineFriend(newFriendId)
-	  })
-
-		expect(result.current.onlineFriends).toEqual([newFriendId])
-	})
-
 	describe("and friends list is updated", () => {
 		it("resets friends if undefined is passed", () => {
 	    const { result } = renderHook(() => useFriends())

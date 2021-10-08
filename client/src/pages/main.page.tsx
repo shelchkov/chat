@@ -7,6 +7,7 @@ import { User } from "../utils/interfaces"
 import { theme } from "../style-guide/theme"
 import { useUserSockets } from "../effects/use-user-sockets"
 import { useFriends } from "../effects/use-friends"
+import { useArrayState } from "../effects/use-array-state"
 
 interface Props {
 	user: User
@@ -54,15 +55,8 @@ export const MainPage = ({
 	user,
 	handleSignOut,
 }: Props): ReactElement => {
-	const {
-		friends,
-		onlineFriends,
-		addFriend,
-		addNewOnlineFriend,
-		setOnlineFriends,
-		updateUsersList,
-		addNewFriend,
-	} = useFriends(user.friends)
+	const { friends, addFriend, updateUsersList, addNewFriend } = useFriends(user.friends)
+	const [onlineFriends, setOnlineFriends, addNewOnlineFriend] = useArrayState<number>()
 	const { newMessage } = useUserSockets(
 		friends,
 		addFriend,

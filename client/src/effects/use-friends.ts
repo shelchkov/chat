@@ -4,17 +4,13 @@ import { useArrayState } from "./use-array-state"
 
 interface Result {
 	friends: User[] | undefined
-	onlineFriends: number[] | undefined
 	addFriend: (friend: User) => void
-	addNewOnlineFriend: (friendId: number) => void
-	setOnlineFriends: (users: number[]) => void
 	updateUsersList: (users?: User[] | null) => void
 	addNewFriend: (userId: number) => void
 }
 
 export const useFriends = (userFriends: User[] = []): Result => {
 	const [friends, setFriends, addFriend, resetFriends] = useArrayState(userFriends)
-	const [onlineFriends, setOnlineFriends, addNewOnlineFriend] = useArrayState<number>()
 	const [originalFriends = [], _, addOriginalFriend] = useArrayState(userFriends)
 
 	const updateUsersList = (users?: User[] | null): void => {
@@ -36,13 +32,5 @@ export const useFriends = (userFriends: User[] = []): Result => {
 		}
 	}
 
-	return {
-		friends,
-		onlineFriends,
-		addFriend,
-		addNewOnlineFriend,
-		setOnlineFriends,
-		updateUsersList,
-		addNewFriend,
-	}
+	return { friends, addFriend, updateUsersList, addNewFriend }
 }
