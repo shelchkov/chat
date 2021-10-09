@@ -34,16 +34,16 @@ describe("useLatestMessages hook", () => {
 		})
 
 		it("returns received messages", async () => {
-		  const { result } = renderHook(() => useLatestMessages())
+			const { result } = renderHook(() => useLatestMessages())
 			expect(result.current.latestMessages).toEqual(data)
 		})
 
 		it("updates latest messages", async () => {
-		  const { result } = renderHook(() => useLatestMessages())
+			const { result } = renderHook(() => useLatestMessages())
 
-		  act(() => {
-		    result.current.updateLatestMessage(messageMock)
-		  })
+			act(() => {
+				result.current.updateLatestMessage(messageMock)
+			})
 
 			expect(result.current.latestMessages).toEqual([])
 		})

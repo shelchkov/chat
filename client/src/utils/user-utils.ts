@@ -102,4 +102,39 @@ export const findFriend = (
 ): User | undefined =>
 	user?.friends?.find((friend): boolean => friend.id === friendId)
 
-export const createFriend = (id: number, name?: string, isOnline?: boolean): User => ({ id, name: name || '', isOnline, email: '' })
+export const createFriend = (
+	id: number,
+	name?: string,
+	isOnline?: boolean,
+): User => ({ id, name: name || "", isOnline, email: "" })
+
+export const getNewOriginalFriend = (
+	userId: number,
+	friends?: User[],
+	originalFriends?: User[],
+) => {
+	if (
+		!friends ||
+		!originalFriends ||
+		originalFriends.find(({ id }) => id === userId)
+	) {
+		return
+	}
+
+	return friends.find(({ id }) => id === userId)
+}
+
+export const getUsersList = (
+	originalFriends: User[],
+	users?: User[] | null,
+) => {
+	if (users) {
+		return markNotFriends(users, originalFriends)
+	}
+
+	if (users === null) {
+		return undefined
+	}
+
+	return originalFriends
+}

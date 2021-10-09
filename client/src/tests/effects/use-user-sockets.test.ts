@@ -18,7 +18,14 @@ describe("userUserSockets hook", () => {
 	const setOnlineFriendsSpy = jest.fn()
 
 	it("doesn't run functions initially", () => {
-		const { result } = renderHook(() => useUserSockets(friends, addNewFriendSpy, addNewOnlineFriendSpy, setOnlineFriendsSpy))
+		const { result } = renderHook(() =>
+			useUserSockets(
+				friends,
+				addNewFriendSpy,
+				addNewOnlineFriendSpy,
+				setOnlineFriendsSpy,
+			),
+		)
 
 		expect(result.current.newMessage).toEqual(undefined)
 		expect(addNewFriendSpy).not.toBeCalled()

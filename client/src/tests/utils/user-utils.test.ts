@@ -2,6 +2,7 @@ import { Message, User } from "../../utils/interfaces"
 import {
 	addLatestMessagesToUsers,
 	findFriend,
+	getNewOriginalFriend,
 	getUpdatedLatestMessages,
 	markNotFriends,
 	markOnlineUsers,
@@ -126,19 +127,45 @@ describe("user-utils", () => {
 		})
 
 		it("adds new message", () => {
-			const messages: Message[] = [{ from: message.from, to: message.to + 1, id: message.id + 3, text: 'message' }]
+			const messages: Message[] = [
+				{
+					from: message.from,
+					to: message.to + 1,
+					id: message.id + 3,
+					text: "message",
+				},
+			]
 			const result = getUpdatedLatestMessages(message, messages)
-			
+
 			expect(result?.length).toEqual(messages.length + 1)
 			expect((result || [])[1]).toEqual(message)
 		})
 	})
 
-	describe('findFriend function', () => {
+	describe("findFriend function", () => {
 		const user: User = { ...userMock, friends: [userMock2] }
 
 		it("finds friend", () => {
-			expect(findFriend(user, (user.friends || [])[0].id)).toEqual((user.friends || [])[0])
+			expect(findFriend(user, (user.friends || [])[0].id)).toEqual(
+				(user.friends || [])[0],
+			)
+		})
+	})
+
+	describe("getNewOriginalFriend function", () => {
+		const userId = 4
+		const friends = [{ ...userMock, id: userId }]
+
+		it("handles case when original friends already have user", () => {
+			expect(getNewOriginalFriend(userId, [], friends)).toEqual(
+				undefined,
+			)
+		})
+
+		it("finds user with desired id", () => {
+			expect(getNewOriginalFriend(userId, friends, [])).toEqual(
+				friends[0],
+			)
 		})
 	})
 })

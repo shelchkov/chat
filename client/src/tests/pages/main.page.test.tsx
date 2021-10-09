@@ -47,7 +47,9 @@ describe("main page", (): void => {
 	jest
 		.spyOn(useUserSockets, "useUserSockets")
 		.mockReturnValue({ newMessage: undefined })
-	jest.spyOn(useArrayState, "useArrayState").mockReturnValue([undefined, jest.fn(),	jest.fn(), jest.fn()])
+	jest
+		.spyOn(useArrayState, "useArrayState")
+		.mockReturnValue([undefined, jest.fn(), jest.fn(), jest.fn()])
 
 	beforeEach((): void => {
 		mainPage = mount(

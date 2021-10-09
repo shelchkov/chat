@@ -103,13 +103,15 @@ describe("useMessages hook", () => {
 	})
 
 	it("adds new message", async () => {
-	  const message = messageMock
-	  const { result } = renderHook(() => useMessages(isSearching, user))
+		const message = messageMock
+		const { result } = renderHook(() => useMessages(isSearching, user))
 
-	  act(() => {
-	    result.current.addNewMessage(message)
-	  })
+		act(() => {
+			result.current.addNewMessage(message)
+		})
 
-		expect(result.current.messages?.find(({ id }) => id === message.id)).toBeDefined()
+		expect(
+			result.current.messages?.find(({ id }) => id === message.id),
+		).toBeDefined()
 	})
 })

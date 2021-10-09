@@ -55,8 +55,17 @@ export const MainPage = ({
 	user,
 	handleSignOut,
 }: Props): ReactElement => {
-	const { friends, addFriend, updateUsersList, addNewFriend } = useFriends(user.friends)
-	const [onlineFriends, setOnlineFriends, addNewOnlineFriend] = useArrayState<number>()
+	const {
+		friends,
+		addFriend,
+		updateUsersList,
+		addNewFriend,
+	} = useFriends(user.friends)
+	const [
+		onlineFriends,
+		setOnlineFriends,
+		addNewOnlineFriend,
+	] = useArrayState<number>()
 	const { newMessage } = useUserSockets(
 		friends,
 		addFriend,

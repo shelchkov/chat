@@ -27,7 +27,7 @@ export const useUserSockets = (
 			const { from } = data.newMessage
 			setNewMessage(data.newMessage)
 
-			if (!friends ||	!friends.find(({ id }) => id === from)) {
+			if (!friends || !friends.find(({ id }) => id === from)) {
 				addNewFriend(createFriend(from, data.fromName, true))
 				addNewOnlineFriend(from)
 			}
