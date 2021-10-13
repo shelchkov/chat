@@ -1,7 +1,3 @@
-import { ValidationRules } from "react-hook-form/dist/types/validator"
-
-import { User } from "./interfaces"
-
 export const getSignedOutInputWidth = (
 	breakpoint: number,
 	isSendMessageform?: boolean,
@@ -27,40 +23,3 @@ export const getPixelsFromRem = (rem: string): number =>
 	parseInt(rem) * remSize
 
 export const noop = (): undefined => undefined
-
-export const markNotFriends = (
-	users: User[],
-	friends: User[],
-): User[] =>
-	users.map((user) =>
-		friends.find((friend) => friend.id === user.id)
-			? user
-			: { ...user, notFriend: true },
-	)
-
-export const splitUsers = (users: User[]) =>
-	users.reduce(
-		(acc, user) => {
-			if (user.notFriend) {
-				acc.notFriends.push(user)
-			} else {
-				acc.friends.push(user)
-			}
-
-			return acc
-		},
-		{ friends: [], notFriends: [] } as {
-			friends: User[]
-			notFriends: User[]
-		},
-	)
-
-export const validationRules: ValidationRules = {
-	required: true,
-	validate: (value): boolean => !!value.trim(),
-}
-
-export const passwordValidationRules = {
-	...validationRules,
-	minLength: 6,
-}

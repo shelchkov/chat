@@ -1,9 +1,9 @@
-import React, { ReactElement, useEffect, useState } from "react"
+import React, { ReactElement, useEffect } from "react"
 import styled from "styled-components"
 
-import { useRequest } from "../../effects/use-request"
-import { getUsersMessagesInput } from "../../utils/api-utils"
+import { useMessages } from "../../effects/use-messages"
 import { Message, User } from "../../utils/interfaces"
+import { noop } from "../../utils/utils"
 
 import { MessagesListAndForm, Loading } from "./messages-list-and-form"
 
@@ -15,6 +15,7 @@ interface Props {
 	isMobile?: boolean
 	addNewFriend: (userId: number) => void
 	showUsersList?: () => void
+	handleNewMessage?: (message: Message) => void
 }
 
 const MessagesListContainer = styled.div`
@@ -26,14 +27,6 @@ const MessagesListContainer = styled.div`
 
 const loadingText = "Loading..."
 
-const findFriend = (
-	user: User | undefined,
-	friendId: number,
-): User | undefined =>
-	user &&
-	user.friends &&
-	user.friends.find((friend): boolean => friend.id === friendId)
-
 export const MessagesList = ({
 	selectedUser,
 	isSearching,
@@ -42,41 +35,21 @@ export const MessagesList = ({
 	addNewFriend,
 	isMobile,
 	showUsersList,
+	handleNewMessage = noop,
 }: Props): ReactElement => {
-	const { start, data, isLoading, error } = useRequest(
-		getUsersMessagesInput(),
+	const { messages, isLoading, error, addNewMessage } = useMessages(
+		isSearching,
+		user,
+		selectedUser,
 	)
-	const [messages, setMessages] = useState<Message[]>()
-
-	useEffect((): void => {
-		setMessages(undefined)
-
-		selectedUser &&
-			(!isSearching || findFriend(user, selectedUser.id)) &&
-			start(undefined, String(selectedUser.id))
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedUser])
-
-	useEffect((): void => {
-		if (!data) {
-			return
-		}
-
-		if (data.statusCode) {
-			setMessages(undefined)
-
-			return
-		}
-
-		setMessages(data)
-	}, [data])
 
 	const addMessage = (message: Message): void => {
 		if (!messages) {
 			addNewFriend(message.to)
 		}
 
-		setMessages([...(messages || []), message])
+		addNewMessage(message)
+		handleNewMessage(message)
 	}
 
 	useEffect((): void => {

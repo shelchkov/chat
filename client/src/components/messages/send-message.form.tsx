@@ -9,8 +9,8 @@ import { Message } from "../../utils/interfaces"
 import { theme } from "../../style-guide/theme"
 import { ButtonTypes } from "../../utils/enums"
 import { getSendMessageInput } from "../../utils/api-utils"
-import { validationRules } from "../../utils/utils"
 import { useInputFocus } from "../../effects/use-input-focus"
+import { validationRules } from "../../utils/validation"
 
 interface Props {
 	isLoading: boolean

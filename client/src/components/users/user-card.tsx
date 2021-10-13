@@ -1,14 +1,16 @@
 import React, { ReactElement } from "react"
 import styled from "styled-components"
 
-import { User } from "../../utils/interfaces"
+import { User, UserWithLatestMessage } from "../../utils/interfaces"
 import { theme } from "../../style-guide/theme"
 
+import { LatestMessage } from "./latest-message"
+
 interface Props {
-	user: User
-	handleUserSelect: (user?: User) => void
-	shouldHideUserStatus?: boolean
+	user: UserWithLatestMessage
 	isSelected: boolean
+	shouldHideUserStatus?: boolean
+	handleUserSelect: (user?: User) => void
 }
 
 const UserCardContainer = styled.div<{ isSelected: boolean }>`
@@ -42,9 +44,9 @@ const UserStatus = styled.div<{ isOnline?: boolean }>`
 
 export const UserCard = ({
 	user,
-	handleUserSelect,
-	shouldHideUserStatus,
 	isSelected,
+	shouldHideUserStatus,
+	handleUserSelect,
 }: Props): ReactElement => {
 	const handleClick = (): void => {
 		handleUserSelect(user)
@@ -58,6 +60,11 @@ export const UserCard = ({
 					<UserStatus isOnline={user.isOnline} />
 				)}
 			</UserNameContainer>
+
+			<LatestMessage
+				latestMessage={user.latestMessage}
+				userId={user.id}
+			/>
 		</UserCardContainer>
 	)
 }

@@ -8,7 +8,7 @@ import { Button } from "../button/button"
 import { getUsersSearchInput } from "../../utils/api-utils"
 import { ButtonTypes } from "../../utils/enums"
 import { User } from "../../utils/interfaces"
-import { validationRules } from "../../utils/utils"
+import { validationRules } from "../../utils/validation"
 
 interface Props {
 	updateUsersList: (users?: User[] | null) => void

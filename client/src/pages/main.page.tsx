@@ -1,12 +1,13 @@
-import React, { ReactElement, useState, useEffect } from "react"
+import React, { ReactElement } from "react"
 import styled from "styled-components"
 
-import { useSockets } from "../effects/use-sockets"
 import { SignOut } from "../components/main/sign-out"
 import { Messages } from "../components/main/messages"
-import { User, Message } from "../utils/interfaces"
-import { markNotFriends } from "../utils/utils"
+import { User } from "../utils/interfaces"
 import { theme } from "../style-guide/theme"
+import { useUserSockets } from "../effects/use-user-sockets"
+import { useFriends } from "../effects/use-friends"
+import { useArrayState } from "../effects/use-array-state"
 
 interface Props {
 	user: User
@@ -54,84 +55,23 @@ export const MainPage = ({
 	user,
 	handleSignOut,
 }: Props): ReactElement => {
-	const [friends, setFriends] = useState<User[] | undefined>(
-		user.friends || [],
+	const {
+		friends,
+		addFriend,
+		updateUsersList,
+		addNewFriend,
+	} = useFriends(user.friends)
+	const [
+		onlineFriends,
+		setOnlineFriends,
+		addNewOnlineFriend,
+	] = useArrayState<number>()
+	const { newMessage } = useUserSockets(
+		friends,
+		addFriend,
+		addNewOnlineFriend,
+		setOnlineFriends,
 	)
-	const [newMessage, setNewMessage] = useState<Message>()
-	const [onlineFriends, setOnlineFriends] = useState<number[]>()
-	const [originalFriends, setOriginalFriends] = useState<User[]>(
-		user.friends || [],
-	)
-
-	const { data } = useSockets()
-
-	const updateUsersList = (users?: User[] | null): void => {
-		if (users) {
-			return setFriends(markNotFriends(users, originalFriends))
-		}
-
-		if (users === null) {
-			return setFriends(undefined)
-		}
-
-		setFriends(originalFriends)
-	}
-
-	useEffect((): void => {
-		if (!data) {
-			return
-		}
-
-		if (data.newMessage) {
-			const newMessage = data.newMessage
-			setNewMessage(newMessage)
-
-			if (
-				!friends ||
-				!friends.find(
-					(friend): boolean => friend.id === newMessage.from,
-				)
-			) {
-				const newFriend = {
-					id: newMessage.from,
-					name: data.fromName,
-					email: "",
-					isOnline: true,
-				} as User
-
-				setFriends([...(friends || []), newFriend])
-
-				setOnlineFriends([...(onlineFriends || []), newFriend.id])
-			}
-		}
-
-		if (data.online) {
-			setOnlineFriends(
-				data.online.map(
-					(onlineUser: { userId: number }): number => onlineUser.userId,
-				),
-			)
-		}
-
-		if (data.newUserOnline) {
-			setOnlineFriends([...(onlineFriends || []), data.newUserOnline])
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [data])
-
-	const addNewFriend = (userId: number): void => {
-		if (
-			friends &&
-			!originalFriends.find((friend): boolean => friend.id === userId)
-		) {
-			const newFriend = friends.find(
-				(friend): boolean => friend.id === userId,
-			)
-
-			newFriend &&
-				setOriginalFriends([...(originalFriends || []), newFriend])
-		}
-	}
 
 	return (
 		<MainContainer>

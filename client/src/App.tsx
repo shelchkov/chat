@@ -1,37 +1,14 @@
-import React, { ReactElement, useState, useEffect } from "react"
-import { useRequest } from "./effects/use-request"
+import React, { ReactElement } from "react"
 
 import { SignedOutPage } from "./pages/signed-out.page"
 import { MainPage } from "./pages/main.page"
 import { LoadingPage } from "./pages/loading.page"
 import { ErrorPage } from "./pages/error.page"
 
-import { getAuthenticateInput } from "./utils/api-utils"
-import { User } from "./utils/interfaces"
+import { useUser } from "./effects/use-user"
 
 const App = (): ReactElement => {
-	const { data, start, error } = useRequest(getAuthenticateInput())
-	const [user, setUser] = useState<User | null>()
-
-	useEffect((): void => {
-		if (!data) {
-			return
-		}
-
-		if (data && data.statusCode) {
-			setUser(null)
-
-			return
-		}
-
-		setUser(data)
-	}, [data])
-
-	useEffect(start, [])
-
-	const handleSignOut = (): void => {
-		setUser(null)
-	}
+	const { user, error, handleSignOut, setUser } = useUser()
 
 	if (error) {
 		return <ErrorPage />

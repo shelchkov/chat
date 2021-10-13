@@ -61,7 +61,8 @@
     "coveragePathIgnorePatterns": [
       "src/index.tsx",
       "src/serviceWorker.ts",
-      "src/style-guide/theme.ts"
+      "src/style-guide/theme.ts",
+      "src/tests"
     ]
   }
 }

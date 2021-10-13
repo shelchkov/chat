@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { apiUrl } from "../utils/api-utils"
 
+import { apiUrl } from "../utils/api-utils"
 import { RequestMethod } from "../utils/enums"
 
 interface Request {

@@ -1,17 +1,17 @@
 import React, { ReactElement } from "react"
 import styled from "styled-components"
 
-import { User } from "../../utils/interfaces"
-import { splitUsers } from "../../utils/utils"
+import { User, UserWithLatestMessage } from "../../utils/interfaces"
+import { splitUsers } from "../../utils/user-utils"
 
 import { UserCard } from "./user-card"
 import { Divider } from "./divider"
 
 interface Props {
-	users: User[] | undefined
+	users: UserWithLatestMessage[] | undefined
 	isSearching: boolean
-	handleUserSelect: (user?: User) => void
 	selectedUserId: number | undefined
+	handleUserSelect: (user?: User) => void
 }
 
 const NoUsersContainer = styled.div`

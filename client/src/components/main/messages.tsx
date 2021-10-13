@@ -1,12 +1,16 @@
 import React, { ReactElement, useState } from "react"
-import { useWidth } from "../../effects/use-width"
 
+import { useWidth } from "../../effects/use-width"
 import { UsersList } from "../users/users-list"
 import { MessagesList } from "../messages/messages-list"
-
 import { theme } from "../../style-guide/theme"
 import { getPixelsFromRem } from "../../utils/utils"
 import { User, Message } from "../../utils/interfaces"
+import { useLatestMessages } from "../../effects/use-latest-messages"
+import {
+	addLatestMessagesToUsers,
+	markOnlineUsers,
+} from "../../utils/user-utils"
 
 interface Props {
 	friends: User[] | undefined
@@ -20,10 +24,8 @@ interface Props {
 export const Messages = ({
 	friends,
 	onlineFriends,
-	user,
-	newMessage,
 	updateUsersList,
-	addNewFriend,
+	...rest
 }: Props): ReactElement => {
 	const { isMore: isDesktop } = useWidth(
 		getPixelsFromRem(theme.breakpoints[1]),
@@ -31,28 +33,33 @@ export const Messages = ({
 	const [selectedFriend, setSelectedFriend] = useState<User>()
 	const [isSearching, setIsSearching] = useState(false)
 
+	const { latestMessages, updateLatestMessage } = useLatestMessages()
+
 	const showUsersList = (): void => {
 		setSelectedFriend(undefined)
 	}
+
+	const usersWithLatestMessages = markOnlineUsers(
+		addLatestMessagesToUsers(friends, latestMessages),
+		onlineFriends,
+	)
 
 	if (isDesktop) {
 		return (
 			<>
 				<UsersList
-					users={friends}
+					users={usersWithLatestMessages}
+					isSearching={isSearching}
 					updateUsersList={updateUsersList}
 					handleUserSelect={setSelectedFriend}
-					isSearching={isSearching}
 					setIsSearching={setIsSearching}
-					onlineFriends={onlineFriends}
 					selectedUserId={selectedFriend && selectedFriend.id}
 				/>
 				<MessagesList
 					selectedUser={selectedFriend}
 					isSearching={isSearching}
-					user={user}
-					newMessage={newMessage}
-					addNewFriend={addNewFriend}
+					handleNewMessage={updateLatestMessage}
+					{...rest}
 				/>
 			</>
 		)
@@ -63,23 +70,21 @@ export const Messages = ({
 			<MessagesList
 				selectedUser={selectedFriend}
 				isSearching={isSearching}
-				user={user}
-				newMessage={newMessage}
-				addNewFriend={addNewFriend}
-				isMobile
+				handleNewMessage={updateLatestMessage}
 				showUsersList={showUsersList}
+				isMobile
+				{...rest}
 			/>
 		)
 	}
 
 	return (
 		<UsersList
-			users={friends}
+			users={usersWithLatestMessages}
 			updateUsersList={updateUsersList}
 			handleUserSelect={setSelectedFriend}
 			isSearching={isSearching}
 			setIsSearching={setIsSearching}
-			onlineFriends={onlineFriends}
 			isMobile
 		/>
 	)

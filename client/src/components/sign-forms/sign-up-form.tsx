@@ -1,15 +1,19 @@
 import React, { ReactElement, useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { useRequest } from "../../effects/use-request"
 
+import { useRequest } from "../../effects/use-request"
 import { Input } from "../input/input"
 import { Button } from "../button/button"
-import { ErrorContainer } from "./error-container"
-
 import { InputTypes, ButtonTypes } from "../../utils/enums"
-import { passwordValidationRules, somethingWentWrong, validationRules } from "../../utils/utils"
+import { somethingWentWrong } from "../../utils/utils"
 import { getSignUpInput } from "../../utils/api-utils"
 import { User } from "../../utils/interfaces"
+import {
+	passwordValidationRules,
+	validationRules,
+} from "../../utils/validation"
+
+import { ErrorContainer } from "./error-container"
 
 interface Props {
 	setUser: (user: User) => void
