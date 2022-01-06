@@ -19,7 +19,7 @@ interface Props {
 	setUser: (user: User) => void
 }
 
-interface Inputs {
+type Inputs = {
 	email: string
 	password: string
 }

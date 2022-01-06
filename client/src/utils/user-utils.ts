@@ -10,7 +10,12 @@ export const markNotFriends = (
 			: { ...user, notFriend: true },
 	)
 
-export const splitUsers = (users: UserWithLatestMessage[]) =>
+export const splitUsers = (
+	users: UserWithLatestMessage[],
+): {
+	friends: UserWithLatestMessage[]
+	notFriends: UserWithLatestMessage[]
+} =>
 	users.reduce(
 		(acc, user) => {
 			if (user.notFriend) {
@@ -112,7 +117,7 @@ export const getNewOriginalFriend = (
 	userId: number,
 	friends?: User[],
 	originalFriends?: User[],
-) => {
+): User | undefined => {
 	if (
 		!friends ||
 		!originalFriends ||
@@ -127,7 +132,7 @@ export const getNewOriginalFriend = (
 export const getUsersList = (
 	originalFriends: User[],
 	users?: User[] | null,
-) => {
+): User[] | undefined => {
 	if (users) {
 		return markNotFriends(users, originalFriends)
 	}

@@ -5,8 +5,8 @@ export const apiUrl =
 export const socketUrl =
 	process.env.REACT_APP_SOCKET_URL || "ws://localhost:8080/events"
 
-interface RequestInput {
-	body?: any
+export interface RequestInput {
+	body?: Record<string, string | number | undefined>
 	url: string
 	method: RequestMethod
 }
