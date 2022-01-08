@@ -2,6 +2,7 @@ import {
   WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
 } from "@nestjs/websockets"
 import { Socket } from "socket.io"
 
@@ -29,20 +30,19 @@ export class SubscriptionsGateway
     const userId = this.subscriptionsService.authenticateUser(request)
 
     if (!userId) {
-      this.subscriptionsService.sendErrorAndDisconnect(client, "No token")
-
-      return
+      return this.subscriptionsService.sendErrorAndDisconnect(
+        client,
+        "No token",
+      )
     }
 
     const user = await this.usersService.getById(userId)
 
     if (!user) {
-      this.subscriptionsService.sendErrorAndDisconnect(
+      return this.subscriptionsService.sendErrorAndDisconnect(
         client,
         "Invalid token",
       )
-
-      return
     }
 
     this.subscriptionsService.addNewUser(client, user)
@@ -77,5 +77,19 @@ export class SubscriptionsGateway
 
     isFriendAdded &&
       this.subscriptionsService.sendNewUserOnline(sender.client, userId)
+  }
+
+  @SubscribeMessage("typing")
+  handleTyping(
+    client: Socket,
+    data: { startTyping?: number; stopTyping?: number },
+  ): void {
+    if (data.startTyping) {
+      this.subscriptionsService.handleTyping(client, data.startTyping)
+    }
+
+    if (data.stopTyping) {
+      this.subscriptionsService.handleTyping(client, data.stopTyping, true)
+    }
   }
 }

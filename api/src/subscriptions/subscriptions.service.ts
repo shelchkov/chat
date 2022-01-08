@@ -20,9 +20,7 @@ export class SubscriptionsService {
   authenticateUser(request: Request): number | undefined {
     const cookie = request.headers["cookie"]
     const token = getCookieParams(cookie)["Authentication"]
-    const userId = this.authenticationService.getUserIdFromToken(token)
-
-    return userId
+    return this.authenticationService.getUserIdFromToken(token)
   }
 
   sendErrorAndDisconnect(client: Socket, error?: string): void {
@@ -88,5 +86,29 @@ export class SubscriptionsService {
     }
 
     return false
+  }
+
+  findUserByClient(client: Socket): SubscriptionUserDto | undefined {
+    return this.users.find((user) => user.client === client)
+  }
+
+  handleTyping(client: Socket, receiverId: number, stopTyping?: boolean) {
+    const user = this.findUserByClient(client)
+
+    if (!user || !user.friends.includes(receiverId)) {
+      return
+    }
+
+    const receiver = this.findUserById(receiverId)
+
+    if (!receiver) {
+      return
+    }
+
+    receiver.client.send(
+      JSON.stringify({
+        [stopTyping ? "stopTyping" : "startTyping"]: user.userId,
+      }),
+    )
   }
 }
