@@ -1,25 +1,43 @@
-import React, { ReactElement } from "react"
+import React, { lazy, ReactElement, Suspense } from "react"
 
-import { SignedOutPage } from "./pages/signed-out.page"
-import { MainPage } from "./pages/main.page"
 import { LoadingPage } from "./pages/loading.page"
-import { ErrorPage } from "./pages/error.page"
-
 import { useUser } from "./effects/use-user"
+
+const ErrorPage = lazy(async () => ({
+	default: (await import("./pages/error.page")).ErrorPage,
+}))
+const SignedOutPage = lazy(async () => ({
+	default: (await import("./pages/signed-out.page")).SignedOutPage,
+}))
+const MainPage = lazy(async () => ({
+	default: (await import("./pages/main.page")).MainPage,
+}))
 
 const App = (): ReactElement => {
 	const { user, error, handleSignOut, setUser } = useUser()
 
 	if (error) {
-		return <ErrorPage />
+		return (
+			<Suspense fallback={<LoadingPage />}>
+				<ErrorPage />
+			</Suspense>
+		)
 	}
 
 	if (user === null) {
-		return <SignedOutPage setUser={setUser} />
+		return (
+			<Suspense fallback={<LoadingPage />}>
+				<SignedOutPage setUser={setUser} />
+			</Suspense>
+		)
 	}
 
 	if (user) {
-		return <MainPage user={user} handleSignOut={handleSignOut} />
+		return (
+			<Suspense fallback={<LoadingPage />}>
+				<MainPage user={user} handleSignOut={handleSignOut} />
+			</Suspense>
+		)
 	}
 
 	return <LoadingPage />

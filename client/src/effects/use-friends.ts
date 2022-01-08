@@ -12,7 +12,7 @@ interface Result {
 
 export const useFriends = (userFriends: User[] = []): Result => {
 	const [friends, setFriends, addFriend] = useArrayState(userFriends)
-	const [originalFriends = [], _, addOriginalFriend] = useArrayState(
+	const [originalFriends = [], , addOriginalFriend] = useArrayState(
 		userFriends,
 	)
 

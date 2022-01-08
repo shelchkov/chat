@@ -15,6 +15,7 @@ interface Props {
 	name: string
 	onChange?: (event: ChangeEvent<HTMLInputElement>) => void
 	type?: InputTypes
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	reference?: any
 	error?: string
 	placeholder?: string

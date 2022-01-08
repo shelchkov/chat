@@ -1,19 +1,19 @@
 import { useState } from "react"
 
-import { apiUrl } from "../utils/api-utils"
+import { apiUrl, RequestInput } from "../utils/api-utils"
 import { RequestMethod } from "../utils/enums"
 
 interface Request {
 	data?: any
 	error?: string
 	isLoading: boolean
-	start: (body?: any, urlAddon?: string) => void
+	start: (body?: RequestInput["body"], urlAddon?: string) => void
 	resetData: () => void
 }
 
 interface Props {
 	url: string
-	body?: any
+	body?: RequestInput["body"]
 	method?: RequestMethod
 }
 
@@ -22,7 +22,10 @@ export const useRequest = ({ url, body, method }: Props): Request => {
 	const [data, setData] = useState<any>()
 	const [error, setError] = useState<string>()
 
-	const start = (newBody?: any, urlAddon?: string): void => {
+	const start = (
+		newBody?: RequestInput["body"],
+		urlAddon?: string,
+	): void => {
 		if (isLoading) {
 			return
 		}

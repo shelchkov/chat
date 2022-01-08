@@ -1,4 +1,4 @@
-import React from "react"
+import React, { ReactElement } from "react"
 import styled from "styled-components"
 
 import { Message } from "../../utils/interfaces"
@@ -12,7 +12,10 @@ const Container = styled.div`
 	padding-top: 4px;
 `
 
-export const LatestMessage = ({ latestMessage, userId }: Props) => {
+export const LatestMessage = ({
+	latestMessage,
+	userId,
+}: Props): ReactElement => {
 	if (!latestMessage) {
 		return <></>
 	}

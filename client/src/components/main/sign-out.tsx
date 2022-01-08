@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect } from "react"
 import styled from "styled-components"
-import { useRequest } from "../../effects/use-request"
 
+import { useRequest } from "../../effects/use-request"
 import { getSignOutInput } from "../../utils/api-utils"
 import { theme } from "../../style-guide/theme"
 

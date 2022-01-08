@@ -1,5 +1,5 @@
 import { shallow, ShallowWrapper } from "enzyme"
-import React from "react"
+import React, { ReactNode } from "react"
 
 import App from "../App"
 import * as useUser from "../effects/use-user"
@@ -7,6 +7,17 @@ import { LoadingPage } from "../pages/loading.page"
 import { SignedOutPage } from "../pages/signed-out.page"
 
 jest.mock("../effects/use-user")
+
+jest.mock("react", () => {
+	const React = jest.requireActual("react")
+
+	const Suspense = ({ children }: { children: ReactNode }) => children
+
+	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	const lazy = () => require("../pages/signed-out.page").SignedOutPage
+
+	return { ...React, lazy, Suspense }
+})
 
 describe("App component", () => {
 	let component: ShallowWrapper
