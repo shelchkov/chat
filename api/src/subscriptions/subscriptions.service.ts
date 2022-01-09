@@ -56,9 +56,8 @@ export class SubscriptionsService {
 
   // Users list
   addNewUser = (client: Socket, user: User): void => {
-    const userId = user.id
     const friends = user.friends.map((friend) => friend.id)
-    this.users.push({ userId, client, friends })
+    this.users.push({ userId: user.id, client, friends })
   }
 
   deleteUserByClient = (client: Socket): void => {
