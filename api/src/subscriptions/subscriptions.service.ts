@@ -20,6 +20,7 @@ export class SubscriptionsService {
   authenticateUser = (request: Request): number | undefined => {
     const cookie = request.headers["cookie"]
     const token = getCookieParams(cookie)["Authentication"]
+
     return this.authenticationService.getUserIdFromToken(token)
   }
 
@@ -62,28 +63,10 @@ export class SubscriptionsService {
     this.users.push({ userId: user.id, client, friends })
   }
 
-  findUserById = (id: number): SubscriptionUserDto =>
-    this.users.find((user) => user.userId === id)
-
-  addUserFriend = (userId: number, friendId: number): boolean => {
-    if (userId === friendId) {
-      return false
-    }
-
-    const user = this.findUserById(userId)
-
-    if (user && !user.friends.includes(friendId)) {
-      user.friends.push(friendId)
-
-      return true
-    }
-
-    return false
-  }
-
-  findUserByClient = (client: Socket): SubscriptionUserDto | undefined => {
-    return this.users.find((user) => user.client === client)
-  }
+  private findUserByClient = (
+    client: Socket,
+  ): SubscriptionUserDto | undefined =>
+    this.users.find((user) => user.client === client)
 
   handleTyping = (
     client: Socket,
@@ -109,7 +92,7 @@ export class SubscriptionsService {
     )
   }
 
-  
+  // Disconnect
   private deleteUserByClient = (client: Socket): void => {
     const index = this.users.findIndex((user) => user.client === client)
 
@@ -148,5 +131,42 @@ export class SubscriptionsService {
 
     this.notifyDisconnection(user)
     this.deleteUserByClient(client)
+  }
+
+  // New message
+  private findUserById = (id: number): SubscriptionUserDto =>
+    this.users.find((user) => user.userId === id)
+
+  private addUserFriend = (userId: number, friendId: number): boolean => {
+    if (userId === friendId) {
+      return false
+    }
+
+    const user = this.findUserById(userId)
+
+    if (user && !user.friends.includes(friendId)) {
+      user.friends.push(friendId)
+
+      return true
+    }
+
+    return false
+  }
+
+  handleNewMessage(userId: number, message: Message, fromName: string) {
+    const user = this.findUserById(userId)
+
+    if (!user) {
+      return
+    }
+
+    this.sendNewMessage(user.client, message, fromName)
+
+    const isFriendAdded = this.addUserFriend(userId, message.from)
+    this.addUserFriend(message.from, userId)
+
+    const sender = this.findUserById(message.from)
+
+    isFriendAdded && this.sendNewUserOnline(sender.client, userId)
   }
 }

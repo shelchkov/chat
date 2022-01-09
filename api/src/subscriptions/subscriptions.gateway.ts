@@ -58,24 +58,7 @@ export class SubscriptionsGateway
     message: Message,
     fromName: string,
   ): void {
-    const user = this.subscriptionsService.findUserById(userId)
-
-    if (!user) {
-      return
-    }
-
-    this.subscriptionsService.sendNewMessage(user.client, message, fromName)
-
-    const isFriendAdded = this.subscriptionsService.addUserFriend(
-      userId,
-      message.from,
-    )
-    this.subscriptionsService.addUserFriend(message.from, userId)
-
-    const sender = this.subscriptionsService.findUserById(message.from)
-
-    isFriendAdded &&
-      this.subscriptionsService.sendNewUserOnline(sender.client, userId)
+    this.subscriptionsService.handleNewMessage(userId, message, fromName)
   }
 
   @SubscribeMessage("typing")
