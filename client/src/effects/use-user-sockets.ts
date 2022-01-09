@@ -7,6 +7,7 @@ import { useSockets } from "./use-sockets"
 
 interface Result {
 	newMessage: Message | undefined
+	handleTyping: (receiverId: number, isStopping?: boolean) => void
 }
 
 export const useUserSockets = (
@@ -15,7 +16,7 @@ export const useUserSockets = (
 	addNewOnlineFriend: (friendId: number) => void,
 	setOnlineFriends: (friends: number[]) => void,
 ): Result => {
-	const { data } = useSockets()
+	const { data, sendMessage } = useSockets()
 	const [newMessage, setNewMessage] = useState<Message>()
 
 	useEffect((): void => {
@@ -43,5 +44,11 @@ export const useUserSockets = (
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data])
 
-	return { newMessage }
+	const handleTyping = (receiverId: number, isStopping?: boolean) => {
+		sendMessage("typing", {
+			[isStopping ? "stopTyping" : "startTyping"]: receiverId,
+		})
+	}
+
+	return { newMessage, handleTyping }
 }

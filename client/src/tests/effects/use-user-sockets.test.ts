@@ -119,7 +119,7 @@ describe("userUserSockets hook", () => {
 		const data = { online: [{ userId: 4 }] }
 
 		beforeAll(() => {
-			useSocketsSpy.mockReturnValue({ data })
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
 		})
 
 		it("saves online users list", () => {
@@ -142,7 +142,7 @@ describe("userUserSockets hook", () => {
 		const data = { newUserOnline: 5 }
 
 		beforeAll(() => {
-			useSocketsSpy.mockReturnValue({ data })
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
 		})
 
 		it("adds new id to list of online friends", () => {
@@ -156,6 +156,61 @@ describe("userUserSockets hook", () => {
 				),
 			)
 			expect(addNewOnlineFriendSpy).toBeCalledWith(data.newUserOnline)
+		})
+	})
+
+	describe("and typing occurs", () => {
+		const sendMessage = jest.fn()
+		const receiverId = 1
+
+		beforeAll(() => {
+			useSocketsSpy.mockReturnValue({ data: {}, sendMessage })
+		})
+
+		beforeEach(() => {
+			sendMessage.mockClear()
+		})
+
+		it("calls sendMessage", () => {
+			const {
+				result: {
+					current: { handleTyping },
+				},
+			} = renderHook(() =>
+				useUserSockets(
+					friends,
+					addNewOnlineFriendSpy,
+					addNewOnlineFriendSpy,
+					setOnlineFriendsSpy,
+				),
+			)
+			handleTyping(receiverId)
+			expect(sendMessage).toBeCalledTimes(1)
+			expect(sendMessage.mock.calls[0][0]).toEqual("typing")
+			expect(sendMessage.mock.calls[0][1]).toEqual({
+				startTyping: receiverId,
+			})
+		})
+
+		it("handlestyping stop", () => {
+			const {
+				result: {
+					current: { handleTyping },
+				},
+			} = renderHook(() =>
+				useUserSockets(
+					friends,
+					addNewOnlineFriendSpy,
+					addNewOnlineFriendSpy,
+					setOnlineFriendsSpy,
+				),
+			)
+			handleTyping(receiverId, true)
+			expect(sendMessage).toBeCalledTimes(1)
+			expect(sendMessage.mock.calls[0][0]).toEqual("typing")
+			expect(sendMessage.mock.calls[0][1]).toEqual({
+				stopTyping: receiverId,
+			})
 		})
 	})
 })

@@ -23,3 +23,30 @@ export const getPixelsFromRem = (rem: string): number =>
 	parseInt(rem) * remSize
 
 export const noop = (): undefined => undefined
+
+export const throttle = (fn: () => void, delay: number) => {
+	let isDisabled: boolean
+
+	return () => {
+		if (isDisabled) {
+			return
+		}
+
+		isDisabled = true
+
+		setTimeout(() => {
+			isDisabled = false
+		}, delay)
+
+		fn()
+	}
+}
+
+export const debounce = (fn: () => void, delay: number) => {
+	let timer: number
+
+	return () => {
+		timer && clearTimeout(timer)
+		timer = setTimeout(fn, delay)
+	}
+}

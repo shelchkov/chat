@@ -2,7 +2,10 @@ import { mount, ReactWrapper } from "enzyme"
 import React from "react"
 
 import { MessagesList } from "../../../components/messages/messages-list"
-import { MessagesListAndForm } from "../../../components/messages/messages-list-and-form"
+import {
+	Loading,
+	MessagesListAndForm,
+} from "../../../components/messages/messages-list-and-form"
 import * as useRequest from "../../../effects/use-request"
 import { messageMock, userMock } from "../../tests-utils"
 import * as useMessages from "../../../effects/use-messages"
@@ -26,6 +29,7 @@ describe("MessagesList component", () => {
 		newMessage: undefined,
 		addNewFriend: addNewFriendMock,
 		handleNewMessage: handleNewMessageMock,
+		handleTyping: jest.fn(),
 	}
 
 	const addNewMessageMock = jest.fn()
@@ -93,6 +97,23 @@ describe("MessagesList component", () => {
 				messageMock,
 			)
 			expect(addNewFriendMock).toBeCalledWith(messageMock.to)
+		})
+	})
+
+	describe("and messages are loading", () => {
+		beforeAll(() => {
+			useMessagesMock.mockReturnValue({
+				...useMessagesDefault,
+				isLoading: true,
+			})
+			component = mount(<MessagesList {...props} />)
+		})
+
+		it("shows loading", () => {
+			expect(component.find(Loading).exists()).toBeTruthy()
+			expect(
+				component.find(Loading).text().includes("Loading..."),
+			).toBeTruthy()
 		})
 	})
 })

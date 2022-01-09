@@ -66,7 +66,7 @@ export const MainPage = ({
 		setOnlineFriends,
 		addNewOnlineFriend,
 	] = useArrayState<number>()
-	const { newMessage } = useUserSockets(
+	const { newMessage, handleTyping } = useUserSockets(
 		friends,
 		addFriend,
 		addNewOnlineFriend,
@@ -88,6 +88,7 @@ export const MainPage = ({
 					user={user}
 					newMessage={newMessage}
 					addNewFriend={addNewFriend}
+					handleTyping={handleTyping}
 				/>
 			</MessagesContainer>
 		</MainContainer>

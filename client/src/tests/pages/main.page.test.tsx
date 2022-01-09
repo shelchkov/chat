@@ -46,7 +46,7 @@ describe("main page", (): void => {
 	})
 	jest
 		.spyOn(useUserSockets, "useUserSockets")
-		.mockReturnValue({ newMessage: undefined })
+		.mockReturnValue({ newMessage: undefined, handleTyping: jest.fn() })
 	jest
 		.spyOn(useArrayState, "useArrayState")
 		.mockReturnValue([undefined, jest.fn(), jest.fn(), jest.fn()])

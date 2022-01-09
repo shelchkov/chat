@@ -16,6 +16,7 @@ interface Props {
 	addNewFriend: (userId: number) => void
 	showUsersList?: () => void
 	handleNewMessage?: (message: Message) => void
+	handleTyping: (receiverId: number, isStopping?: boolean) => void
 }
 
 const MessagesListContainer = styled.div`
@@ -36,6 +37,7 @@ export const MessagesList = ({
 	isMobile,
 	showUsersList,
 	handleNewMessage = noop,
+	handleTyping,
 }: Props): ReactElement => {
 	const { messages, isLoading, error, addNewMessage } = useMessages(
 		isSearching,
@@ -81,6 +83,7 @@ export const MessagesList = ({
 					addMessage={addMessage}
 					isMobile={isMobile}
 					showUsersList={showUsersList}
+					handleTyping={handleTyping}
 				/>
 			)}
 		</MessagesListContainer>

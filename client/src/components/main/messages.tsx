@@ -19,6 +19,7 @@ interface Props {
 	newMessage: Message | undefined
 	updateUsersList: (users?: User[] | null) => void
 	addNewFriend: (userId: number) => void
+	handleTyping: (receiverId: number, isStopping?: boolean) => void
 }
 
 export const Messages = ({

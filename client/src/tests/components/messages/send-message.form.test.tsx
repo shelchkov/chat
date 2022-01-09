@@ -16,11 +16,12 @@ describe("SendMessageForm", () => {
 	const addMessage = jest.fn()
 
 	const selectedUserId = 1
-	const props = {
+	const props: Parameters<typeof SendMessageForm>[0] = {
 		isLoading: false,
 		selectedUserId,
 		isMobile: false,
 		addMessage,
+		handleTyping: jest.fn(),
 	}
 
 	const useInputFocusMock = jest.spyOn(useInputFocus, "useInputFocus")

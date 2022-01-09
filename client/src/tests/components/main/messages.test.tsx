@@ -22,6 +22,7 @@ describe("Messages component", () => {
 		newMessage: undefined,
 		updateUsersList: jest.fn(),
 		addNewFriend: jest.fn(),
+		handleTyping: jest.fn(),
 	}
 
 	const updateLatestMessageMock = jest.fn()
