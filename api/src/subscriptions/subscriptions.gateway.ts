@@ -50,8 +50,7 @@ export class SubscriptionsGateway
   }
 
   handleDisconnect(client: Socket): void {
-    this.subscriptionsService.deleteUserByClient(client)
-    this.subscriptionsService.sendUsersStatus()
+    return this.subscriptionsService.handleDisconnect(client)
   }
 
   sendMessageToUser(

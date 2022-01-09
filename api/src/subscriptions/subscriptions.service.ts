@@ -17,18 +17,18 @@ export class SubscriptionsService {
 
   private users: SubscriptionUserDto[] = []
 
-  authenticateUser(request: Request): number | undefined {
+  authenticateUser = (request: Request): number | undefined => {
     const cookie = request.headers["cookie"]
     const token = getCookieParams(cookie)["Authentication"]
     return this.authenticationService.getUserIdFromToken(token)
   }
 
-  sendErrorAndDisconnect(client: Socket, error?: string): void {
+  sendErrorAndDisconnect = (client: Socket, error?: string): void => {
     client.send(JSON.stringify({ error: error || "Something went wrong" }))
     client.disconnect()
   }
 
-  sendUsersStatus(): void {
+  sendUsersStatus = (): void => {
     this.users.forEach((user): void => {
       const onlineUsers = this.users
         .filter((onlineUser): boolean =>
@@ -47,7 +47,9 @@ export class SubscriptionsService {
     newMessage: Message,
     fromName: string,
   ): void => {
-    client.send(JSON.stringify({ newMessage, fromName }))
+    client.send(
+      JSON.stringify({ newMessage, fromName, stopTyping: fromName }),
+    )
   }
 
   sendNewUserOnline = (client: Socket, newUserOnline: number): void => {
@@ -58,14 +60,6 @@ export class SubscriptionsService {
   addNewUser = (client: Socket, user: User): void => {
     const friends = user.friends.map((friend) => friend.id)
     this.users.push({ userId: user.id, client, friends })
-  }
-
-  deleteUserByClient = (client: Socket): void => {
-    const index = this.users.findIndex((user) => user.client === client)
-
-    if (index) {
-      this.users.splice(index, 1)
-    }
   }
 
   findUserById = (id: number): SubscriptionUserDto =>
@@ -87,11 +81,15 @@ export class SubscriptionsService {
     return false
   }
 
-  findUserByClient(client: Socket): SubscriptionUserDto | undefined {
+  findUserByClient = (client: Socket): SubscriptionUserDto | undefined => {
     return this.users.find((user) => user.client === client)
   }
 
-  handleTyping(client: Socket, receiverId: number, stopTyping?: boolean) {
+  handleTyping = (
+    client: Socket,
+    receiverId: number,
+    stopTyping?: boolean,
+  ) => {
     const user = this.findUserByClient(client)
 
     if (!user || !user.friends.includes(receiverId)) {
@@ -109,5 +107,46 @@ export class SubscriptionsService {
         [stopTyping ? "stopTyping" : "startTyping"]: user.userId,
       }),
     )
+  }
+
+  
+  private deleteUserByClient = (client: Socket): void => {
+    const index = this.users.findIndex((user) => user.client === client)
+
+    if (index !== -1) {
+      this.users.splice(index, 1)
+    }
+  }
+
+  private getOnlineFriends = (userId: number) => {
+    const user = this.users.find((user) => user.userId === userId)
+
+    if (!user) {
+      return []
+    }
+
+    return user.friends.filter((friendId) =>
+      this.users.find(({ userId }) => userId === friendId),
+    )
+  }
+
+  private notifyDisconnection = (user: SubscriptionUserDto) => {
+    user.friends.forEach((friendId) => {
+      const online = this.getOnlineFriends(friendId).filter(
+        (id) => id !== user.userId,
+      )
+      user.client.send(JSON.stringify({ online }))
+    })
+  }
+
+  handleDisconnect = (client: Socket) => {
+    const user = this.findUserByClient(client)
+
+    if (!user) {
+      return
+    }
+
+    this.notifyDisconnection(user)
+    this.deleteUserByClient(client)
   }
 }
