@@ -7,7 +7,6 @@ import {
 import { Socket } from "socket.io"
 
 import Message from "../messages/message.entity"
-import { UsersService } from "../users/users.service"
 
 import { SubscriptionsService } from "./subscriptions.service"
 
@@ -21,32 +20,10 @@ if (process.env.NODE_ENV !== "production") {
 export class SubscriptionsGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly subscriptionsService: SubscriptionsService,
-  ) {}
+  constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
   async handleConnection(client: Socket, request: Request): Promise<void> {
-    const userId = this.subscriptionsService.authenticateUser(request)
-
-    if (!userId) {
-      return this.subscriptionsService.sendErrorAndDisconnect(
-        client,
-        "No token",
-      )
-    }
-
-    const user = await this.usersService.getById(userId)
-
-    if (!user) {
-      return this.subscriptionsService.sendErrorAndDisconnect(
-        client,
-        "Invalid token",
-      )
-    }
-
-    this.subscriptionsService.addNewUser(client, user)
-    this.subscriptionsService.sendUsersStatus()
+    return this.subscriptionsService.handleConnection(client, request)
   }
 
   handleDisconnect(client: Socket): void {
@@ -58,7 +35,11 @@ export class SubscriptionsGateway
     message: Message,
     fromName: string,
   ): void {
-    this.subscriptionsService.handleNewMessage(userId, message, fromName)
+    return this.subscriptionsService.handleNewMessage(
+      userId,
+      message,
+      fromName,
+    )
   }
 
   @SubscribeMessage("typing")
@@ -67,11 +48,15 @@ export class SubscriptionsGateway
     data: { startTyping?: number; stopTyping?: number },
   ): void {
     if (data.startTyping) {
-      this.subscriptionsService.handleTyping(client, data.startTyping)
+      return this.subscriptionsService.handleTyping(client, data.startTyping)
     }
 
     if (data.stopTyping) {
-      this.subscriptionsService.handleTyping(client, data.stopTyping, true)
+      return this.subscriptionsService.handleTyping(
+        client,
+        data.stopTyping,
+        true,
+      )
     }
   }
 }

@@ -1,19 +1,28 @@
 import { Test } from "@nestjs/testing"
+import { UsersService } from "../users/users.service"
+import mockedUser from "../utils/mocks/user"
+import { copy } from "../utils/utils"
 import { AuthenticationService } from "../authentication/authentication.service"
 import { SubscriptionsService } from "./subscriptions.service"
 
 describe("SubscriptionsService", () => {
   let subscriptionsService: SubscriptionsService
 
+  const user = copy(mockedUser)
+
   const getUserIdFromToken = jest.fn()
+
+  const getById = jest.fn().mockResolvedValue(user)
 
   beforeAll(async () => {
     const authenticationService = { getUserIdFromToken }
+    const usersService = { getById }
 
     const module = await Test.createTestingModule({
       providers: [
         SubscriptionsService,
         { provide: AuthenticationService, useValue: authenticationService },
+        { provide: UsersService, useValue: usersService },
       ],
     }).compile()
 
