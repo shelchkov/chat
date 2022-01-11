@@ -16,6 +16,8 @@ interface Data {
 	online?: { userId: number }[]
 	fromName?: string
 	newUserOnline?: number
+	stopTyping?: number
+	startTyping?: number
 }
 
 const closeTimeout = 100

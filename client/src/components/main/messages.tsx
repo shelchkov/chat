@@ -17,6 +17,7 @@ interface Props {
 	onlineFriends: number[] | undefined
 	user: User
 	newMessage: Message | undefined
+	typingUsers: number[]
 	updateUsersList: (users?: User[] | null) => void
 	addNewFriend: (userId: number) => void
 	handleTyping: (receiverId: number, isStopping?: boolean) => void
@@ -26,6 +27,7 @@ export const Messages = ({
 	friends,
 	onlineFriends,
 	updateUsersList,
+	typingUsers,
 	...rest
 }: Props): ReactElement => {
 	const { isMore: isDesktop } = useWidth(
@@ -55,6 +57,7 @@ export const Messages = ({
 					handleUserSelect={setSelectedFriend}
 					setIsSearching={setIsSearching}
 					selectedUserId={selectedFriend && selectedFriend.id}
+					typingUsers={typingUsers}
 				/>
 				<MessagesList
 					selectedUser={selectedFriend}
@@ -87,6 +90,7 @@ export const Messages = ({
 			isSearching={isSearching}
 			setIsSearching={setIsSearching}
 			isMobile
+			typingUsers={typingUsers}
 		/>
 	)
 }

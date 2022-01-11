@@ -143,10 +143,10 @@ describe("userUserSockets hook", () => {
 
 		beforeAll(() => {
 			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
+			addNewOnlineFriendSpy.mockClear()
 		})
 
 		it("adds new id to list of online friends", () => {
-			addNewOnlineFriendSpy.mockClear()
 			renderHook(() =>
 				useUserSockets(
 					friends,
@@ -156,6 +156,74 @@ describe("userUserSockets hook", () => {
 				),
 			)
 			expect(addNewOnlineFriendSpy).toBeCalledWith(data.newUserOnline)
+		})
+	})
+
+	describe("and receives information about typing", () => {
+		const data = { startTyping: 6 }
+
+		beforeAll(() => {
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
+		})
+
+		it("adds received id to typingUsers", () => {
+			const {
+				result: {
+					current: { typingUsers },
+				},
+			} = renderHook(() =>
+				useUserSockets(
+					friends,
+					addNewFriendSpy,
+					addNewOnlineFriendSpy,
+					setOnlineFriendsSpy,
+				),
+			)
+
+			expect(typingUsers).toContain(data.startTyping)
+			expect(typingUsers).toHaveLength(1)
+		})
+
+		it("doesn't add id again", () => {
+			const { result, rerender } = renderHook(() =>
+				useUserSockets(
+					friends,
+					addNewFriendSpy,
+					addNewOnlineFriendSpy,
+					setOnlineFriendsSpy,
+				),
+			)
+
+			expect(result.current.typingUsers).toHaveLength(1)
+			rerender()
+			expect(result.current.typingUsers).toHaveLength(1)
+		})
+	})
+
+	describe("and receives information about stopping typing", () => {
+		const data = { startTyping: 6 }
+
+		beforeAll(() => {
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
+		})
+
+		it("adds received id to typingUsers", () => {
+			const { result, rerender } = renderHook(() =>
+				useUserSockets(
+					friends,
+					addNewFriendSpy,
+					addNewOnlineFriendSpy,
+					setOnlineFriendsSpy,
+				),
+			)
+
+			expect(result.current.typingUsers).toHaveLength(1)
+
+			const data = { stopTyping: 6 }
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
+
+			rerender()
+			expect(result.current.typingUsers).toHaveLength(0)
 		})
 	})
 

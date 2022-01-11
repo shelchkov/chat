@@ -10,11 +10,12 @@ import { UsersListContent } from "./users-list-content"
 interface Props {
 	users: UserWithLatestMessage[] | undefined
 	isSearching: boolean
+	typingUsers: number[]
+	isMobile?: boolean
+	selectedUserId?: number
 	updateUsersList: (users?: User[] | null) => void
 	handleUserSelect: (user?: User) => void
 	setIsSearching: (isSearching: boolean) => void
-	isMobile?: boolean
-	selectedUserId?: number
 }
 
 const UsersBlockContainer = styled.div<{ isMobile?: boolean }>`
@@ -33,11 +34,12 @@ const UsersListContainer = styled.div`
 export const UsersList = ({
 	users,
 	isSearching,
+	typingUsers,
+	isMobile,
+	selectedUserId,
 	updateUsersList,
 	handleUserSelect,
 	setIsSearching,
-	isMobile,
-	selectedUserId,
 }: Props): ReactElement => (
 	<UsersBlockContainer isMobile={isMobile}>
 		<AddFriendForm
@@ -51,6 +53,7 @@ export const UsersList = ({
 				isSearching={isSearching}
 				handleUserSelect={handleUserSelect}
 				selectedUserId={selectedUserId}
+				typingUsers={typingUsers}
 			/>
 		</UsersListContainer>
 	</UsersBlockContainer>

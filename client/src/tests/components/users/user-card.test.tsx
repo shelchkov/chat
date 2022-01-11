@@ -31,4 +31,15 @@ describe("UserCard component", () => {
 	it("renders user name", () => {
 		expect(component.text().includes(user.name)).toBeTruthy()
 	})
+
+	describe("and user is typing", () => {
+		beforeAll(() => {
+			props.isTyping = true
+			component = shallow(<UserCard {...props} />)
+		})
+
+		it("shows typing message", () => {
+			expect(component.text().includes("Typing...")).toBeTruthy()
+		})
+	})
 })

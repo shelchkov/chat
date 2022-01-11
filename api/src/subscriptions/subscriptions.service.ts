@@ -119,7 +119,7 @@ export class SubscriptionsService {
     fromName: string,
   ): void => {
     client.send(
-      JSON.stringify({ newMessage, fromName, stopTyping: fromName }),
+      JSON.stringify({ newMessage, fromName, stopTyping: parseInt(fromName) }),
     )
   }
 
