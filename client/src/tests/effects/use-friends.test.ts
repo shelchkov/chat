@@ -58,6 +58,7 @@ describe("useFriends hook", () => {
 		})
 
 		describe("and array is passed", () => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const users = [{ id: 6 }, { id: 7 }] as any
 
 			it("sets friends list", () => {
@@ -68,7 +69,10 @@ describe("useFriends hook", () => {
 				})
 
 				expect(result.current.friends).toEqual(
-					users.map((user: any) => ({ ...user, notFriend: true })),
+					users.map((user: { id: number }) => ({
+						...user,
+						notFriend: true,
+					})),
 				)
 			})
 		})

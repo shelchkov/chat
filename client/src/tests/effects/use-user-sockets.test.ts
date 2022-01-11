@@ -10,7 +10,7 @@ jest.mock("../../effects/use-sockets")
 describe("userUserSockets hook", () => {
 	const useSocketsSpy = jest
 		.spyOn(useSockets, "useSockets")
-		.mockReturnValue({} as any)
+		.mockReturnValue({ data: {}, sendMessage: jest.fn() })
 
 	const friends = [userMock]
 	const addNewFriendSpy = jest.fn()
@@ -35,11 +35,16 @@ describe("userUserSockets hook", () => {
 
 	describe("and receives new message via websocket", (): void => {
 		const data = {
-			newMessage: { from: (friends as User[])[0].id },
+			newMessage: {
+				from: (friends as User[])[0].id,
+				id: 1,
+				text: "",
+				to: 2,
+			},
 		}
 
 		beforeAll(() => {
-			useSocketsSpy.mockReturnValue({ data } as any)
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
 		})
 
 		it("sets new message", () => {
@@ -74,7 +79,7 @@ describe("userUserSockets hook", () => {
 		describe("and user isn't added to friends list", () => {
 			beforeAll(() => {
 				data.newMessage.from = data.newMessage.from + 1
-				useSocketsSpy.mockReturnValue({ data } as any)
+				useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
 			})
 
 			it("creates new friend", () => {

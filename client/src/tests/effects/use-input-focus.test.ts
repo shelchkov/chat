@@ -4,6 +4,7 @@ import { useInputFocus } from "../../effects/use-input-focus"
 
 describe("useInputFocus", () => {
 	const focus = jest.fn()
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const ref = { current: { focus } } as any
 
 	describe("reference is optional", () => {

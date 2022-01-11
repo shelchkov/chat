@@ -34,12 +34,13 @@ describe("SendMessageForm", () => {
 	const reset = jest.fn()
 	jest
 		.spyOn(hookForm, "useForm")
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		.mockReturnValue({ register, handleSubmit, reset } as any)
 
 	const start = jest.fn()
 	const useRequestSpy = jest
 		.spyOn(useRequest, "useRequest")
-		.mockReturnValue({ start } as any)
+		.mockReturnValue({ start, isLoading: false, resetData: jest.fn() })
 
 	let component: ReactWrapper<typeof props>
 
@@ -90,7 +91,12 @@ describe("SendMessageForm", () => {
 			const message = { id: 1 }
 
 			start.mockResolvedValue(message)
-			useRequestSpy.mockReturnValue({ start, data: message } as any)
+			useRequestSpy.mockReturnValue({
+				start,
+				data: message,
+				isLoading: false,
+				resetData: jest.fn(),
+			})
 			component = mount(<SendMessageForm {...props} />)
 
 			expect(addMessage).toBeCalledTimes(1)

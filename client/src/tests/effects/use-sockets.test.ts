@@ -12,11 +12,12 @@ describe("useSockets hook", (): void => {
 
 	beforeAll((): void => {
 		WebSocketSpy = jest
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			.spyOn(global, "WebSocket" as any)
-			.mockImplementation(function (url: string) {
+			.mockImplementation(function () {
 				const onclose = (): void => undefined
 
-				const onmessage = (event: MessageEvent): void => undefined
+				const onmessage = (): void => undefined
 
 				const result = {
 					onmessage,
@@ -27,7 +28,7 @@ describe("useSockets hook", (): void => {
 				currentWs = result
 
 				return result
-			} as any)
+			})
 	})
 
 	beforeEach((): void => {
@@ -63,9 +64,7 @@ describe("useSockets hook", (): void => {
 
 	describe("when connection is closing", (): void => {
 		it("should reconnect", async (): Promise<void> => {
-			const { result, waitForNextUpdate } = renderHook(() =>
-				useSockets(),
-			)
+			const { waitForNextUpdate } = renderHook(() => useSockets())
 			expect(WebSocketSpy).toBeCalledTimes(1)
 
 			act((): void => {

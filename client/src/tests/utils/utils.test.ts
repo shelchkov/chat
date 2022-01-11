@@ -30,6 +30,7 @@ describe("utils", () => {
 			const setTimeoutOg = window.setTimeout
 
 			beforeAll(() => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				window.setTimeout = setTimeoutMock as any
 			})
 
@@ -74,6 +75,7 @@ describe("utils", () => {
 			const setTimeoutOg = window.setTimeout
 
 			beforeAll(() => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				window.setTimeout = setTimeoutMock as any
 			})
 

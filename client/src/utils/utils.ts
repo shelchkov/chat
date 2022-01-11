@@ -24,7 +24,10 @@ export const getPixelsFromRem = (rem: string): number =>
 
 export const noop = (): undefined => undefined
 
-export const throttle = (fn: () => void, delay: number) => {
+export const throttle = (
+	fn: () => void,
+	delay: number,
+): (() => void) => {
 	let isDisabled: boolean
 
 	return () => {
@@ -42,7 +45,10 @@ export const throttle = (fn: () => void, delay: number) => {
 	}
 }
 
-export const debounce = (fn: () => void, delay: number) => {
+export const debounce = (
+	fn: () => void,
+	delay: number,
+): (() => void) => {
 	let timer: number
 
 	return () => {

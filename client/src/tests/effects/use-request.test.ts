@@ -8,12 +8,11 @@ describe("useRequest hook", (): void => {
 	let fetchSpy: jest.SpyInstance
 
 	beforeEach((): void => {
-		fetchSpy = jest
-			.spyOn(global, "fetch")
-			.mockImplementation(
-				() =>
-					Promise.resolve({ json: () => Promise.resolve(data) }) as any,
-			)
+		fetchSpy = jest.spyOn(global, "fetch").mockImplementation(
+			() =>
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				Promise.resolve({ json: () => Promise.resolve(data) }) as any,
+		)
 	})
 
 	afterEach((): void => {
