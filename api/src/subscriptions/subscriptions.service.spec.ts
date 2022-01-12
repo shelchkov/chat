@@ -47,7 +47,7 @@ describe("SubscriptionsService", () => {
   const send = jest.fn()
   const disconnect = jest.fn()
   const client = { send, disconnect } as any
-  
+
   describe("when handling connection", () => {
     const request = { headers: { cookie: "cookie" } } as any
 

@@ -42,15 +42,20 @@ export class SubscriptionsService {
       return
     }
 
-    user.friends.forEach((friendId) => {
-      const friend = this.findUserById(friendId)
+    const onlineFriends = user.friends
+      .map((id) => this.findUserById(id))
+      .filter((user) => !!user)
 
-      if (!friend) {
-        return
-      }
-
+    onlineFriends.forEach((friend) => {
       this.sendNewUserOnline(friend.client, userId)
     })
+
+    onlineFriends.length &&
+      user.client.send(
+        JSON.stringify({
+          online: onlineFriends.map(({ userId }) => ({ userId })),
+        }),
+      )
   }
 
   handleConnection = async (
@@ -118,9 +123,7 @@ export class SubscriptionsService {
     newMessage: Message,
     fromName: string,
   ): void => {
-    client.send(
-      JSON.stringify({ newMessage, fromName, stopTyping: parseInt(fromName) }),
-    )
+    client.send(JSON.stringify({ newMessage, fromName }))
   }
 
   sendNewUserOnline = (client: Socket, newUserOnline: number): void => {
@@ -156,7 +159,7 @@ export class SubscriptionsService {
     )
   }
 
-  private findUserById = (id: number): SubscriptionUserDto =>
+  private findUserById = (id: number): SubscriptionUserDto | undefined =>
     this.users.find((user) => user.userId === id)
 
   private addUserFriend = (userId: number, friendId: number): boolean => {
