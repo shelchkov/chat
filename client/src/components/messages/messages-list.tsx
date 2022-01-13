@@ -55,12 +55,19 @@ export const MessagesList = ({
 	}
 
 	useEffect((): void => {
-		if (!user || !newMessage || !selectedUser) {
+		if (!user || !newMessage) {
+			return
+		}
+
+		if (!selectedUser || newMessage.from !== selectedUser.id) {
+			return handleNewMessage(newMessage)
+		}
+
+		if (!selectedUser) {
 			return
 		}
 
 		if (
-			newMessage.from === selectedUser.id &&
 			!(messages || []).find(
 				(message): boolean => message.id === newMessage.id,
 			)
@@ -68,7 +75,7 @@ export const MessagesList = ({
 			addMessage(newMessage)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [newMessage, addMessage, selectedUser])
+	}, [newMessage])
 
 	return (
 		<MessagesListContainer>

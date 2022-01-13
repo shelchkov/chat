@@ -80,6 +80,23 @@ describe("MessagesList component", () => {
 		it("calls addNewMessage", () => {
 			expect(addNewMessageMock).toBeCalledWith(props.newMessage)
 		})
+
+		describe("and new message sent by not selected user", () => {
+			beforeAll(() => {
+				props.newMessage = messageMock
+				props.selectedUser = {
+					...userMock,
+					id: props.newMessage.from + 1,
+				}
+				props.handleNewMessage = handleNewMessageMock
+				handleNewMessageMock.mockClear()
+				component = mount(<MessagesList {...props} />)
+			})
+
+			it("calls handleNewMessage", () => {
+				expect(handleNewMessageMock).toBeCalledWith(props.newMessage)
+			})
+		})
 	})
 
 	describe("and selected user is not a friend", () => {
