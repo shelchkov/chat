@@ -10,7 +10,7 @@ jest.mock("../../effects/use-sockets")
 describe("userUserSockets hook", () => {
 	const useSocketsSpy = jest
 		.spyOn(useSockets, "useSockets")
-		.mockReturnValue({} as any)
+		.mockReturnValue({ data: {}, sendMessage: jest.fn() })
 
 	const friends = [userMock]
 	const addNewFriendSpy = jest.fn()
@@ -35,11 +35,16 @@ describe("userUserSockets hook", () => {
 
 	describe("and receives new message via websocket", (): void => {
 		const data = {
-			newMessage: { from: (friends as User[])[0].id },
+			newMessage: {
+				from: (friends as User[])[0].id,
+				id: 1,
+				text: "",
+				to: 2,
+			},
 		}
 
 		beforeAll(() => {
-			useSocketsSpy.mockReturnValue({ data } as any)
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
 		})
 
 		it("sets new message", () => {
@@ -74,7 +79,7 @@ describe("userUserSockets hook", () => {
 		describe("and user isn't added to friends list", () => {
 			beforeAll(() => {
 				data.newMessage.from = data.newMessage.from + 1
-				useSocketsSpy.mockReturnValue({ data } as any)
+				useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
 			})
 
 			it("creates new friend", () => {
@@ -119,7 +124,7 @@ describe("userUserSockets hook", () => {
 		const data = { online: [{ userId: 4 }] }
 
 		beforeAll(() => {
-			useSocketsSpy.mockReturnValue({ data })
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
 		})
 
 		it("saves online users list", () => {
@@ -142,11 +147,11 @@ describe("userUserSockets hook", () => {
 		const data = { newUserOnline: 5 }
 
 		beforeAll(() => {
-			useSocketsSpy.mockReturnValue({ data })
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
+			addNewOnlineFriendSpy.mockClear()
 		})
 
 		it("adds new id to list of online friends", () => {
-			addNewOnlineFriendSpy.mockClear()
 			renderHook(() =>
 				useUserSockets(
 					friends,
@@ -156,6 +161,129 @@ describe("userUserSockets hook", () => {
 				),
 			)
 			expect(addNewOnlineFriendSpy).toBeCalledWith(data.newUserOnline)
+		})
+	})
+
+	describe("and receives information about typing", () => {
+		const data = { startTyping: 6 }
+
+		beforeAll(() => {
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
+		})
+
+		it("adds received id to typingUsers", () => {
+			const {
+				result: {
+					current: { typingUsers },
+				},
+			} = renderHook(() =>
+				useUserSockets(
+					friends,
+					addNewFriendSpy,
+					addNewOnlineFriendSpy,
+					setOnlineFriendsSpy,
+				),
+			)
+
+			expect(typingUsers).toContain(data.startTyping)
+			expect(typingUsers).toHaveLength(1)
+		})
+
+		it("doesn't add id again", () => {
+			const { result, rerender } = renderHook(() =>
+				useUserSockets(
+					friends,
+					addNewFriendSpy,
+					addNewOnlineFriendSpy,
+					setOnlineFriendsSpy,
+				),
+			)
+
+			expect(result.current.typingUsers).toHaveLength(1)
+			rerender()
+			expect(result.current.typingUsers).toHaveLength(1)
+		})
+	})
+
+	describe("and receives information about stopping typing", () => {
+		const data = { startTyping: 6 }
+
+		beforeAll(() => {
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
+		})
+
+		it("adds received id to typingUsers", () => {
+			const { result, rerender } = renderHook(() =>
+				useUserSockets(
+					friends,
+					addNewFriendSpy,
+					addNewOnlineFriendSpy,
+					setOnlineFriendsSpy,
+				),
+			)
+
+			expect(result.current.typingUsers).toHaveLength(1)
+
+			const data = { stopTyping: 6 }
+			useSocketsSpy.mockReturnValue({ data, sendMessage: jest.fn() })
+
+			rerender()
+			expect(result.current.typingUsers).toHaveLength(0)
+		})
+	})
+
+	describe("and typing occurs", () => {
+		const sendMessage = jest.fn()
+		const receiverId = 1
+
+		beforeAll(() => {
+			useSocketsSpy.mockReturnValue({ data: {}, sendMessage })
+		})
+
+		beforeEach(() => {
+			sendMessage.mockClear()
+		})
+
+		it("calls sendMessage", () => {
+			const {
+				result: {
+					current: { handleTyping },
+				},
+			} = renderHook(() =>
+				useUserSockets(
+					friends,
+					addNewOnlineFriendSpy,
+					addNewOnlineFriendSpy,
+					setOnlineFriendsSpy,
+				),
+			)
+			handleTyping(receiverId)
+			expect(sendMessage).toBeCalledTimes(1)
+			expect(sendMessage.mock.calls[0][0]).toEqual("typing")
+			expect(sendMessage.mock.calls[0][1]).toEqual({
+				startTyping: receiverId,
+			})
+		})
+
+		it("handlestyping stop", () => {
+			const {
+				result: {
+					current: { handleTyping },
+				},
+			} = renderHook(() =>
+				useUserSockets(
+					friends,
+					addNewOnlineFriendSpy,
+					addNewOnlineFriendSpy,
+					setOnlineFriendsSpy,
+				),
+			)
+			handleTyping(receiverId, true)
+			expect(sendMessage).toBeCalledTimes(1)
+			expect(sendMessage.mock.calls[0][0]).toEqual("typing")
+			expect(sendMessage.mock.calls[0][1]).toEqual({
+				stopTyping: receiverId,
+			})
 		})
 	})
 })

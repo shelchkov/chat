@@ -2,11 +2,11 @@ import {
   WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
 } from "@nestjs/websockets"
 import { Socket } from "socket.io"
 
 import Message from "../messages/message.entity"
-import { UsersService } from "../users/users.service"
 
 import { SubscriptionsService } from "./subscriptions.service"
 
@@ -20,38 +20,14 @@ if (process.env.NODE_ENV !== "production") {
 export class SubscriptionsGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly subscriptionsService: SubscriptionsService,
-  ) {}
+  constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
   async handleConnection(client: Socket, request: Request): Promise<void> {
-    const userId = this.subscriptionsService.authenticateUser(request)
-
-    if (!userId) {
-      this.subscriptionsService.sendErrorAndDisconnect(client, "No token")
-
-      return
-    }
-
-    const user = await this.usersService.getById(userId)
-
-    if (!user) {
-      this.subscriptionsService.sendErrorAndDisconnect(
-        client,
-        "Invalid token",
-      )
-
-      return
-    }
-
-    this.subscriptionsService.addNewUser(client, user)
-    this.subscriptionsService.sendUsersStatus()
+    return this.subscriptionsService.handleConnection(client, request)
   }
 
   handleDisconnect(client: Socket): void {
-    this.subscriptionsService.deleteUserByClient(client)
-    this.subscriptionsService.sendUsersStatus()
+    return this.subscriptionsService.handleDisconnect(client)
   }
 
   sendMessageToUser(
@@ -59,23 +35,28 @@ export class SubscriptionsGateway
     message: Message,
     fromName: string,
   ): void {
-    const user = this.subscriptionsService.findUserById(userId)
+    return this.subscriptionsService.handleNewMessage(
+      userId,
+      message,
+      fromName,
+    )
+  }
 
-    if (!user) {
-      return
+  @SubscribeMessage("typing")
+  handleTyping(
+    client: Socket,
+    data: { startTyping?: number; stopTyping?: number },
+  ): void {
+    if (data.startTyping) {
+      return this.subscriptionsService.handleTyping(client, data.startTyping)
     }
 
-    this.subscriptionsService.sendNewMessage(user.client, message, fromName)
-
-    const isFriendAdded = this.subscriptionsService.addUserFriend(
-      userId,
-      message.from,
-    )
-    this.subscriptionsService.addUserFriend(message.from, userId)
-
-    const sender = this.subscriptionsService.findUserById(message.from)
-
-    isFriendAdded &&
-      this.subscriptionsService.sendNewUserOnline(sender.client, userId)
+    if (data.stopTyping) {
+      return this.subscriptionsService.handleTyping(
+        client,
+        data.stopTyping,
+        true,
+      )
+    }
   }
 }

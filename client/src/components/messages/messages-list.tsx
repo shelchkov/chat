@@ -16,6 +16,7 @@ interface Props {
 	addNewFriend: (userId: number) => void
 	showUsersList?: () => void
 	handleNewMessage?: (message: Message) => void
+	handleTyping: (receiverId: number, isStopping?: boolean) => void
 }
 
 const MessagesListContainer = styled.div`
@@ -36,6 +37,7 @@ export const MessagesList = ({
 	isMobile,
 	showUsersList,
 	handleNewMessage = noop,
+	handleTyping,
 }: Props): ReactElement => {
 	const { messages, isLoading, error, addNewMessage } = useMessages(
 		isSearching,
@@ -53,12 +55,19 @@ export const MessagesList = ({
 	}
 
 	useEffect((): void => {
-		if (!user || !newMessage || !selectedUser) {
+		if (!user || !newMessage) {
+			return
+		}
+
+		if (!selectedUser || newMessage.from !== selectedUser.id) {
+			return handleNewMessage(newMessage)
+		}
+
+		if (!selectedUser) {
 			return
 		}
 
 		if (
-			newMessage.from === selectedUser.id &&
 			!(messages || []).find(
 				(message): boolean => message.id === newMessage.id,
 			)
@@ -66,7 +75,7 @@ export const MessagesList = ({
 			addMessage(newMessage)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [newMessage, addMessage, selectedUser])
+	}, [newMessage])
 
 	return (
 		<MessagesListContainer>
@@ -81,6 +90,7 @@ export const MessagesList = ({
 					addMessage={addMessage}
 					isMobile={isMobile}
 					showUsersList={showUsersList}
+					handleTyping={handleTyping}
 				/>
 			)}
 		</MessagesListContainer>

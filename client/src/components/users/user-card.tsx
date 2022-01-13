@@ -10,6 +10,7 @@ interface Props {
 	user: UserWithLatestMessage
 	isSelected: boolean
 	shouldHideUserStatus?: boolean
+	isTyping?: boolean
 	handleUserSelect: (user?: User) => void
 }
 
@@ -42,10 +43,15 @@ const UserStatus = styled.div<{ isOnline?: boolean }>`
 	border-radius: 50%;
 `
 
+const MessageContainer = styled.div`
+	padding-top: 4px;
+`
+
 export const UserCard = ({
 	user,
 	isSelected,
 	shouldHideUserStatus,
+	isTyping,
 	handleUserSelect,
 }: Props): ReactElement => {
 	const handleClick = (): void => {
@@ -61,10 +67,16 @@ export const UserCard = ({
 				)}
 			</UserNameContainer>
 
-			<LatestMessage
-				latestMessage={user.latestMessage}
-				userId={user.id}
-			/>
+			<MessageContainer>
+				{isTyping ? (
+					"Typing..."
+				) : (
+					<LatestMessage
+						latestMessage={user.latestMessage}
+						userId={user.id}
+					/>
+				)}
+			</MessageContainer>
 		</UserCardContainer>
 	)
 }

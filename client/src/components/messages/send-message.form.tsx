@@ -11,6 +11,7 @@ import { ButtonTypes } from "../../utils/enums"
 import { getSendMessageInput } from "../../utils/api-utils"
 import { useInputFocus } from "../../effects/use-input-focus"
 import { validationRules } from "../../utils/validation"
+import { useTyping } from "../../effects/use-typing"
 
 interface Props {
 	isLoading: boolean
@@ -18,6 +19,7 @@ interface Props {
 	error?: string
 	isMobile?: boolean
 	addMessage: (message: Message) => void
+	handleTyping: (receiverId: number, isStopping?: boolean) => void
 }
 
 const SendMessageContainer = styled.form`
@@ -36,12 +38,15 @@ export const SendMessageForm = ({
 	selectedUserId,
 	isMobile,
 	addMessage,
+	handleTyping,
 }: Props): ReactElement => {
 	const { data, start } = useRequest(getSendMessageInput())
 	const { register, handleSubmit, reset } = useForm<Inputs>()
 	const inputRef = createRef<HTMLInputElement>()
 
 	useInputFocus(isMobile ? undefined : inputRef)
+
+	const { handleChange } = useTyping(handleTyping, selectedUserId)
 
 	const onSubmit = (data: Inputs): void => {
 		start({ text: data.message }, String(selectedUserId))
@@ -75,6 +80,7 @@ export const SendMessageForm = ({
 				disabled={isDisabled}
 				reference={inputRef}
 				placeholder="Type your message"
+				onChange={handleChange}
 			/>
 			<Button
 				text="Send"

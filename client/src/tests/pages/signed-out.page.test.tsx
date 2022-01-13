@@ -11,7 +11,7 @@ const signIn = "Sign in"
 const signedOutText = "Fill out fields below to sign into your account"
 
 describe("signed out page", (): void => {
-	let signedOutPage: ShallowWrapper<any, any>
+	let signedOutPage: ShallowWrapper
 
 	beforeEach((): void => {
 		signedOutPage = shallow(<SignedOutPage setUser={noop} />)

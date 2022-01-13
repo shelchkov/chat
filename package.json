@@ -8,7 +8,10 @@
   "scripts": {
     "install:all": "npm install && cd api && npm install && cd ../client && npm install",
     "dev": "concurrently --kill-others-on-fail \"npm run api\" \"npm run client\"",
-    "lint": "cd api && npm run format && npm run lint && cd ../client && npm run format && npm run lint:fix",
+    "api:check": "npm run api:typecheck && npm run api:test:cov && npm run api:test:integration",
+    "client:check": "npm run client:typecheck && npm run client:lint && npm run client:test:cov",
+    "api:lint": "cd api && npm run format && npm run lint",
+    "client:lint": "cd client && npm run format && npm run lint:fix",
     "build": "npm run client:build && node tools/build.js",
     "api:test:cov": "cd api && npm run test:cov",
     "api:test:integration": "cd api && npm run test:integration",
@@ -19,7 +22,9 @@
     "postclient:build": "tsc --project tsconfig.build.json",
     "prebuild": "rm -rf api/src/static",
     "postbuild": "echo 'web: npm run start:prod' > api/Procfile",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "api:typecheck": "cd api && npm run typecheck",
+    "client:typecheck": "cd client && npm run typecheck"
   },
   "repository": {
     "type": "git",

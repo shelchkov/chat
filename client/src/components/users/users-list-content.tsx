@@ -11,6 +11,7 @@ interface Props {
 	users: UserWithLatestMessage[] | undefined
 	isSearching: boolean
 	selectedUserId: number | undefined
+	typingUsers: number[]
 	handleUserSelect: (user?: User) => void
 }
 
@@ -29,8 +30,9 @@ const errorText = "Something went wrong"
 export const UsersListContent = ({
 	users,
 	isSearching,
-	handleUserSelect,
 	selectedUserId,
+	typingUsers,
+	handleUserSelect,
 }: Props): ReactElement => {
 	if (!users) {
 		return (
@@ -57,8 +59,9 @@ export const UsersListContent = ({
 					<UserCard
 						user={user}
 						key={user.id}
-						handleUserSelect={handleUserSelect}
 						isSelected={user.id === selectedUserId}
+						isTyping={typingUsers.includes(user.id)}
+						handleUserSelect={handleUserSelect}
 					/>
 				),
 			)}

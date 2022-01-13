@@ -4,6 +4,7 @@ import { apiUrl, RequestInput } from "../utils/api-utils"
 import { RequestMethod } from "../utils/enums"
 
 interface Request {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data?: any
 	error?: string
 	isLoading: boolean
@@ -19,7 +20,7 @@ interface Props {
 
 export const useRequest = ({ url, body, method }: Props): Request => {
 	const [isLoading, setIsLoading] = useState(false)
-	const [data, setData] = useState<any>()
+	const [data, setData] = useState<Request["data"]>()
 	const [error, setError] = useState<string>()
 
 	const start = (

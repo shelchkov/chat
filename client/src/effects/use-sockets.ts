@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { socketUrl } from "../utils/api-utils"
 import { Message } from "../utils/interfaces"
 
 interface SocketsProps {
 	data: Data | undefined
+	sendMessage: (
+		event: string,
+		data: { startTyping?: number; stopTyping?: number },
+	) => void
 }
 
 interface Data {
@@ -12,6 +16,8 @@ interface Data {
 	online?: { userId: number }[]
 	fromName?: string
 	newUserOnline?: number
+	stopTyping?: number
+	startTyping?: number
 }
 
 const closeTimeout = 100
@@ -19,19 +25,21 @@ const closeTimeout = 100
 export const useSockets = (): SocketsProps => {
 	const [connectionsNumber, setconnectionsNumber] = useState(1)
 	const [data, setData] = useState<Data>()
+	const ws = useRef<WebSocket>()
 
 	useEffect((): (() => void) | undefined => {
 		if (!connectionsNumber) {
 			return
 		}
 
-		const ws = new WebSocket(socketUrl)
+		ws.current = new WebSocket(socketUrl)
 
-		ws.onmessage = (event): void => setData(JSON.parse(event.data))
+		ws.current.onmessage = (event): void =>
+			setData(JSON.parse(event.data))
 
 		let timer: number | null
 
-		ws.onclose = (): void => {
+		ws.current.onclose = (): void => {
 			if (timer !== null) {
 				timer = setTimeout(
 					(): void => setconnectionsNumber(connectionsNumber + 1),
@@ -41,7 +49,7 @@ export const useSockets = (): SocketsProps => {
 		}
 
 		return (): void => {
-			ws.close()
+			ws.current && ws.current.close()
 
 			if (timer) {
 				return clearTimeout(timer)
@@ -56,5 +64,9 @@ export const useSockets = (): SocketsProps => {
 		return (): void => setconnectionsNumber(0)
 	}, [])
 
-	return { data }
+	const sendMessage: SocketsProps["sendMessage"] = (event, data) => {
+		ws.current && ws.current.send(JSON.stringify({ data, event }))
+	}
+
+	return { data, sendMessage }
 }

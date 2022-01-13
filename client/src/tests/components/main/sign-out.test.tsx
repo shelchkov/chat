@@ -16,7 +16,7 @@ describe("sign out", (): void => {
 	const start = jest.fn()
 	const useRequestSpy = jest
 		.spyOn(useRequest, "useRequest")
-		.mockReturnValue({ start } as any)
+		.mockReturnValue({ start, isLoading: false, resetData: jest.fn() })
 
 	let signOut: ReactWrapper
 
@@ -47,7 +47,11 @@ describe("sign out", (): void => {
 		})
 
 		it("indicates that loading is in progress", () => {
-			useRequestSpy.mockReturnValue({ isLoading: true } as any)
+			useRequestSpy.mockReturnValue({
+				isLoading: true,
+				start: jest.fn(),
+				resetData: jest.fn(),
+			})
 			signOut = mount(<SignOut handleSignOut={handleSignOut} />)
 
 			expect(signOut.contains(`${signOutText}...`)).toBeTruthy()
@@ -58,7 +62,9 @@ describe("sign out", (): void => {
 				useRequestSpy.mockReturnValue({
 					isLoading: false,
 					error: "Error message",
-				} as any)
+					start: jest.fn(),
+					resetData: jest.fn(),
+				})
 				signOut = mount(<SignOut handleSignOut={handleSignOut} />)
 			})
 
@@ -73,7 +79,9 @@ describe("sign out", (): void => {
 				useRequestSpy.mockReturnValue({
 					isLoading: false,
 					data: { success: true },
-				} as any)
+					resetData: jest.fn(),
+					start: jest.fn(),
+				})
 				signOut = mount(<SignOut handleSignOut={handleSignOut} />)
 			})
 

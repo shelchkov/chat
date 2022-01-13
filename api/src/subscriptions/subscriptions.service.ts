@@ -7,41 +7,114 @@ import User from "../users/user.entity"
 import Message from "../messages/message.entity"
 
 import { SubscriptionUserDto } from "./dto/subscriptionUser.dto"
-import { OnlineUserDto } from "./dto/onlineUser.dto"
+import { UsersService } from "../users/users.service"
 
 @Injectable()
 export class SubscriptionsService {
   constructor(
     private readonly authenticationService: AuthenticationService,
+    private readonly usersService: UsersService,
   ) {}
 
   private users: SubscriptionUserDto[] = []
 
-  authenticateUser(request: Request): number | undefined {
+  private authenticateUser = (request: Request): number | undefined => {
     const cookie = request.headers["cookie"]
     const token = getCookieParams(cookie)["Authentication"]
-    const userId = this.authenticationService.getUserIdFromToken(token)
 
-    return userId
+    return this.authenticationService.getUserIdFromToken(token)
   }
 
-  sendErrorAndDisconnect(client: Socket, error?: string): void {
+  sendErrorAndDisconnect = (client: Socket, error?: string): void => {
     client.send(JSON.stringify({ error: error || "Something went wrong" }))
     client.disconnect()
   }
 
-  sendUsersStatus(): void {
-    this.users.forEach((user): void => {
-      const onlineUsers = this.users
-        .filter((onlineUser): boolean =>
-          user.friends.includes(onlineUser.userId),
-        )
-        .map((user): OnlineUserDto => ({ userId: user.userId }))
+  private addNewUser = (client: Socket, user: User): void => {
+    const friends = user.friends.map((friend) => friend.id)
+    this.users.push({ userId: user.id, client, friends })
+  }
 
-      if (onlineUsers.length > 0) {
-        user.client.send(JSON.stringify({ online: onlineUsers }))
-      }
+  private notifyConection = (userId: number) => {
+    const user = this.findUserById(userId)
+
+    if (!user) {
+      return
+    }
+
+    const onlineFriends = user.friends
+      .map((id) => this.findUserById(id))
+      .filter((user) => !!user)
+
+    onlineFriends.forEach((friend) => {
+      this.sendNewUserOnline(friend.client, userId)
     })
+
+    onlineFriends.length &&
+      user.client.send(
+        JSON.stringify({
+          online: onlineFriends.map(({ userId }) => ({ userId })),
+        }),
+      )
+  }
+
+  handleConnection = async (
+    client: Socket,
+    request: Request,
+  ): Promise<void> => {
+    const userId = this.authenticateUser(request)
+
+    if (!userId) {
+      return this.sendErrorAndDisconnect(client, "No token")
+    }
+
+    const user = await this.usersService.getById(userId)
+
+    if (!user) {
+      return this.sendErrorAndDisconnect(client, "Invalid token")
+    }
+
+    this.addNewUser(client, user)
+    this.notifyConection(userId)
+  }
+
+  private deleteUserByClient = (client: Socket): void => {
+    const index = this.users.findIndex((user) => user.client === client)
+
+    if (index !== -1) {
+      this.users.splice(index, 1)
+    }
+  }
+
+  private getOnlineFriends = (user: SubscriptionUserDto) => {
+    return user.friends.filter((friendId) =>
+      this.users.find(({ userId }) => userId === friendId),
+    )
+  }
+
+  private notifyDisconnection = (user: SubscriptionUserDto) => {
+    user.friends.forEach((friendId) => {
+      const friend = this.findUserById(friendId)
+
+      if (!friend) {
+        return
+      }
+
+      friend.client.send(
+        JSON.stringify({ online: this.getOnlineFriends(friend) }),
+      )
+    })
+  }
+
+  handleDisconnect = (client: Socket) => {
+    const user = this.findUserByClient(client)
+
+    if (!user) {
+      return
+    }
+
+    this.notifyDisconnection(user)
+    this.deleteUserByClient(client)
   }
 
   sendNewMessage = (
@@ -56,25 +129,39 @@ export class SubscriptionsService {
     client.send(JSON.stringify({ newUserOnline }))
   }
 
-  // Users list
-  addNewUser = (client: Socket, user: User): void => {
-    const userId = user.id
-    const friends = user.friends.map((friend) => friend.id)
-    this.users.push({ userId, client, friends })
-  }
+  private findUserByClient = (
+    client: Socket,
+  ): SubscriptionUserDto | undefined =>
+    this.users.find((user) => user.client === client)
 
-  deleteUserByClient = (client: Socket): void => {
-    const index = this.users.findIndex((user) => user.client === client)
+  handleTyping = (
+    client: Socket,
+    receiverId: number,
+    stopTyping?: boolean,
+  ) => {
+    const user = this.findUserByClient(client)
 
-    if (index) {
-      this.users.splice(index, 1)
+    if (!user || !user.friends.includes(receiverId)) {
+      return
     }
+
+    const receiver = this.findUserById(receiverId)
+
+    if (!receiver) {
+      return
+    }
+
+    receiver.client.send(
+      JSON.stringify({
+        [stopTyping ? "stopTyping" : "startTyping"]: user.userId,
+      }),
+    )
   }
 
-  findUserById = (id: number): SubscriptionUserDto =>
+  private findUserById = (id: number): SubscriptionUserDto | undefined =>
     this.users.find((user) => user.userId === id)
 
-  addUserFriend = (userId: number, friendId: number): boolean => {
+  private addUserFriend = (userId: number, friendId: number): boolean => {
     if (userId === friendId) {
       return false
     }
@@ -88,5 +175,22 @@ export class SubscriptionsService {
     }
 
     return false
+  }
+
+  handleNewMessage(userId: number, message: Message, fromName: string) {
+    const user = this.findUserById(userId)
+
+    if (!user) {
+      return
+    }
+
+    this.sendNewMessage(user.client, message, fromName)
+
+    const isFriendAdded = this.addUserFriend(userId, message.from)
+    this.addUserFriend(message.from, userId)
+
+    const sender = this.findUserById(message.from)
+
+    isFriendAdded && this.sendNewUserOnline(sender.client, userId)
   }
 }

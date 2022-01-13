@@ -14,6 +14,7 @@ interface Props {
 	isMobile?: boolean
 	addMessage: (message: Message) => void
 	showUsersList?: () => void
+	handleTyping: (receiverId: number, isStopping?: boolean) => void
 }
 
 const MessagesListContent = styled.div<{ isMobile?: boolean }>`
@@ -79,6 +80,7 @@ export const MessagesListAndForm = ({
 	addMessage,
 	isMobile,
 	showUsersList,
+	handleTyping,
 }: Props): ReactElement => {
 	const messagesListRef = createRef<HTMLDivElement>()
 
@@ -135,6 +137,7 @@ export const MessagesListAndForm = ({
 				selectedUserId={selectedUser && selectedUser.id}
 				addMessage={addMessage}
 				isMobile={isMobile}
+				handleTyping={handleTyping}
 			/>
 		</>
 	)
