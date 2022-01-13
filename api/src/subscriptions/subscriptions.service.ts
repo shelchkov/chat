@@ -86,13 +86,7 @@ export class SubscriptionsService {
     }
   }
 
-  private getOnlineFriends = (userId: number) => {
-    const user = this.users.find((user) => user.userId === userId)
-
-    if (!user) {
-      return []
-    }
-
+  private getOnlineFriends = (user: SubscriptionUserDto) => {
     return user.friends.filter((friendId) =>
       this.users.find(({ userId }) => userId === friendId),
     )
@@ -100,10 +94,15 @@ export class SubscriptionsService {
 
   private notifyDisconnection = (user: SubscriptionUserDto) => {
     user.friends.forEach((friendId) => {
-      const online = this.getOnlineFriends(friendId).filter(
-        (id) => id !== user.userId,
+      const friend = this.findUserById(friendId)
+
+      if (!friend) {
+        return
+      }
+
+      friend.client.send(
+        JSON.stringify({ online: this.getOnlineFriends(friend) }),
       )
-      user.client.send(JSON.stringify({ online }))
     })
   }
 
