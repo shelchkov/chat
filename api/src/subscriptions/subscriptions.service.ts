@@ -16,7 +16,7 @@ export class SubscriptionsService {
     private readonly usersService: UsersService,
   ) {}
 
-  private users: SubscriptionUserDto[] = []
+  private users: Record<string, SubscriptionUserDto> = {}
 
   private authenticateUser = (request: Request): number | undefined => {
     const cookie = request.headers["cookie"]
@@ -32,28 +32,28 @@ export class SubscriptionsService {
 
   private addNewUser = (client: Socket, user: User): void => {
     const friends = user.friends.map((friend) => friend.id)
-    this.users.push({ userId: user.id, client, friends })
+    this.users[user.id] = { client, friends }
   }
 
   private notifyConection = (userId: number) => {
-    const user = this.findUserById(userId)
+    const user = this.users[userId]
 
     if (!user) {
       return
     }
 
     const onlineFriends = user.friends
-      .map((id) => this.findUserById(id))
-      .filter((user) => !!user)
+      .map((id) => [id, this.users[id]] as const)
+      .filter(([,user]) => !!user)
 
-    onlineFriends.forEach((friend) => {
+    onlineFriends.forEach(([,friend]) => {
       this.sendNewUserOnline(friend.client, userId)
     })
 
     onlineFriends.length &&
       user.client.send(
         JSON.stringify({
-          online: onlineFriends.map(({ userId }) => ({ userId })),
+          online: onlineFriends.map(([userId]) => ({ userId })),
         }),
       )
   }
@@ -78,36 +78,38 @@ export class SubscriptionsService {
     this.notifyConection(userId)
   }
 
-  private deleteUserByClient = (client: Socket): void => {
-    const index = this.users.findIndex((user) => user.client === client)
+  private findUserIdByClient = (client: Socket): string | undefined => {
+    const user = this.findUserByClient(client)
 
-    if (index !== -1) {
-      this.users.splice(index, 1)
+    return user ? user[0] : undefined
+  }
+
+  private deleteUserByClient = (client: Socket): void => {
+    const id = this.findUserIdByClient(client)
+
+    if (id !== undefined) {
+      delete this.users[id]
     }
   }
 
-  private getOnlineFriends = (user: SubscriptionUserDto) => {
-    return user.friends.filter((friendId) =>
-      this.users.find(({ userId }) => userId === friendId),
-    )
-  }
+  private getFriends = (user: SubscriptionUserDto) => user.friends.filter((friendId) => this.users[friendId])
 
   private notifyDisconnection = (user: SubscriptionUserDto) => {
     user.friends.forEach((friendId) => {
-      const friend = this.findUserById(friendId)
+      const friend = this.users[friendId]
 
       if (!friend) {
         return
       }
 
       friend.client.send(
-        JSON.stringify({ online: this.getOnlineFriends(friend) }),
+        JSON.stringify({ online: this.getFriends(friend) }),
       )
     })
   }
 
   handleDisconnect = (client: Socket) => {
-    const user = this.findUserByClient(client)
+    const [,user] = this.findUserByClient(client)
 
     if (!user) {
       return
@@ -131,21 +133,21 @@ export class SubscriptionsService {
 
   private findUserByClient = (
     client: Socket,
-  ): SubscriptionUserDto | undefined =>
-    this.users.find((user) => user.client === client)
+  ): [string, SubscriptionUserDto | undefined] =>
+    Object.entries(this.users).find(([, user]) => user.client === client)
 
   handleTyping = (
     client: Socket,
     receiverId: number,
     stopTyping?: boolean,
   ) => {
-    const user = this.findUserByClient(client)
+    const [userId, user] = this.findUserByClient(client)
 
     if (!user || !user.friends.includes(receiverId)) {
       return
     }
 
-    const receiver = this.findUserById(receiverId)
+    const receiver = this.users[receiverId]
 
     if (!receiver) {
       return
@@ -153,20 +155,17 @@ export class SubscriptionsService {
 
     receiver.client.send(
       JSON.stringify({
-        [stopTyping ? "stopTyping" : "startTyping"]: user.userId,
+        [stopTyping ? "stopTyping" : "startTyping"]: userId,
       }),
     )
   }
-
-  private findUserById = (id: number): SubscriptionUserDto | undefined =>
-    this.users.find((user) => user.userId === id)
 
   private addUserFriend = (userId: number, friendId: number): boolean => {
     if (userId === friendId) {
       return false
     }
 
-    const user = this.findUserById(userId)
+    const user = this.users[userId]
 
     if (user && !user.friends.includes(friendId)) {
       user.friends.push(friendId)
@@ -178,7 +177,7 @@ export class SubscriptionsService {
   }
 
   handleNewMessage(userId: number, message: Message, fromName: string) {
-    const user = this.findUserById(userId)
+    const user = this.users[userId]
 
     if (!user) {
       return
@@ -189,7 +188,7 @@ export class SubscriptionsService {
     const isFriendAdded = this.addUserFriend(userId, message.from)
     this.addUserFriend(message.from, userId)
 
-    const sender = this.findUserById(message.from)
+    const sender = this.users[message.from]
 
     isFriendAdded && this.sendNewUserOnline(sender.client, userId)
   }
