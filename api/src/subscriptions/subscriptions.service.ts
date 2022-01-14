@@ -92,9 +92,9 @@ export class SubscriptionsService {
     }
   }
 
-  private getFriends = (user: SubscriptionUserDto) => user.friends.filter((friendId) => this.users[friendId])
+  private getOnlineFriends = (user: SubscriptionUserDto) => user.friends.filter((friendId) => this.users[friendId])
 
-  private notifyDisconnection = (user: SubscriptionUserDto) => {
+  private notifyDisconnection = (user: SubscriptionUserDto, userId: number) => {
     user.friends.forEach((friendId) => {
       const friend = this.users[friendId]
 
@@ -103,19 +103,19 @@ export class SubscriptionsService {
       }
 
       friend.client.send(
-        JSON.stringify({ online: this.getFriends(friend) }),
+        JSON.stringify({ online: this.getOnlineFriends(friend).filter((id) => id !== userId).map((userId) => ({ userId })) }),
       )
     })
   }
 
   handleDisconnect = (client: Socket) => {
-    const [,user] = this.findUserByClient(client)
+    const [userId, user] = this.findUserByClient(client)
 
     if (!user) {
       return
     }
 
-    this.notifyDisconnection(user)
+    this.notifyDisconnection(user, parseInt(userId))
     this.deleteUserByClient(client)
   }
 
@@ -155,7 +155,7 @@ export class SubscriptionsService {
 
     receiver.client.send(
       JSON.stringify({
-        [stopTyping ? "stopTyping" : "startTyping"]: userId,
+        [stopTyping ? "stopTyping" : "startTyping"]: parseInt(userId),
       }),
     )
   }
