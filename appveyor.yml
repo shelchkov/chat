@@ -4,9 +4,9 @@ environment:
   GIT_COMMIT_SHA: $(APPVEYOR_PULL_REQUEST_HEAD_COMMIT)
   CC_TEST_REPORTER_ID: 6236cfcb1fda6970790e1494d8f2425235296d0a63bd449eaed95a18c6cb2257
   CC_TEST_REPORTER: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
-  HEROKU_APP_NAME: peaceful-river-48954
+  HEROKU_APP_NAME: s-chat
   HEROKU_API_KEY:
-    secure: jPWq020PLzj6m4aJkjSCJcXuwD/CYjSLNs1tPNPBRP8Hs5YvF0cGJCZR+X/BiSJL
+    secure: R/5IvI/HPYe7XOScz/pQZ0tM2YMv3izoJu0P9gf7nUOjyAeYq4yHTLLfyyf2GflR
   REACT_APP_API_URL: /
   REACT_APP_SOCKET_URL: wss://${HEROKU_APP_NAME}.herokuapp.com/events
 
