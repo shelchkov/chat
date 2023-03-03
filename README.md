@@ -5,7 +5,7 @@
 ![Coveralls](https://img.shields.io/coveralls/github/shelchkov/chat?label=client%20coverage&logo=Coveralls)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a5d240e7373aa43dfba8/maintainability)](https://codeclimate.com/github/shelchkov/chat/maintainability)
 
-[Demo](https://peaceful-river-48954.herokuapp.com)
+[Demo](https://s-chat.herokuapp.com)
 
 ## How to run
 
