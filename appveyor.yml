@@ -76,5 +76,5 @@ for:
     after_build:
       - cd api && git init && git config user.email "${GIT_USER_EMAIL}" && git config user.name "${GIT_USER_NAME}"
       - git add . && git commit -m "Deploy ${APPVEYOR_REPO_TAG_NAME}"
-      - git push -f https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP_NAME}.git
+      - git push -f https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP_NAME}.git master
     skip_non_tags: true
