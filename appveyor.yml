@@ -4,11 +4,6 @@ environment:
   GIT_COMMIT_SHA: $(APPVEYOR_PULL_REQUEST_HEAD_COMMIT)
   CC_TEST_REPORTER_ID: 6236cfcb1fda6970790e1494d8f2425235296d0a63bd449eaed95a18c6cb2257
   CC_TEST_REPORTER: https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
-  HEROKU_APP_NAME: peaceful-river-48954
-  HEROKU_API_KEY:
-    secure: jPWq020PLzj6m4aJkjSCJcXuwD/CYjSLNs1tPNPBRP8Hs5YvF0cGJCZR+X/BiSJL
-  REACT_APP_API_URL: /
-  REACT_APP_SOCKET_URL: wss://${HEROKU_APP_NAME}.herokuapp.com/events
 
   matrix:
     - job_name: Api Tests
@@ -67,14 +62,8 @@ for:
         - job_name: Deploy
     install:
       - nvm use ${NODE_VERSION}
-      - npm install && cd client && npm install
-      - curl https://cli-assets.heroku.com/install.sh | sh
-      - heroku --version
+      - cd client && npm install && cd ../api && npm install && cd ..
     build_script:
-      - npm run typecheck && cd ..
-      - npm run build
-    after_build:
-      - cd api && git init && git config user.email "${GIT_USER_EMAIL}" && git config user.name "${GIT_USER_NAME}"
-      - git add . && git commit -m "Deploy ${APPVEYOR_REPO_TAG_NAME}"
-      - git push -f https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP_NAME}.git
+      - npm run api:typecheck && npm run client:typecheck
+      - curl ${DEPLOY_HOOK_URL}
     skip_non_tags: true
