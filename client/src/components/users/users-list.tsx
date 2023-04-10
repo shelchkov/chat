@@ -18,7 +18,7 @@ interface Props {
 	setIsSearching: (isSearching: boolean) => void
 }
 
-const UsersBlockContainer = styled.div<{ isMobile?: boolean }>`
+const UsersBlockContainer = styled.section<{ isMobile?: boolean }>`
 	width: ${(p): string => (p.isMobile ? "100%" : "40%")};
 	border-right: ${(p): string =>
 		p.isMobile ? "none" : `1px solid ${theme.colors.greys[1]}`};

@@ -19,7 +19,7 @@ interface Props {
 	handleTyping: (receiverId: number, isStopping?: boolean) => void
 }
 
-const MessagesListContainer = styled.div`
+const MessagesListContainer = styled.section`
 	width: fill-available;
 	display: flex;
 	flex-direction: column;

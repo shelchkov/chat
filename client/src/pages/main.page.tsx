@@ -19,7 +19,7 @@ const MainContainer = styled.div`
 	color: ${theme.colors.greys[0]};
 `
 
-const MainTextContainer = styled.div`
+const MainTextContainer = styled.header`
 	height: 86px;
 	display: flex;
 	justify-content: space-between;
@@ -39,12 +39,12 @@ const MainText = styled.p`
 	}
 `
 
-const MessagesContainer = styled.div`
+const MessagesContainer = styled.main`
 	display: flex;
-	height: calc(100% - 87px);
+	height: calc(100% - 88px);
 
 	@media (min-width: ${theme.breakpoints[1]}) {
-		height: calc(100% - 52px);
+		height: calc(100% - 53px);
 	}
 `
 
